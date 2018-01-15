@@ -1,0 +1,15 @@
+AllCops:
+  Include:
+    - Rakefile
+    - config.ru
+  Exclude:
+    - Gemfile
+    - db/**
+    - config/**
+    - script/**
+
+Metrics/LineLength:
+  Max: 120
+
+Documentation:
+  Enabled: false
