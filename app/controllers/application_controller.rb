@@ -28,7 +28,6 @@ class ApplicationController < ActionController::API
   end
 
   def auth_token
-    byebug
     @auth_token ||= JsonWebToken.decode(request.headers['Authorization'].split(' ').last)
   end
 end
