@@ -1,0 +1,17 @@
+---
+version: '3.4'
+services:
+  db:
+    image: postgres:9.5.4
+    environment:
+      POSTGRES_PASSWORD: postgresiswebscale
+    ports: ["5432:5432"]
+  app: &app-common
+    build: "."
+    command: bin/wait-for-it.sh db:5432 -- passenger start -p 3000
+    environment:
+      DATABASE_URL: postgresql://postgres:postgresiswebscale@db
+    links:
+    - db
+    volumes: [".:/app"]
+    ports: ["3000:3000"]
