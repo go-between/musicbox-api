@@ -17,6 +17,7 @@
 default: &default
   adapter: postgresql
   encoding: unicode
+  url: <%= ENV['DATABASE_URL'] %>
   # For details on connection pooling, see Rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
@@ -81,5 +82,3 @@ test:
 production:
   <<: *default
   database: musicbox-api_production
-  username: musicbox-api
-  password: <%= ENV['MUSICBOX-API_DATABASE_PASSWORD'] %>

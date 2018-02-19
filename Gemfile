@@ -10,7 +10,7 @@ gem 'rails', '~> 5.1.4'
 # Use sqlite3 as the database for Active Record
 # gem 'sqlite3'
 # Use Puma as the app server
-gem 'puma', '~> 3.7'
+# gem 'puma', '~> 3.7'
 
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 0.18'
@@ -31,6 +31,13 @@ gem 'google-api-client'
 gem 'jwt'
 gem 'signet'
 gem 'dotenv-rails'
+gem "passenger", "~> 5.2.0"
+
+gem 'jsonapi-rails', '~> 0.3.0'
+gem 'jsonapi_spec_helpers', '~> 0.4', require: false
+gem 'jsonapi_suite', '~> 0.7'
+gem 'jsonapi_swagger_helpers', '~> 0.6', require: false
+gem 'kaminari', '~> 1.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -46,14 +53,6 @@ group :development do
   gem 'spring-watcher-listen', '~> 2.0.0'
 end
 
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
-
-gem 'jsonapi-rails', '~> 0.3.0'
-gem 'jsonapi_spec_helpers', '~> 0.4', require: false
-gem 'jsonapi_suite', '~> 0.7'
-gem 'jsonapi_swagger_helpers', '~> 0.6', require: false
-gem 'kaminari', '~> 1.0'
 group :development, :test do
   gem 'factory_bot_rails', '~> 4.0'
   gem 'faker', '~> 1.7'
