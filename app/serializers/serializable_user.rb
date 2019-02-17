@@ -15,5 +15,4 @@ class SerializableUser < JSONAPI::Serializable::Resource
   # end
   attribute :email
   attribute :name
-  attribute :google_id
 end
