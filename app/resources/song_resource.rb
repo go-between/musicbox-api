@@ -1,11 +1,11 @@
 # Define how to query and persist a given model.
 # Further Resource documentation: https://jsonapi-suite.github.io/jsonapi_compliable/JsonapiCompliable/Resource.html
-class UserResource < ApplicationResource
+class SongResource < ApplicationResource
   # Used for associating this resource with a given input.
   # This should match the 'type' in the corresponding serializer.
-  type :users
+  type :songs
   # Associate to a Model object so we know how to persist.
-  model User
+  model Song
   belongs_to :room,
     scope: -> {Room.all},
     resource: RoomResource,

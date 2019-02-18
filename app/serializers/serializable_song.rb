@@ -1,7 +1,7 @@
 # Serializers define the rendered JSON for a model instance.
 # We use jsonapi-rb, which is similar to active_model_serializers.
-class SerializableUser < JSONAPI::Serializable::Resource
-  type :users
+class SerializableSong < JSONAPI::Serializable::Resource
+  type :songs
 
   # Add attributes here to ensure they get rendered, .e.g.
   #
@@ -14,7 +14,7 @@ class SerializableUser < JSONAPI::Serializable::Resource
   #   @object.name.upcase
   # end
 
-  belongs_to :room
-  attribute :email
+  belongs_to :rooms
   attribute :name
+  attribute :url
 end
