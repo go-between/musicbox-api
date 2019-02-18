@@ -29,6 +29,7 @@ gem 'pg', '~> 1.1.4'
 gem 'rack-cors'
 gem 'dotenv-rails'
 gem "passenger", "~> 5.2.0"
+gem 'redis', '~> 4.1.0'
 
 gem 'jsonapi-rails', '~> 0.3.1'
 gem 'jsonapi_spec_helpers', '~> 0.4.10', require: false
