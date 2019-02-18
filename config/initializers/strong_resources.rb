@@ -31,13 +31,8 @@
 #
 # For additional documentation, see https://jsonapi-suite.github.io/strong_resources
 StrongResources.configure do
-  strong_resource :google_token do
-    attribute :code, :string
-  end
-
   strong_resource :user do
     attribute :email, :string
     attribute :name, :string
-    attribute :google_id, :string
   end
 end
