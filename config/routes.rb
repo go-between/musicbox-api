@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+
+  mount ActionCable.server => '/cable'
+
   scope path: '/api' do
     resources :docs, only: [:index], path: '/swagger'
 

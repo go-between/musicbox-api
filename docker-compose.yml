@@ -11,7 +11,12 @@ services:
     command: bin/wait-for-it.sh db:5432 -- passenger start -p 3000
     environment:
       DATABASE_URL: postgresql://postgres:postgresiswebscale@db
+      REDIS_URL: redis://redis:6379
     links:
     - db
+    - redis
     volumes: [".:/app"]
     ports: ["3000:3000"]
+  redis:
+    image: redis:5.0.3
+    ports: ["6379:6379"]

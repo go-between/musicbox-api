@@ -12,6 +12,8 @@ class RoomsController < ApplicationController
   # before_action :apply_strong_params, only: %i[create update]
 
   def show
+    ActionCable.server.broadcast 'messages', foo: :bar
+
     scope = jsonapi_scope(Room.where(id: params[:id]))
     instance = scope.resolve.first
     raise JsonapiCompliable::Errors::RecordNotFound unless instance
