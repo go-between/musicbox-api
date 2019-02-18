@@ -38,4 +38,8 @@ StrongResources.configure do
   strong_resource :room do
     attribute :name, :string
   end
+  strong_resource :song do
+    attribute :name, :string
+    attribute :url, :string
+  end
 end
