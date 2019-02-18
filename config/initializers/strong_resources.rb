@@ -35,4 +35,7 @@ StrongResources.configure do
     attribute :email, :string
     attribute :name, :string
   end
+  strong_resource :room do
+    attribute :name, :string
+  end
 end
