@@ -173,6 +173,7 @@ GEM
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
       ffi (~> 1.0)
+    redis (4.1.0)
     rspec (3.5.0)
       rspec-core (~> 3.5.0)
       rspec-expectations (~> 3.5.0)
@@ -257,6 +258,7 @@ DEPENDENCIES
   pg (~> 1.1.4)
   rack-cors
   rails (~> 5.2.2)
+  redis (~> 4.1.0)
   rspec-rails (~> 3.5.2)
   rubocop
   rubocop-rspec
