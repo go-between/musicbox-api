@@ -12,11 +12,10 @@ class RoomsController < ApplicationController
   # before_action :apply_strong_params, only: %i[create update]
 
   def show
-    ActionCable.server.broadcast 'messages', foo: :bar
+    room = Room.find(params[:id])
+    ActionCable.server.broadcast 'messages', songs: room.songs
 
-    scope = jsonapi_scope(Room.where(id: params[:id]))
-    instance = scope.resolve.first
-    raise JsonapiCompliable::Errors::RecordNotFound unless instance
-    render_jsonapi(instance, scope: false)
+    raise JsonapiCompliable::Errors::RecordNotFound unless room
+    render_jsonapi(room, scope: false)
   end
 end
