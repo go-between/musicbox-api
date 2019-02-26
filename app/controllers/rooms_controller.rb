@@ -13,7 +13,7 @@ class RoomsController < ApplicationController
 
   def show
     room = Room.find(params[:id])
-    ActionCable.server.broadcast 'messages', songs: room.songs
+    ActionCable.server.broadcast 'songs', songs: room.songs, type: 'songs'
 
     raise JsonapiCompliable::Errors::RecordNotFound unless room
     render_jsonapi(room, scope: false)
