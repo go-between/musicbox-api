@@ -13,9 +13,18 @@ class RoomsController < ApplicationController
 
   def show
     room = Room.find(params[:id])
-    ActionCable.server.broadcast 'songs', songs: room.songs, type: 'songs'
+
+    ActionCable.server.broadcast('queue', songs_for(room))
 
     raise JsonapiCompliable::Errors::RecordNotFound unless room
     render_jsonapi(room, scope: false)
+  end
+
+  private
+
+  def songs_for(room)
+    JSONAPI::Serializable::Renderer
+      .new
+      .render(room.songs, class: { Song: SerializableSong })
   end
 end
