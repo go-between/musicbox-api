@@ -17,4 +17,5 @@ class SerializableSong < JSONAPI::Serializable::Resource
   belongs_to :rooms
   attribute :name
   attribute :url
+  attribute :duration_in_seconds
 end
