@@ -26,6 +26,7 @@ require 'jsonapi_spec_helpers'
 # Checks for pending migration and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.maintain_test_schema!
+DatabaseCleaner.allow_remote_database_url = true
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
