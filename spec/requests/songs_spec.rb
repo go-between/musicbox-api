@@ -17,16 +17,16 @@ RSpec.describe "Songs", type: :request do
             name: "foo",
             url: "http://bar",
             duration_in_seconds: 5
-          }
-        },
-        relationships: {
-          room: {
-            data: { type: "rooms", id: "#{room.id}" }
+          },
+          relationships: {
+            room: {
+              data: { type: "rooms", id: "#{room.id}" }
+            }
           }
         }
       })
 
-      expect(room.songs.size).to eq(1)
+      expect(room.reload.songs.size).to eq(1)
     end
   end
 end

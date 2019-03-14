@@ -13,7 +13,6 @@ class SongsController < ApplicationController
 
   def create
     song, success = jsonapi_create.to_a
-    byebug
 
     if success
       render_jsonapi(song, scope: false)
