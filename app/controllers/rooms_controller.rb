@@ -13,9 +13,7 @@ class RoomsController < ApplicationController
 
   def show
     room = Room.find(params[:id])
-
-    ActionCable.server.broadcast('queue', songs_for(room))
-
+    
     raise JsonapiCompliable::Errors::RecordNotFound unless room
     render_jsonapi(room, scope: false)
   end

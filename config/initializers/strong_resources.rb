@@ -39,7 +39,9 @@ StrongResources.configure do
     attribute :name, :string
   end
   strong_resource :song do
+    belongs_to :room
     attribute :name, :string
     attribute :url, :string
+    attribute :duration_in_seconds, :integer
   end
 end
