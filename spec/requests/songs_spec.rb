@@ -3,8 +3,10 @@
 require "rails_helper"
 
 RSpec.describe "Songs", type: :request do
+  include JsonHelper
+
   describe "#create" do
-    it "can be posted to a room" do
+    it "can be created" do
       room = create(:room)
       expect(room.songs.size).to eq(0)
 
@@ -16,15 +18,11 @@ RSpec.describe "Songs", type: :request do
             url: "http://bar",
             duration_in_seconds: 5
           },
-          relationships: {
-            room: {
-              data: { type: "rooms", id: "#{room.id}" }
-            }
-          }
         }
       })
 
-      expect(room.reload.songs.size).to eq(1)
+      id = json_body.dig(:data, :id)
+      expect(Song.exists?(id)).to eq(true)
     end
   end
 end
