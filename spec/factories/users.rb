@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :user do
-    email 'MyString'
-    name 'MyString'
-    google_id 'MyString'
+    email { 'anime-turtle@myspace.com' }
+    name { 'Sephiroth Goku' }
+    room
   end
 end
