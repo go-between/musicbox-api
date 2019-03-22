@@ -3,14 +3,12 @@
 require "rails_helper"
 
 RSpec.describe "Songs", type: :request do
-  # JSON.parse(response.body, symbolize_names: true)
-
   describe "#create" do
     it "can be posted to a room" do
-      room = Room.create!
+      room = create(:room)
       expect(room.songs.size).to eq(0)
 
-      post("/api/v1/rooms/#{room.id}/songs", params: {
+      jsonapi_post("/api/v1/rooms/#{room.id}/songs", {
         data: {
           type: "songs",
           attributes: {
