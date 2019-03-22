@@ -12,12 +12,20 @@ class SongsController < ApplicationController
   before_action :apply_strong_params, only: %i[create]
 
   def create
-    song, success = jsonapi_create.to_a
+    return render_jsonapi(persisted_song, scope: false) if persisted_song.present?
 
+    song, success = jsonapi_create.to_a
     if success
       render_jsonapi(song, scope: false)
     else
       render_errors_for(song)
     end
+  end
+
+  private
+
+  def persisted_song
+    return @_persisted_song if defined? @_persisted_song
+    @_persisted_song = Song.find_by(youtube_id: attrs[:youtube_id])
   end
 end
