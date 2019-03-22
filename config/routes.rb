@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     scope path: '/v1' do
       resources :users
       resources :rooms, only: [:show]
+      resources :room_queues, only: [:create]
       resources :songs, only: [:create]
     end
   end

@@ -38,6 +38,11 @@ StrongResources.configure do
   strong_resource :room do
     attribute :name, :string
   end
+  strong_resource :room_queue do
+    belongs_to :room
+    belongs_to :song
+    belongs_to :user
+  end
   strong_resource :song do
     attribute :name, :string
     attribute :duration_in_seconds, :integer
