@@ -7,16 +7,13 @@ RSpec.describe "Songs", type: :request do
 
   describe "#create" do
     it "can be created" do
-      room = create(:room)
-      expect(room.songs.size).to eq(0)
-
-      jsonapi_post("/api/v1/rooms/#{room.id}/songs", {
+      jsonapi_post("/api/v1/songs", {
         data: {
           type: "songs",
           attributes: {
             name: "foo",
             url: "http://bar",
-            duration_in_seconds: 5
+            youtube_id: "the-id"
           },
         }
       })
