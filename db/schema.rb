@@ -17,9 +17,9 @@ ActiveRecord::Schema.define(version: 2019_03_22_030346) do
   enable_extension "plpgsql"
 
   create_table "room_queues", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.bigint "room_id"
-    t.bigint "song_id"
-    t.bigint "user_id"
+    t.uuid "room_id"
+    t.uuid "song_id"
+    t.uuid "user_id"
     t.integer "order"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
