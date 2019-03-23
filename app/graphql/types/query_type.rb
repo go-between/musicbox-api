@@ -1,13 +1,19 @@
 module Types
   class QueryType < Types::BaseObject
-    # Add root-level fields here.
-    # They will be entry points for queries on your schema.
+    graphql_name "Query"
 
-    # TODO: remove me
-    field :test_field, String, null: false,
-      description: "An example field added by the generator"
-    def test_field
-      "Hello World!"
+    field :songs, [Types::SongType], null: true do
+    end
+
+    field :room_queues, [Types::RoomQueueType], null: true do
+    end
+
+    def room_queues
+      RoomQueue.all
+    end
+
+    def songs
+      Song.all
     end
   end
 end
