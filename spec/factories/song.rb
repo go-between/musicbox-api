@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :song do
     name { 'Despacito - Bluegrass Cover' }
-    room
+    youtube_id { 'abcde' }
   end
 end

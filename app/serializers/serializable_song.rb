@@ -14,8 +14,8 @@ class SerializableSong < JSONAPI::Serializable::Resource
   #   @object.name.upcase
   # end
 
-  belongs_to :rooms
+  attribute :duration_in_seconds
   attribute :name
   attribute :url
-  attribute :duration_in_seconds
+  attribute :youtube_id
 end
