@@ -42,4 +42,20 @@ RSpec.describe "Songs", type: :request do
       expect(song.id).to eq(id)
     end
   end
+
+  context "when missing required attributes" do
+    it "fails to persist when youtube_id is not specified" do
+      jsonapi_post("/api/v1/songs", {
+        data: {
+          type: "songs",
+          attributes: {
+            name: "foo",
+            url: "http://bar",
+          },
+        }
+      })
+
+      expect(response).to be_unprocessable
+    end
+  end
 end
