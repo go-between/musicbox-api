@@ -13,11 +13,6 @@ class RoomResource < ApplicationResource
     resource: UserResource,
     foreign_key: :room_id
 
-  has_many :songs,
-    scope: -> {Song.all},
-    resource: SongResource,
-    foreign_key: :room_id
-
   # Customize your resource here. Some common examples:
   #
   # === Allow ?filter[name] query parameter ===

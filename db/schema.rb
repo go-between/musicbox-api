@@ -10,11 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_19_133140) do
+ActiveRecord::Schema.define(version: 2019_03_22_030346) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "room_queues", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "room_id"
+    t.uuid "song_id"
+    t.uuid "user_id"
+    t.integer "order"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["room_id"], name: "index_room_queues_on_room_id"
+    t.index ["song_id"], name: "index_room_queues_on_song_id"
+    t.index ["user_id"], name: "index_room_queues_on_user_id"
+  end
 
   create_table "rooms", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
@@ -25,11 +37,11 @@ ActiveRecord::Schema.define(version: 2019_03_19_133140) do
   create_table "songs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.string "url"
-    t.uuid "room_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "duration_in_seconds"
     t.string "youtube_id"
+    t.index ["youtube_id"], name: "index_songs_on_youtube_id"
   end
 
   create_table "songs_users", id: false, force: :cascade do |t|

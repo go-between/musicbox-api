@@ -6,10 +6,6 @@ class SongResource < ApplicationResource
   type :songs
   # Associate to a Model object so we know how to persist.
   model Song
-  belongs_to :room,
-    scope: -> {Room.all},
-    resource: RoomResource,
-    foreign_key: :room_id
 
   # Customize your resource here. Some common examples:
   #
