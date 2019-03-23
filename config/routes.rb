@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  post "/graphql", to: "graphql#execute"
   mount ActionCable.server => '/cable'
 
   scope path: '/api' do
