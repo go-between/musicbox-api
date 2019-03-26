@@ -6,6 +6,8 @@ Rails.application.routes.draw do
     resources :docs, only: [:index], path: '/swagger'
 
     scope path: '/v1' do
+      post "/graphql", to: "graphql#execute"
+
       resources :users
       resources :rooms, only: [:show]
       resources :room_queues, only: [:create]
