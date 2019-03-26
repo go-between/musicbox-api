@@ -10,11 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_22_030346) do
+ActiveRecord::Schema.define(version: 2019_03_26_121153) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "playlists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.uuid "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "room_queues", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "room_id"
@@ -36,11 +43,11 @@ ActiveRecord::Schema.define(version: 2019_03_22_030346) do
 
   create_table "songs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
-    t.string "url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "duration_in_seconds"
     t.string "youtube_id"
+    t.string "description"
     t.index ["youtube_id"], name: "index_songs_on_youtube_id"
   end
 
