@@ -16,13 +16,6 @@ ActiveRecord::Schema.define(version: 2019_03_26_121153) do
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
-  create_table "playlists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "name"
-    t.uuid "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "room_queues", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "room_id"
     t.uuid "song_id"
