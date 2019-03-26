@@ -5,15 +5,16 @@ require "rails_helper"
 RSpec.describe "Songs", type: :request do
   include JsonHelper
 
-  def query(name:, youtube_id:)
+  def query(youtube_id:)
     %(
       mutation {
         createSong(input:{
-          name: "#{name}",
           youtubeId: "#{youtube_id}"
         }) {
           song {
             id
+            description
+            duration_in_seconds
             name
             youtubeId
           }
@@ -25,7 +26,7 @@ RSpec.describe "Songs", type: :request do
 
   describe "#create" do
     it "can be created" do
-      post('/api/v1/graphql', params: { query: query(name: "the name", youtube_id: "an-id") })
+      post('/api/v1/graphql', params: { query: query(youtube_id: "an-id") })
       data = json_body.dig(:data, :createSong)
       id = data.dig(:song, :id)
 
@@ -37,7 +38,7 @@ RSpec.describe "Songs", type: :request do
       song = create(:song, youtube_id: "the-youtube-id")
 
       expect do
-        post('/api/v1/graphql', params: { query: query(name: "the name", youtube_id: "the-youtube-id") })
+        post('/api/v1/graphql', params: { query: query(youtube_id: "the-youtube-id") })
         data = json_body.dig(:data, :createSong)
         id = data.dig(:song, :id)
 
@@ -50,7 +51,7 @@ RSpec.describe "Songs", type: :request do
   context "when missing required attributes" do
     it "fails to persist when youtube_id is not specified" do
       expect do
-        post('/api/v1/graphql', params: { query: query(name: "the name", youtube_id: nil) })
+        post('/api/v1/graphql', params: { query: query(youtube_id: nil) })
         data = json_body.dig(:data, :createSong)
 
         expect(data[:song]).to be_nil

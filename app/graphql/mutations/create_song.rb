@@ -1,12 +1,11 @@
 module Mutations
   class CreateSong < Mutations::BaseMutation
-    argument :name, String, required: true
     argument :youtube_id, String, required: true
 
     field :song, Types::SongType, null: true
     field :errors, [String], null: true
 
-    def resolve(name:, youtube_id:)
+    def resolve(youtube_id:)
       persisted_song = Song.find_by(youtube_id: youtube_id)
       if persisted_song.present?
         return {
@@ -15,7 +14,7 @@ module Mutations
         }
       end
 
-      song = Song.new(name: name, youtube_id: youtube_id)
+      song = Song.new(youtube_id: youtube_id)
       if song.save
         {
           song: song,
