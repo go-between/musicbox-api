@@ -14,6 +14,7 @@ gem 'rails', '~> 5.2.2'
 
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.1.4'
+gem 'yt'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
