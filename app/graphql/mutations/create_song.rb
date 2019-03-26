@@ -16,6 +16,7 @@ module Mutations
 
       song = Song.new(youtube_id: youtube_id)
       if song.save
+        set_attrs_from_youtube!(song)
         {
           song: song,
           errors: [],
@@ -26,6 +27,17 @@ module Mutations
           errors: song.errors.full_messages
         }
       end
+    end
+
+    private
+
+    def set_attrs_from_youtube!(song)
+      video = Yt::Video.new(id: song.youtube_id)
+      song.update!(
+        description: video.description,
+        name: video.title,
+        duration_in_seconds: video.duration
+      )
     end
   end
 end
