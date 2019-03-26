@@ -8,12 +8,19 @@ module Types
     field :room_queues, [Types::RoomQueueType], null: true do
     end
 
+    field :users, [Types::UserType], null: true do
+    end
+
     def room_queues
       RoomQueue.all
     end
 
     def songs
       Song.all
+    end
+
+    def users
+      User.all
     end
   end
 end
