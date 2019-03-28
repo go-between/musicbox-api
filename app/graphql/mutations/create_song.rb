@@ -1,12 +1,11 @@
 module Mutations
   class CreateSong < Mutations::BaseMutation
-    argument :name, String, required: true
     argument :youtube_id, String, required: true
 
     field :song, Types::SongType, null: true
     field :errors, [String], null: true
 
-    def resolve(name:, youtube_id:)
+    def resolve(youtube_id:)
       persisted_song = Song.find_by(youtube_id: youtube_id)
       if persisted_song.present?
         return {
@@ -15,8 +14,9 @@ module Mutations
         }
       end
 
-      song = Song.new(name: name, youtube_id: youtube_id)
+      song = Song.new(youtube_id: youtube_id)
       if song.save
+        set_attrs_from_youtube!(song)
         {
           song: song,
           errors: [],
@@ -27,6 +27,17 @@ module Mutations
           errors: song.errors.full_messages
         }
       end
+    end
+
+    private
+
+    def set_attrs_from_youtube!(song)
+      video = Yt::Video.new(id: song.youtube_id)
+      song.update!(
+        description: video.description,
+        name: video.title,
+        duration_in_seconds: video.duration
+      )
     end
   end
 end
