@@ -6,14 +6,13 @@ RSpec.describe "Songs", type: :request do
   include AuthHelper
   include JsonHelper
 
-  def query(order:, room_id:, song_id:, user_id:)
+  def query(order:, room_id:, song_id:)
     %(
       mutation {
         createRoomQueue(input:{
           order: "#{order}",
           roomId: "#{room_id}"
           songId: "#{song_id}"
-          userId: "#{user_id}"
         }) {
           roomQueue {
             id
@@ -37,9 +36,8 @@ RSpec.describe "Songs", type: :request do
   describe "#create" do
     let(:room) { create(:room) }
     let(:song) { create(:song) }
-    let(:user) { create(:user) }
     it "can be created with a room, song, and user" do
-      q = query(order: 1, room_id: room.id, song_id: song.id, user_id: user.id)
+      q = query(order: 1, room_id: room.id, song_id: song.id)
       authed_post('/api/v1/graphql', query: q)
       data = json_body.dig(:data, :createRoomQueue)
 
@@ -47,12 +45,12 @@ RSpec.describe "Songs", type: :request do
       rq = RoomQueue.find(id)
       expect(rq.room).to eq(room)
       expect(rq.song).to eq(song)
-      expect(rq.user).to eq(user)
+      expect(rq.user).to eq(current_user)
     end
 
     it "broadcasts enqueued songs" do
       expect do
-        q = query(order: 1, room_id: room.id, song_id: song.id, user_id: user.id)
+        q = query(order: 1, room_id: room.id, song_id: song.id)
         authed_post('/api/v1/graphql', query: q)
 
       end.to have_broadcasted_to("queue").and(have_broadcasted_to("now_playing"))
@@ -60,7 +58,7 @@ RSpec.describe "Songs", type: :request do
 
     context "when missing required attributes" do
       it "fails to persist when room is not specified" do
-        q = query(order: 1, room_id: SecureRandom.uuid, song_id: song.id, user_id: user.id)
+        q = query(order: 1, room_id: SecureRandom.uuid, song_id: song.id)
         authed_post('/api/v1/graphql', query: q)
 
         data = json_body.dig(:data, :createRoomQueue)
@@ -70,23 +68,13 @@ RSpec.describe "Songs", type: :request do
       end
 
       it "fails to persist when song is not specified" do
-        q = query(order: 1, room_id: room.id, song_id: SecureRandom.uuid, user_id: user.id)
+        q = query(order: 1, room_id: room.id, song_id: SecureRandom.uuid)
         authed_post('/api/v1/graphql', query: q)
 
         data = json_body.dig(:data, :createRoomQueue)
 
         expect(data[:roomQueue]).to be_nil
         expect(data[:errors]).to match_array([include("Song must exist")])
-      end
-
-      it "fails to persist when user is not specified" do
-        q = query(order: 1, room_id: room.id, song_id: song.id, user_id: SecureRandom.uuid)
-        authed_post('/api/v1/graphql', query: q)
-
-        data = json_body.dig(:data, :createRoomQueue)
-
-        expect(data[:roomQueue]).to be_nil
-        expect(data[:errors]).to match_array([include("User must exist")])
       end
     end
   end

@@ -1,4 +1,5 @@
 class Song < ApplicationRecord
-  has_and_belongs_to_many :users
   validates :youtube_id, presence: true
+  has_many :song_users
+  has_many :users, through: :song_users
 end

@@ -38,10 +38,13 @@ RSpec.describe "Songs", type: :request do
       expect(song.description).to eq('a description')
       expect(song.duration_in_seconds).to eq(1500)
       expect(data[:errors]).to be_blank
+
+      expect(song.users).to include(current_user)
     end
 
     it "allows find-or-create by youtube_id" do
       song = create(:song, youtube_id: "the-youtube-id")
+      SongUser.create!(song: song, user: current_user)
       expect(Yt::Video).to_not receive(:new)
 
       expect do
@@ -51,7 +54,7 @@ RSpec.describe "Songs", type: :request do
 
         expect(song.id).to eq(id)
         expect(data[:errors]).to be_blank
-      end.to_not change(Song, :count)
+      end.to change(Song, :count).by(0).and(change(SongUser, :count).by(0))
     end
   end
 
