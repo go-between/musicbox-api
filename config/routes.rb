@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
 
-  devise_for :users
   mount ActionCable.server => '/cable'
 
   scope path: '/api' do
@@ -8,6 +7,9 @@ Rails.application.routes.draw do
 
     scope path: '/v1' do
       post "/graphql", to: "graphql#execute"
+
+      devise_for :users
+      use_doorkeeper
 
       resources :users
       resources :rooms, only: [:show]
