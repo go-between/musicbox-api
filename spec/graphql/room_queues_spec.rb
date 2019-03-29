@@ -3,6 +3,7 @@
 require "rails_helper"
 
 RSpec.describe "Songs", type: :request do
+  include AuthHelper
   include JsonHelper
 
   def query(order:, room_id:, song_id:, user_id:)
@@ -39,7 +40,7 @@ RSpec.describe "Songs", type: :request do
     let(:user) { create(:user) }
     it "can be created with a room, song, and user" do
       q = query(order: 1, room_id: room.id, song_id: song.id, user_id: user.id)
-      post('/api/v1/graphql', params: { query: q })
+      authed_post('/api/v1/graphql', query: q)
       data = json_body.dig(:data, :createRoomQueue)
 
       id = data.dig(:roomQueue, :id)
@@ -52,14 +53,16 @@ RSpec.describe "Songs", type: :request do
     it "broadcasts enqueued songs" do
       expect do
         q = query(order: 1, room_id: room.id, song_id: song.id, user_id: user.id)
-        post('/api/v1/graphql', params: { query: q })
+        authed_post('/api/v1/graphql', query: q)
+
       end.to have_broadcasted_to("queue").and(have_broadcasted_to("now_playing"))
     end
 
     context "when missing required attributes" do
       it "fails to persist when room is not specified" do
         q = query(order: 1, room_id: SecureRandom.uuid, song_id: song.id, user_id: user.id)
-        post('/api/v1/graphql', params: { query: q })
+        authed_post('/api/v1/graphql', query: q)
+
         data = json_body.dig(:data, :createRoomQueue)
 
         expect(data[:roomQueue]).to be_nil
@@ -68,7 +71,8 @@ RSpec.describe "Songs", type: :request do
 
       it "fails to persist when song is not specified" do
         q = query(order: 1, room_id: room.id, song_id: SecureRandom.uuid, user_id: user.id)
-        post('/api/v1/graphql', params: { query: q })
+        authed_post('/api/v1/graphql', query: q)
+
         data = json_body.dig(:data, :createRoomQueue)
 
         expect(data[:roomQueue]).to be_nil
@@ -77,7 +81,8 @@ RSpec.describe "Songs", type: :request do
 
       it "fails to persist when user is not specified" do
         q = query(order: 1, room_id: room.id, song_id: song.id, user_id: SecureRandom.uuid)
-        post('/api/v1/graphql', params: { query: q })
+        authed_post('/api/v1/graphql', query: q)
+
         data = json_body.dig(:data, :createRoomQueue)
 
         expect(data[:roomQueue]).to be_nil
