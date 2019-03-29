@@ -6,30 +6,29 @@ module Mutations
     field :errors, [String], null: true
 
     def resolve(youtube_id:)
-      persisted_song = Song.find_by(youtube_id: youtube_id)
-      if persisted_song.present?
-        return {
-          song: persisted_song,
-          errors: []
-        }
+      song = Song.find_or_initialize_by(youtube_id: youtube_id)
+
+      return {
+        song: nil,
+        errors: song.errors.full_messages,
+      } unless song.valid?
+
+      unless song.persisted?
+        set_attrs_from_youtube!(song)
+        associate_song_to_user!(song)
       end
 
-      song = Song.new(youtube_id: youtube_id)
-      if song.save
-        set_attrs_from_youtube!(song)
-        {
-          song: song,
-          errors: [],
-        }
-      else
-        {
-          song: nil,
-          errors: song.errors.full_messages
-        }
-      end
+      {
+        song: song,
+        errors: [],
+      }
     end
 
     private
+
+    def associate_song_to_user!(song)
+      SongUser.find_or_create_by(song: song, user: context[:current_user])
+    end
 
     def set_attrs_from_youtube!(song)
       video = Yt::Video.new(id: song.youtube_id)
