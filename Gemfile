@@ -32,11 +32,6 @@ gem 'dotenv-rails'
 gem "passenger", "~> 5.2.0"
 gem 'redis', '~> 4.1.0'
 
-gem 'jsonapi-rails', '~> 0.3.1'
-gem 'jsonapi_spec_helpers', '~> 0.4.10', require: false
-gem 'jsonapi_suite', '~> 0.7'
-gem 'jsonapi_swagger_helpers', '~> 0.6', require: false
-gem 'kaminari', '~> 1.0'
 gem 'graphql'
 gem 'doorkeeper'
 gem 'devise'
@@ -59,9 +54,7 @@ end
 
 group :development, :test do
   gem 'factory_bot_rails', '~> 4.0'
-  gem 'faker', '~> 1.7'
   gem 'rspec-rails', '~> 3.5.2'
-  gem 'swagger-diff', '~> 1.1'
 end
 
 group :test do
