@@ -5,7 +5,6 @@ require File.expand_path('../../config/environment', __FILE__)
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'spec_helper'
 require 'rspec/rails'
-require 'jsonapi_spec_helpers'
 require 'action_cable/testing/rspec'
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -31,11 +30,6 @@ DatabaseCleaner.allow_remote_database_url = true
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
-  config.include JsonapiSpecHelpers
-
-  config.before :each do
-    JsonapiErrorable.disable!
-  end
 
   # bootstrap database cleaner
   config.before(:suite) do
