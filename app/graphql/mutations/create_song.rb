@@ -1,6 +1,6 @@
 module Mutations
   class CreateSong < Mutations::BaseMutation
-    argument :youtube_id, String, required: true
+    argument :youtube_id, ID, required: true
 
     field :song, Types::SongType, null: true
     field :errors, [String], null: true
