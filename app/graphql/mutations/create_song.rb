@@ -13,9 +13,9 @@ module Mutations
         errors: song.errors.full_messages,
       } unless song.valid?
 
+      associate_song_to_user!(song)
       unless song.persisted?
         set_attrs_from_youtube!(song)
-        associate_song_to_user!(song)
       end
 
       {
@@ -27,7 +27,7 @@ module Mutations
     private
 
     def associate_song_to_user!(song)
-      SongUser.find_or_create_by(song: song, user: context[:current_user])
+      SongUser.find_or_create_by!(song: song, user: context[:current_user])
     end
 
     def set_attrs_from_youtube!(song)
