@@ -16,7 +16,7 @@ module Types
     end
 
     def songs
-      Song.all
+      context[:current_user].songs
     end
 
     def users
