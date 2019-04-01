@@ -1,4 +1,9 @@
 class User < ApplicationRecord
-  belongs_to :room
-  has_and_belongs_to_many :songs
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable
+
+  has_many :song_users
+  has_many :songs, through: :song_users
 end
