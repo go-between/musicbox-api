@@ -1,7 +1,6 @@
 FactoryBot.define do
   factory :user do
-    email { 'anime-turtle@myspace.com' }
-    name { 'Sephiroth Goku' }
-    room
+    email { "anime-turtle-#{SecureRandom.uuid}@myspace.com" }
+    password { 'hunter2' }
   end
 end

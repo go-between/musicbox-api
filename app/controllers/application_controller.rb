@@ -1,15 +1,15 @@
 class ApplicationController < ActionController::API
-  # Bootstrap jsonapi_suite with relevant modules
-  include JsonapiSuite::ControllerMixin
-
-  register_exception JsonapiCompliable::Errors::RecordNotFound,
-                     status: 404
-
   # rescue_from Exception do |e|
   #   # handle_exception(e)
   # end
 
-  def attrs
-    deserialized_params.attributes
+  before_action :doorkeeper_authorize!
+
+  private
+
+  def current_user
+    return @_current_user if defined? @_current_user
+
+    @_current_user = User.find(doorkeeper_token.resource_owner_id)
   end
 end
