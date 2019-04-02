@@ -13,10 +13,12 @@ module Mutations
         errors: song.errors.full_messages,
       } unless song.valid?
 
-      associate_song_to_user!(song)
+
       unless song.persisted?
         set_attrs_from_youtube!(song)
       end
+
+      associate_song_to_user!(song)
 
       {
         song: song,
