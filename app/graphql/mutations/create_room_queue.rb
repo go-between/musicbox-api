@@ -1,8 +1,8 @@
 module Mutations
   class CreateRoomQueue < Mutations::BaseMutation
-    argument :order, String, required: true
-    argument :room_id, String, required: true
-    argument :song_id, String, required: true
+    argument :order, Int, required: true
+    argument :room_id, ID, required: true
+    argument :song_id, ID, required: true
 
     field :room_queue, Types::RoomQueueType, null: true
     field :errors, [String], null: true
