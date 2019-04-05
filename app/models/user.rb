@@ -4,6 +4,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  belongs_to :room, optional: true
   has_many :song_users
   has_many :songs, through: :song_users
 end

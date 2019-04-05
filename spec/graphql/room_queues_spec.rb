@@ -10,7 +10,7 @@ RSpec.describe "Songs", type: :request do
     %(
       mutation {
         createRoomQueue(input:{
-          order: "#{order}",
+          order: #{order},
           roomId: "#{room_id}"
           songId: "#{song_id}"
         }) {
