@@ -10,8 +10,9 @@ module Mutations
     def resolve(order:, room_id:, song_id:)
       room_queue = RoomQueue.new(order: order, room_id: room_id, song_id: song_id, user: context[:current_user])
       if room_queue.save
-        ActionCable.server.broadcast('queue', enqueued_songs(room_queue).map(&:attributes))
-        ActionCable.server.broadcast('now_playing', enqueued_songs(room_queue).map(&:attributes))
+        queue = MusicboxApiSchema.execute(query: query, variables: { roomId: room_queue.room_id })
+        QueuesChannel.broadcast_to(room_queue.room, queue.to_h)
+        # ActionCable.server.broadcast('now_playing', enqueued_songs(room_queue).map(&:attributes))
 
         {
           room_queue: room_queue,
@@ -27,8 +28,14 @@ module Mutations
 
     private
 
-    def enqueued_songs(room_queue)
-      room_queue.room.enqueued_songs
+    def query
+      %(
+        query($roomId: ID!) {
+          roomQueues(roomId: $roomId) {
+            id, order, song { id, name }, user { email }
+          }
+        }
+      )
     end
   end
 end
