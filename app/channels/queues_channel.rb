@@ -1,5 +1,6 @@
 class QueuesChannel < ApplicationCable::Channel
   def subscribed
-    stream_from 'queue'
+    room = Room.find(params[:room_id])
+    stream_for room
   end
 end
