@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_07_020627) do
+ActiveRecord::Schema.define(version: 2019_04_09_022601) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -55,16 +55,16 @@ ActiveRecord::Schema.define(version: 2019_04_07_020627) do
     t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
   end
 
-  create_table "room_queues", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "room_songs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "room_id"
     t.uuid "song_id"
     t.uuid "user_id"
     t.integer "order"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["room_id"], name: "index_room_queues_on_room_id"
-    t.index ["song_id"], name: "index_room_queues_on_song_id"
-    t.index ["user_id"], name: "index_room_queues_on_user_id"
+    t.index ["room_id"], name: "index_room_songs_on_room_id"
+    t.index ["song_id"], name: "index_room_songs_on_song_id"
+    t.index ["user_id"], name: "index_room_songs_on_user_id"
   end
 
   create_table "rooms", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

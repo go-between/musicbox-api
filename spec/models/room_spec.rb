@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe RoomQueue, type: :model do
+RSpec.describe RoomSong, type: :model do
   it "it has an assocation to the current song" do
     start_time = Time.zone.now
     song = create(:song)

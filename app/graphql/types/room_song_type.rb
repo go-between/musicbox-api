@@ -1,6 +1,6 @@
 module Types
-  class RoomQueueType < Types::BaseObject
-    graphql_name 'RoomQueue'
+  class RoomSongType < Types::BaseObject
+    graphql_name 'RoomSong'
 
     field :id, ID, null: false
     field :order, Int, null: false

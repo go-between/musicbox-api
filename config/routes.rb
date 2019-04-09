@@ -13,7 +13,7 @@ Rails.application.routes.draw do
 
       resources :users
       resources :rooms, only: [:show]
-      resources :room_queues, only: [:create]
+      resources :room_songs, only: [:create]
       resources :songs, only: [:create]
     end
   end
