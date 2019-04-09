@@ -2,6 +2,14 @@ module Types
   class QueryType < Types::BaseObject
     graphql_name "Query"
 
+    field :song, Types::SongType, null: true do
+      argument :id, ID, required: true
+    end
+
+    def song(id:)
+      Song.find(id)
+    end
+
     field :songs, [Types::SongType], null: true do
     end
 
