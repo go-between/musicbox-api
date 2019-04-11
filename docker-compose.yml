@@ -4,13 +4,13 @@ services:
   db:
     image: postgres:9.5.4
     environment:
-      POSTGRES_PASSWORD: postgresiswebscale
+      POSTGRES_PASSWORD: postgrespassword
     ports: ["5432:5432"]
   app: &app-common
     build: "."
     command: bin/wait-for-it.sh db:5432 -- passenger start -p 3000
     environment: &app-environment
-      DATABASE_URL: postgresql://postgres:postgresiswebscale@db
+      DATABASE_URL: postgresql://postgres:postgrespassword@db
       REDIS_URL: redis://redis:6379
     links:
     - db

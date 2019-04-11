@@ -3,24 +3,32 @@ class QueueManagementWorker
   sidekiq_options queue: 'queue_management'
 
   def perform(room_id)
-    queue = RoomQueue.where(room_id: room_id)
-    return self.class.perform_in(1.second, room_id) if queue.empty?
-    up_next = queue.first
-    Room.find(room_id).update!(current_song_id: up_next.song_id, current_song_start: Time.zone.now)
-    now_playing = MusicboxApiSchema.execute(query: query, variables: { id: up_next.song_id })
-    NowPlayingChannel.broadcast_to(up_next.room, now_playing.to_h)
-    self.class.perform_in(now_playing.dig(:data, :song, :durationInSeconds).seconds, room_id)
+    queue = RoomSong.where(room_id: room_id)
+    return empty_queue!(room_id) if queue.empty?
+
+    queue_entry = queue.first
+    next_queued_song = queue_entry.song
+    queue_entry.destroy!
+
+    Room.find(room_id).update!(current_song_id: next_queued_song.id, current_song_start: Time.zone.now)
+
+    BroadcastNowPlayingWorker.perform_async(room_id)
+    BroadcastQueueWorker.perform_async(room_id)
+    self.class.perform_in(next_queued_song.duration_in_seconds, room_id)
   end
 
   private
 
-  def query
-    %(
-      query($id: ID!) {
-        song(id: $id) {
-          id, description, durationInSeconds, name, youtubeId
-        }
-      }
-    )
+  def empty_queue!(room_id)
+    room = Room.find(room_id)
+
+    if room.current_song.present?
+      room.update!(current_song: nil, current_song_start: nil)
+
+      BroadcastNowPlayingWorker.perform_async(room_id)
+      BroadcastQueueWorker.perform_async(room_id)
+    end
+
+    self.class.perform_in(1.second, room_id)
   end
 end
