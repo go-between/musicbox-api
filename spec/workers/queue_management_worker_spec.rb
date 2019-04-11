@@ -3,6 +3,7 @@ RSpec.describe QueueManagementWorker, type: :worker do
   let(:started) { Time.zone.now }
   let(:song) { create(:song) }
   let(:room) { create(:room, current_song: song, current_song_start: started) }
+  let(:user) { create(:user) }
   let(:worker) { QueueManagementWorker.new }
 
   context "when queue is empty" do
@@ -27,8 +28,9 @@ RSpec.describe QueueManagementWorker, type: :worker do
 
   context "when queue has songs to play" do
     let(:new_song) { create(:song) }
+
     before(:each) do
-      create(:room_song, room: room, song: new_song, user: create(:user))
+      create(:room_song, room: room, song: new_song, user: user)
     end
 
     it "updates the room's current song" do
@@ -39,6 +41,11 @@ RSpec.describe QueueManagementWorker, type: :worker do
       room.reload
       expect(room.current_song).to eq(new_song)
       expect(room.current_song_start).to eq("3000-01-01 00:00:00.000000000 +0000")
+    end
+
+    it "destroys the queue record" do
+      worker.perform(room.id)
+      expect(RoomSong.exists?(room: room, song: song, user: user)).to eq(false)
     end
 
     it "re-enqueues a new worker" do
