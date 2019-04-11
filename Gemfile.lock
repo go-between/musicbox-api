@@ -162,6 +162,9 @@ GEM
       rspec-expectations (~> 3.5.0)
       rspec-mocks (~> 3.5.0)
       rspec-support (~> 3.5.0)
+    rspec-sidekiq (3.0.3)
+      rspec-core (~> 3.0, >= 3.0.0)
+      sidekiq (>= 2.4.0)
     rspec-support (3.5.0)
     rubocop (0.64.0)
       jaro_winkler (~> 1.5.1)
@@ -194,6 +197,7 @@ GEM
       sprockets (>= 3.0.0)
     thor (0.20.3)
     thread_safe (0.3.6)
+    timecop (0.9.1)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     unicode-display_width (1.4.1)
@@ -226,11 +230,13 @@ DEPENDENCIES
   rails (~> 5.2.2)
   redis (~> 4.1.0)
   rspec-rails (~> 3.5.2)
+  rspec-sidekiq
   rubocop
   rubocop-rspec
   sidekiq
   spring
   spring-watcher-listen (~> 2.0.0)
+  timecop
   yt
 
 BUNDLED WITH
