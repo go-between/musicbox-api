@@ -1,10 +1,9 @@
 Rails.application.routes.draw do
-
+  require 'sidekiq/web'
+  mount Sidekiq::Web => '/workers'
   mount ActionCable.server => '/cable'
 
   scope path: '/api' do
-    resources :docs, only: [:index], path: '/swagger'
-
     scope path: '/v1' do
       post "/graphql", to: "graphql#execute"
 

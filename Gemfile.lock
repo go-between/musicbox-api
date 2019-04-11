@@ -50,6 +50,7 @@ GEM
     builder (3.2.3)
     byebug (11.0.0)
     concurrent-ruby (1.1.4)
+    connection_pool (2.2.2)
     crass (1.0.4)
     database_cleaner (1.7.0)
     devise (4.6.2)
@@ -108,6 +109,8 @@ GEM
     powerpack (0.1.2)
     rack (2.0.6)
     rack-cors (1.0.2)
+    rack-protection (2.0.5)
+      rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     rails (5.2.2)
@@ -172,6 +175,11 @@ GEM
       rubocop (>= 0.60.0)
     ruby-progressbar (1.10.0)
     ruby_dep (1.5.0)
+    sidekiq (5.2.5)
+      connection_pool (~> 2.2, >= 2.2.2)
+      rack (>= 1.5.0)
+      rack-protection (>= 1.5.0)
+      redis (>= 3.3.5, < 5)
     spring (2.0.2)
       activesupport (>= 4.2)
     spring-watcher-listen (2.0.1)
@@ -220,6 +228,7 @@ DEPENDENCIES
   rspec-rails (~> 3.5.2)
   rubocop
   rubocop-rspec
+  sidekiq
   spring
   spring-watcher-listen (~> 2.0.0)
   yt

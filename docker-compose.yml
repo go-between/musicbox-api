@@ -9,7 +9,7 @@ services:
   app: &app-common
     build: "."
     command: bin/wait-for-it.sh db:5432 -- passenger start -p 3000
-    environment:
+    environment: &app-environment
       DATABASE_URL: postgresql://postgres:postgresiswebscale@db
       REDIS_URL: redis://redis:6379
     links:
@@ -20,3 +20,11 @@ services:
   redis:
     image: redis:5.0.3
     ports: ["6379:6379"]
+  app-sidekiq-workers:
+    <<: *app-common
+    command: bin/wait-for-it.sh db:5432 -- bin/wait-for-it.sh redis:6379 -- bundle exec sidekiq
+    ports: []
+    environment:
+      <<: *app-environment
+      DB_POOL: 1
+      SIDEKIQ_CONCURRENCY: 1

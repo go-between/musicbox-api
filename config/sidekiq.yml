@@ -1,0 +1,5 @@
+:verbose: false
+:concurrency: 5
+:timeout: 8
+:queues:
+  - [queue_management, 1]

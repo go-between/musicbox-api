@@ -31,6 +31,7 @@ gem 'rack-cors'
 gem 'dotenv-rails'
 gem "passenger", "~> 5.2.0"
 gem 'redis', '~> 4.1.0'
+gem 'sidekiq'
 
 gem 'graphql'
 gem 'doorkeeper'
