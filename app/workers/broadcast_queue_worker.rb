@@ -3,22 +3,17 @@ class BroadcastQueueWorker
   sidekiq_options queue: 'websocket_broadcast'
 
   def perform(room_id)
-    queue = RoomQueue.where(room_id: room_id)
-    return self.class.perform_in(1.second, room_id) if queue.empty?
-    up_next = queue.first
-    Room.find(room_id).update!(current_song_id: up_next.song_id, current_song_start: Time.zone.now)
-    now_playing = MusicboxApiSchema.execute(query: query, variables: { id: up_next.song_id })
-    NowPlayingChannel.broadcast_to(up_next.room, now_playing.to_h)
-    self.class.perform_in(now_playing.dig(:data, :song, :durationInSeconds).seconds, room_id)
+    queue = MusicboxApiSchema.execute(query: query, variables: { roomId: room_id })
+    QueuesChannel.broadcast_to(Room.find(room_id), queue.to_h)
   end
 
   private
 
   def query
     %(
-      query($id: ID!) {
-        song(id: $id) {
-          id, description, durationInSeconds, name, youtubeId
+      query($roomId: ID!) {
+        roomSongs(roomId: $roomId) {
+          id, order, song { id, name }, user { email }
         }
       }
     )

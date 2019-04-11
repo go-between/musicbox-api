@@ -3,5 +3,6 @@ FactoryBot.define do
     room
     song
     user
+    order { 1 }
   end
 end
