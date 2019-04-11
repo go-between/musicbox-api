@@ -9,12 +9,12 @@ RSpec.describe "Songs", type: :request do
   def query(order:, room_id:, song_id:)
     %(
       mutation {
-        createRoomQueue(input:{
+        createRoomSong(input:{
           order: #{order},
           roomId: "#{room_id}"
           songId: "#{song_id}"
         }) {
-          roomQueue {
+          RoomSong {
             id
             order
             room {
@@ -39,10 +39,10 @@ RSpec.describe "Songs", type: :request do
     it "can be created with a room, song, and user" do
       q = query(order: 1, room_id: room.id, song_id: song.id)
       authed_post('/api/v1/graphql', query: q)
-      data = json_body.dig(:data, :createRoomQueue)
+      data = json_body.dig(:data, :createRoomSong)
 
-      id = data.dig(:roomQueue, :id)
-      rq = RoomQueue.find(id)
+      id = data.dig(:RoomSong, :id)
+      rq = RoomSong.find(id)
       expect(rq.room).to eq(room)
       expect(rq.song).to eq(song)
       expect(rq.user).to eq(current_user)
@@ -61,9 +61,9 @@ RSpec.describe "Songs", type: :request do
         q = query(order: 1, room_id: SecureRandom.uuid, song_id: song.id)
         authed_post('/api/v1/graphql', query: q)
 
-        data = json_body.dig(:data, :createRoomQueue)
+        data = json_body.dig(:data, :createRoomSong)
 
-        expect(data[:roomQueue]).to be_nil
+        expect(data[:RoomSong]).to be_nil
         expect(data[:errors]).to match_array([include("Room must exist")])
       end
 
@@ -71,9 +71,9 @@ RSpec.describe "Songs", type: :request do
         q = query(order: 1, room_id: room.id, song_id: SecureRandom.uuid)
         authed_post('/api/v1/graphql', query: q)
 
-        data = json_body.dig(:data, :createRoomQueue)
+        data = json_body.dig(:data, :createRoomSong)
 
-        expect(data[:roomQueue]).to be_nil
+        expect(data[:RoomSong]).to be_nil
         expect(data[:errors]).to match_array([include("Song must exist")])
       end
     end
