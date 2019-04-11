@@ -48,12 +48,10 @@ RSpec.describe "Songs", type: :request do
       expect(rq.user).to eq(current_user)
     end
 
-    xit "broadcasts enqueued songs" do
-      expect do
-        q = query(order: 1, room_id: room.id, song_id: song.id)
-        authed_post('/api/v1/graphql', query: q)
-
-      end.to have_broadcasted_to("queue").and(have_broadcasted_to("now_playing"))
+    it "broadcasts enqueued songs" do
+      q = query(order: 1, room_id: room.id, song_id: song.id)
+      authed_post('/api/v1/graphql', query: q)
+      expect(BroadcastQueueWorker).to have_enqueued_sidekiq_job(room.id)
     end
 
     context "when missing required attributes" do
