@@ -14,7 +14,7 @@ RSpec.describe "Songs", type: :request do
           roomId: "#{room_id}"
           songId: "#{song_id}"
         }) {
-          RoomSong {
+          roomSong {
             id
             order
             room {
@@ -41,7 +41,7 @@ RSpec.describe "Songs", type: :request do
       authed_post('/api/v1/graphql', query: q)
       data = json_body.dig(:data, :createRoomSong)
 
-      id = data.dig(:RoomSong, :id)
+      id = data.dig(:roomSong, :id)
       rq = RoomSong.find(id)
       expect(rq.room).to eq(room)
       expect(rq.song).to eq(song)
@@ -49,11 +49,9 @@ RSpec.describe "Songs", type: :request do
     end
 
     it "broadcasts enqueued songs" do
-      expect do
-        q = query(order: 1, room_id: room.id, song_id: song.id)
-        authed_post('/api/v1/graphql', query: q)
-
-      end.to have_broadcasted_to("queue").and(have_broadcasted_to("now_playing"))
+      q = query(order: 1, room_id: room.id, song_id: song.id)
+      authed_post('/api/v1/graphql', query: q)
+      expect(BroadcastQueueWorker).to have_enqueued_sidekiq_job(room.id)
     end
 
     context "when missing required attributes" do

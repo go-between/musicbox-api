@@ -3,3 +3,4 @@
 :timeout: 8
 :queues:
   - [queue_management, 1]
+  - [websocket_broadcast, 1]
