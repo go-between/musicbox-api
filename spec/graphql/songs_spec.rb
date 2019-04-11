@@ -26,35 +26,54 @@ RSpec.describe "Songs", type: :request do
   end
 
   describe "#create" do
-    it "can be created" do
-      video = OpenStruct.new(duration: 1500, title: "a title", description: "a description")
-      expect(Yt::Video).to receive(:new).with(id: "an-id").and_return(video)
-      authed_post('/api/v1/graphql', query: query(youtube_id: "an-id"))
-      data = json_body.dig(:data, :createSong)
-      id = data.dig(:song, :id)
-
-      song = Song.find(id)
-      expect(song.name).to eq('a title')
-      expect(song.description).to eq('a description')
-      expect(song.duration_in_seconds).to eq(1500)
-      expect(data[:errors]).to be_blank
-
-      expect(song.users).to include(current_user)
-    end
-
-    it "allows find-or-create by youtube_id" do
-      song = create(:song, youtube_id: "the-youtube-id")
-      SongUser.create!(song: song, user: current_user)
-      expect(Yt::Video).to_not receive(:new)
-
-      expect do
-        authed_post('/api/v1/graphql', query: query(youtube_id: "the-youtube-id"))
+    context "when song does not exist" do
+      it "creates song and associates with current user" do
+        video = OpenStruct.new(duration: 1500, title: "a title", description: "a description")
+        expect(Yt::Video).to receive(:new).with(id: "an-id").and_return(video)
+        authed_post('/api/v1/graphql', query: query(youtube_id: "an-id"))
         data = json_body.dig(:data, :createSong)
         id = data.dig(:song, :id)
 
-        expect(song.id).to eq(id)
+        song = Song.find(id)
+        expect(song.name).to eq('a title')
+        expect(song.description).to eq('a description')
+        expect(song.duration_in_seconds).to eq(1500)
         expect(data[:errors]).to be_blank
-      end.to change(Song, :count).by(0).and(change(SongUser, :count).by(0))
+
+        expect(song.users).to include(current_user)
+      end
+    end
+
+    context "when song already exists" do
+      it "does not modify song but does associate to user" do
+        song = create(:song, youtube_id: "the-youtube-id")
+        expect(Yt::Video).to_not receive(:new)
+
+        expect do
+          authed_post('/api/v1/graphql', query: query(youtube_id: "the-youtube-id"))
+          data = json_body.dig(:data, :createSong)
+          id = data.dig(:song, :id)
+
+          expect(song.id).to eq(id)
+          expect(data[:errors]).to be_blank
+          expect(song.users).to include(current_user)
+        end.to change(Song, :count).by(0).and(change(SongUser, :count).by(1))
+      end
+
+      it "does not modify song or association with user when already in library" do
+        song = create(:song, youtube_id: "the-youtube-id")
+        SongUser.create!(song: song, user: current_user)
+        expect(Yt::Video).to_not receive(:new)
+
+        expect do
+          authed_post('/api/v1/graphql', query: query(youtube_id: "the-youtube-id"))
+          data = json_body.dig(:data, :createSong)
+          id = data.dig(:song, :id)
+
+          expect(song.id).to eq(id)
+          expect(data[:errors]).to be_blank
+        end.to change(Song, :count).by(0).and(change(SongUser, :count).by(0))
+      end
     end
   end
 
