@@ -7,12 +7,12 @@ RSpec.describe QueueManagementWorker, type: :worker do
   let(:worker) { QueueManagementWorker.new }
 
   context "when queue is empty" do
-    it "does not change the room's current song" do
+    it "removes the current song" do
       worker.perform(room.id)
 
       room.reload
-      expect(room.current_song).to eq(song)
-      expect(room.current_song_start).to eq(started)
+      expect(room.current_song).to eq(nil)
+      expect(room.current_song_start).to eq(nil)
     end
 
     it "re-queues a new worker" do
@@ -20,9 +20,32 @@ RSpec.describe QueueManagementWorker, type: :worker do
       worker.perform(room.id)
     end
 
-    it "does not broadcast to now playing" do
-      worker.perform(room.id)
-      expect(BroadcastNowPlayingWorker).to_not have_enqueued_sidekiq_job
+    context "when its previous run processed the last song" do
+      it "broadcasts to queue" do
+        worker.perform(room.id)
+        expect(BroadcastQueueWorker).to have_enqueued_sidekiq_job(room.id)
+      end
+
+      it "broadcasts to now playing" do
+        worker.perform(room.id)
+        expect(BroadcastNowPlayingWorker).to have_enqueued_sidekiq_job(room.id)
+      end
+    end
+
+    context "when its previous run was empty" do
+      before(:each) do
+        room.update!(current_song: nil, current_song_start: nil)
+      end
+
+      it "does not broadcast to now playing" do
+        worker.perform(room.id)
+        expect(BroadcastNowPlayingWorker).to_not have_enqueued_sidekiq_job(anything)
+      end
+
+      it "does not broadcasts to queue" do
+        worker.perform(room.id)
+        expect(BroadcastQueueWorker).to_not have_enqueued_sidekiq_job(anything)
+      end
     end
   end
 
@@ -53,6 +76,11 @@ RSpec.describe QueueManagementWorker, type: :worker do
 
       expect(QueueManagementWorker).to receive(:perform_in).with(432.second, room.id)
       worker.perform(room.id)
+    end
+
+    it "broadcasts to queue" do
+      worker.perform(room.id)
+      expect(BroadcastQueueWorker).to have_enqueued_sidekiq_job(room.id)
     end
 
     it "broadcasts to now playing" do
