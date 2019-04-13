@@ -16,7 +16,7 @@ module Types
 
     def room_songs(room_id:)
       # TODO:  Service class to determine real order
-      RoomSong.where(room_id: room_id)
+      RoomSong.where(room_id: room_id).interleaved_by_oldest_user
     end
 
     field :song, Types::SongType, null: true do
