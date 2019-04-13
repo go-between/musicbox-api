@@ -1,4 +1,4 @@
-class NowPlayingChannel < ApplicationCable::Channel
+class UsersChannel < ApplicationCable::Channel
   def subscribed
     room = Room.find(params[:room_id])
     stream_for room
