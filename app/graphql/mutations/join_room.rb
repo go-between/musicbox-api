@@ -13,6 +13,7 @@ module Mutations
       } if room.blank?
 
       context[:current_user].update!(room_id: room_id)
+      BroadcastUsersWorker.perform_async(room.id)
 
       {
         room: room,
