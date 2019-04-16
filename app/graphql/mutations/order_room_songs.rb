@@ -10,6 +10,7 @@ module Mutations
         room_song = RoomSong.find_or_initialize_by(song_id: song_id, user: context[:current_user], room_id: room_id)
         room_song.order = index + 1
         room_song.save!
+        BroadcastQueueWorker.perform_async(room_id)
       end
       {
         errors: []
