@@ -78,6 +78,7 @@ RSpec.describe "Songs", type: :request do
   end
 
   describe "ordering room songs for a user" do
+    let(:room) { create(:room) }
     def order_room_songs_query(room_id:, song_ids:)
       %(
         mutation {
@@ -92,7 +93,6 @@ RSpec.describe "Songs", type: :request do
     end
 
     it "sets the order on each provided room song to index plus one" do
-      room = create(:room)
       rs1 = create(:room_song, order: 1, user: current_user, room: room)
       rs2 = create(:room_song, order: 2, user: current_user, room: room)
       rs3 = create(:room_song, order: 3, user: current_user, room: room)
@@ -106,7 +106,6 @@ RSpec.describe "Songs", type: :request do
     end
 
     it "adds new songs to the order as provided" do
-      room = create(:room)
       rs1 = create(:room_song, order: 1, user: current_user, room: room)
       rs2 = create(:room_song, order: 2, user: current_user, room: room)
       rs3 = create(:room_song, order: 3, user: current_user, room: room)
@@ -121,6 +120,13 @@ RSpec.describe "Songs", type: :request do
       expect(rs1.reload.order).to eq(3)
       expect(rs2.reload.order).to eq(4)
       expect(rs3.reload.order).to eq(1)
+    end
+
+    it "broadcasts the new room song list with expected order" do
+      song = create(:song)
+      q = order_room_songs_query(room_id: room.id, song_ids: [song.id])
+      authed_post('/api/v1/graphql', query: q)
+      expect(BroadcastQueueWorker).to have_enqueued_sidekiq_job(room.id)
     end
   end
 
