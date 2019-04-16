@@ -6,38 +6,38 @@ RSpec.describe "Songs", type: :request do
   include AuthHelper
   include JsonHelper
 
-  def query(order:, room_id:, song_id:)
-    %(
-      mutation {
-        createRoomSong(input:{
-          order: #{order},
-          roomId: "#{room_id}"
-          songId: "#{song_id}"
-        }) {
-          roomSong {
-            id
-            order
-            room {
-              id
-            }
-            song {
-              id
-            }
-            user {
-              id
-            }
-          }
-          errors
-        }
-      }
-    )
-  end
-
   describe "#create" do
+    def create_query(order:, room_id:, song_id:)
+      %(
+        mutation {
+          createRoomSong(input:{
+            order: #{order},
+            roomId: "#{room_id}"
+            songId: "#{song_id}"
+          }) {
+            roomSong {
+              id
+              order
+              room {
+                id
+              }
+              song {
+                id
+              }
+              user {
+                id
+              }
+            }
+            errors
+          }
+        }
+      )
+    end
+
     let(:room) { create(:room) }
     let(:song) { create(:song) }
     it "can be created with a room, song, and user" do
-      q = query(order: 1, room_id: room.id, song_id: song.id)
+      q = create_query(order: 1, room_id: room.id, song_id: song.id)
       authed_post('/api/v1/graphql', query: q)
       data = json_body.dig(:data, :createRoomSong)
 
@@ -49,14 +49,14 @@ RSpec.describe "Songs", type: :request do
     end
 
     it "broadcasts enqueued songs" do
-      q = query(order: 1, room_id: room.id, song_id: song.id)
+      q = create_query(order: 1, room_id: room.id, song_id: song.id)
       authed_post('/api/v1/graphql', query: q)
       expect(BroadcastQueueWorker).to have_enqueued_sidekiq_job(room.id)
     end
 
     context "when missing required attributes" do
       it "fails to persist when room is not specified" do
-        q = query(order: 1, room_id: SecureRandom.uuid, song_id: song.id)
+        q = create_query(order: 1, room_id: SecureRandom.uuid, song_id: song.id)
         authed_post('/api/v1/graphql', query: q)
 
         data = json_body.dig(:data, :createRoomSong)
@@ -66,7 +66,7 @@ RSpec.describe "Songs", type: :request do
       end
 
       it "fails to persist when song is not specified" do
-        q = query(order: 1, room_id: room.id, song_id: SecureRandom.uuid)
+        q = create_query(order: 1, room_id: room.id, song_id: SecureRandom.uuid)
         authed_post('/api/v1/graphql', query: q)
 
         data = json_body.dig(:data, :createRoomSong)
@@ -76,4 +76,52 @@ RSpec.describe "Songs", type: :request do
       end
     end
   end
+
+  describe "ordering room songs for a user" do
+    def order_room_songs_query(room_id:, song_ids:)
+      %(
+        mutation {
+          orderRoomSongs(input:{
+            roomId: "#{room_id}"
+            songIds: #{song_ids}
+          }) {
+            errors
+          }
+        }
+      )
+    end
+
+    it "sets the order on each provided room song to index plus one" do
+      room = create(:room)
+      rs1 = create(:room_song, order: 1, user: current_user, room: room)
+      rs2 = create(:room_song, order: 2, user: current_user, room: room)
+      rs3 = create(:room_song, order: 3, user: current_user, room: room)
+
+      q = order_room_songs_query(room_id: room.id, song_ids: [rs3.song_id, rs1.song_id, rs2.song_id])
+      authed_post('/api/v1/graphql', query: q)
+
+      expect(rs1.reload.order).to eq(2)
+      expect(rs2.reload.order).to eq(3)
+      expect(rs3.reload.order).to eq(1)
+    end
+
+    it "adds new songs to the order as provided" do
+      room = create(:room)
+      rs1 = create(:room_song, order: 1, user: current_user, room: room)
+      rs2 = create(:room_song, order: 2, user: current_user, room: room)
+      rs3 = create(:room_song, order: 3, user: current_user, room: room)
+      new_song = create(:song)
+      expect(RoomSong.exists?(user: current_user, song_id: new_song.id, room: room)).to eq(false)
+
+      q = order_room_songs_query(room_id: room.id, song_ids: [rs3.song_id, new_song.id, rs1.song_id, rs2.song_id])
+      authed_post('/api/v1/graphql', query: q)
+
+      new_room_song = RoomSong.find_by(user: current_user, song_id: new_song.id, room: room)
+      expect(new_room_song.order).to eq(2)
+      expect(rs1.reload.order).to eq(3)
+      expect(rs2.reload.order).to eq(4)
+      expect(rs3.reload.order).to eq(1)
+    end
+  end
+
 end
