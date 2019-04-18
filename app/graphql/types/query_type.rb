@@ -10,6 +10,13 @@ module Types
       Room.find(id)
     end
 
+    field :rooms, [Types::RoomType], null: true do
+    end
+
+    def rooms
+      Room.all
+    end
+
     field :room_songs, [Types::RoomSongType], null: true do
       argument :room_id, ID, required: true
     end
