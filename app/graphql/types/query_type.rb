@@ -19,11 +19,15 @@ module Types
 
     field :room_songs, [Types::RoomSongType], null: true do
       argument :room_id, ID, required: true
+      argument :for_user, Boolean, required: false
     end
 
-    def room_songs(room_id:)
+    def room_songs(room_id:, for_user:)
       # TODO:  Service class to determine real order
-      RoomSong.where(room_id: room_id).interleaved_by_oldest_user
+      songs = RoomSong.where(room_id: room_id)
+      songs = songs.where(user: context[:current_user]) if for_user
+
+      songs.interleaved_by_oldest_user
     end
 
     field :song, Types::SongType, null: true do
