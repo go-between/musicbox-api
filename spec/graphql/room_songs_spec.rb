@@ -79,12 +79,12 @@ RSpec.describe "Songs", type: :request do
 
   describe "ordering room songs for a user" do
     let(:room) { create(:room) }
-    def order_room_songs_query(room_id:, song_ids:)
+    def order_room_songs_query
       %(
-        mutation {
+        mutation($roomId: ID!, $orderedSongs: [OrderedSongObject!]!) {
           orderRoomSongs(input:{
-            roomId: "#{room_id}"
-            songIds: #{song_ids}
+            roomId: $roomId
+            orderedSongs: $orderedSongs
           }) {
             errors
           }
@@ -97,8 +97,16 @@ RSpec.describe "Songs", type: :request do
       rs2 = create(:room_song, order: 2, user: current_user, room: room)
       rs3 = create(:room_song, order: 3, user: current_user, room: room)
 
-      q = order_room_songs_query(room_id: room.id, song_ids: [rs3.song_id, rs1.song_id, rs2.song_id])
-      authed_post('/api/v1/graphql', query: q)
+      ordered_songs = [
+        { roomSongId: rs3.id, songId: rs3.song_id },
+        { roomSongId: rs1.id, songId: rs1.song_id },
+        { roomSongId: rs2.id, songId: rs2.song_id },
+      ]
+      variables = {
+        roomId: room.id,
+        orderedSongs: ordered_songs
+      }
+      authed_post('/api/v1/graphql', query: order_room_songs_query, variables: variables)
 
       expect(rs1.reload.order).to eq(2)
       expect(rs2.reload.order).to eq(3)
@@ -109,13 +117,24 @@ RSpec.describe "Songs", type: :request do
       rs1 = create(:room_song, order: 1, user: current_user, room: room)
       rs2 = create(:room_song, order: 2, user: current_user, room: room)
       rs3 = create(:room_song, order: 3, user: current_user, room: room)
+      queue_id = SecureRandom.uuid
       new_song = create(:song)
       expect(RoomSong.exists?(user: current_user, song_id: new_song.id, room: room)).to eq(false)
 
-      q = order_room_songs_query(room_id: room.id, song_ids: [rs3.song_id, new_song.id, rs1.song_id, rs2.song_id])
-      authed_post('/api/v1/graphql', query: q)
+      ordered_songs = [
+        { roomSongId: rs3.id, songId: rs3.song_id },
+        { roomSongId: queue_id, songId: new_song.id},
+        { roomSongId: rs1.id, songId: rs1.song_id },
+        { roomSongId: rs2.id, songId: rs2.song_id }
+      ]
+      variables = {
+        roomId: room.id,
+        orderedSongs: ordered_songs
+      }
 
-      new_room_song = RoomSong.find_by(user: current_user, song_id: new_song.id, room: room)
+      authed_post('/api/v1/graphql', query: order_room_songs_query, variables: variables)
+
+      new_room_song = RoomSong.find_by(id: queue_id, user: current_user, song_id: new_song.id, room: room)
       expect(new_room_song.order).to eq(2)
       expect(rs1.reload.order).to eq(3)
       expect(rs2.reload.order).to eq(4)
@@ -124,10 +143,16 @@ RSpec.describe "Songs", type: :request do
 
     it "broadcasts the new room song list with expected order" do
       song = create(:song)
-      q = order_room_songs_query(room_id: room.id, song_ids: [song.id])
-      authed_post('/api/v1/graphql', query: q)
+      ordered_songs = [
+        { roomSongId: SecureRandom.uuid, songId: song.id},
+      ]
+      variables = {
+        roomId: room.id,
+        orderedSongs: ordered_songs
+      }
+
+      authed_post('/api/v1/graphql', query: order_room_songs_query, variables: variables)
       expect(BroadcastQueueWorker).to have_enqueued_sidekiq_job(room.id)
     end
   end
-
 end
