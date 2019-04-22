@@ -15,8 +15,9 @@ module Mutations
                     )
         room_song.order = index + 1
         room_song.save!
-        BroadcastQueueWorker.perform_async(room_id)
       end
+
+      BroadcastQueueWorker.perform_async(room_id)
       {
         errors: []
       }

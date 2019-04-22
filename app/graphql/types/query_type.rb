@@ -22,7 +22,7 @@ module Types
       argument :for_user, Boolean, required: false
     end
 
-    def room_songs(room_id:, for_user:)
+    def room_songs(room_id:, for_user: false)
       # TODO:  Service class to determine real order
       songs = RoomSong.where(room_id: room_id)
       songs = songs.where(user: context[:current_user]) if for_user
