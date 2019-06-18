@@ -24,7 +24,7 @@ class RoomSongDisplayer
     waiting_user_rotation.each_with_index do |user_id, idx|
       user_waiting_songs = waiting_songs.where(user_id: user_id).order(:order)
       user_waiting_songs.each_with_index do |song, song_idx|
-        ordered_waiting_songs[idx + (waiting_user_rotation.size * song_idx)]
+        ordered_waiting_songs[idx + (waiting_user_rotation.size * song_idx)] = song
       end
     end
 

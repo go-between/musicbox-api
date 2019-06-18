@@ -27,7 +27,7 @@ module Types
       songs = RoomSong.where(room_id: room_id)
       songs = songs.where(user: context[:current_user]) if for_user
 
-      songs.interleaved_by_oldest_user
+      RoomSongDisplayer.new(room_id).waiting
     end
 
     field :song, Types::SongType, null: true do
