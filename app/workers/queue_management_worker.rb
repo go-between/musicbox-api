@@ -6,7 +6,7 @@ class QueueManagementWorker
     displayer = RoomSongDisplayer.new(room_id)
 
     just_finished = displayer.now_playing
-    just_finished.update!(play_state: "finished") if just_finished.present?
+    just_finished.update!(play_state: "finished", played_at: Time.zone.now) if just_finished.present?
 
     next_queued_song = displayer.up_next
     return empty_queue!(room_id) if next_queued_song.blank?
