@@ -6,6 +6,8 @@ module Mutations
     field :errors, [String], null: true
 
     def resolve(room_id:, ordered_songs:)
+      room = Room.find(room_id)
+      room.update!(user_rotation: room.user_rotation + [context[:current_user].id]) unless room.user_rotation.include?(context[:current_user].id)
       ordered_songs.each_with_index do |ordered_song, index|
         room_song = RoomSong.find_or_initialize_by(
                       id: ordered_song[:room_song_id],
@@ -13,8 +15,7 @@ module Mutations
                       song_id: ordered_song[:song_id],
                       user: context[:current_user]
                     )
-        room_song.order = index + 1
-        room_song.save!
+        room_song.update!(order: index + 1, play_state: "waiting")
       end
 
       BroadcastQueueWorker.perform_async(room_id)

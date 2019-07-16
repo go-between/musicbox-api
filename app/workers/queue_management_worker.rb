@@ -3,12 +3,15 @@ class QueueManagementWorker
   sidekiq_options queue: 'queue_management'
 
   def perform(room_id)
-    queue = RoomSong.where(room_id: room_id)
-    return empty_queue!(room_id) if queue.empty?
+    displayer = RoomSongDisplayer.new(room_id)
 
-    queue_entry = queue.first
-    next_queued_song = queue_entry.song
-    queue_entry.destroy!
+    just_finished = displayer.now_playing
+    just_finished.update!(play_state: "finished") if just_finished.present?
+
+    next_queued_song = displayer.up_next
+    return empty_queue!(room_id) if next_queued_song.blank?
+
+    next_queued_song.update!(play_state: "playing")
 
     Room.find(room_id).update!(current_song_id: next_queued_song.id, current_song_start: Time.zone.now)
 
