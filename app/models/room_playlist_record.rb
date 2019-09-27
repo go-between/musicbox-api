@@ -1,4 +1,4 @@
-class RoomPlaylistSong < ApplicationRecord
+class RoomPlaylistRecord < ApplicationRecord
   belongs_to :room
   belongs_to :song
   belongs_to :user
