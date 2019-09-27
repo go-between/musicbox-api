@@ -1,13 +1,25 @@
 require 'rails_helper'
 
 RSpec.describe Song, type: :model do
-  it "can have many users" do
-    song = create(:song)
-    user1 = create(:user)
-    user2 = create(:user)
-    song.users << user1
-    song.users << user2
+  let(:song) { Song.create!(youtube_id: "abcd") }
 
-    expect(song.reload.users).to match_array([user1, user2])
+  describe "relationships" do
+    it "has many library records" do
+      lib1 = create(:user_library_record, song: song)
+      lib2 = create(:user_library_record, song: song)
+
+      expect(song.reload.user_library_records).to match_array([lib1, lib2])
+    end
+
+    it "has many users" do
+      user1 = create(:user)
+      user2 = create(:user)
+
+      lib1 = create(:user_library_record, song: song, user: user1)
+      lib1 = create(:user_library_record, song: song, user: user2)
+      lib1 = create(:user_library_record, song: song, user: user2)
+
+      expect(song.reload.users).to match_array([user1, user2, user2])
+    end
   end
 end

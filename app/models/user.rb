@@ -5,6 +5,6 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   belongs_to :room, optional: true
-  has_many :song_users
-  has_many :songs, through: :song_users
+  has_many :user_library_records
+  has_many :songs, through: :user_library_records
 end

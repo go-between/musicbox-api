@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :room_song do
+  factory :room_playlist_record do
     room
     song
     user
