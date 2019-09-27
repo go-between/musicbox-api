@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_27_232709) do
+ActiveRecord::Schema.define(version: 2019_09_27_233126) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -55,7 +55,7 @@ ActiveRecord::Schema.define(version: 2019_09_27_232709) do
     t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
   end
 
-  create_table "room_playlist_songs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "room_playlist_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "room_id"
     t.uuid "song_id"
     t.uuid "user_id"
@@ -64,10 +64,10 @@ ActiveRecord::Schema.define(version: 2019_09_27_232709) do
     t.datetime "updated_at", null: false
     t.string "play_state"
     t.datetime "played_at"
-    t.index ["play_state"], name: "index_room_playlist_songs_on_play_state"
-    t.index ["room_id"], name: "index_room_playlist_songs_on_room_id"
-    t.index ["song_id"], name: "index_room_playlist_songs_on_song_id"
-    t.index ["user_id"], name: "index_room_playlist_songs_on_user_id"
+    t.index ["play_state"], name: "index_room_playlist_records_on_play_state"
+    t.index ["room_id"], name: "index_room_playlist_records_on_room_id"
+    t.index ["song_id"], name: "index_room_playlist_records_on_song_id"
+    t.index ["user_id"], name: "index_room_playlist_records_on_user_id"
   end
 
   create_table "rooms", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
