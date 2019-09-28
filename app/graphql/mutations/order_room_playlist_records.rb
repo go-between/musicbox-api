@@ -14,7 +14,7 @@ module Mutations
       records = initialize_records!(room_id, ordered_records)
       records.each_with_index { |r, i| r.update!(order: i) }
 
-      BroadcastQueueWorker.perform_async(room_id)
+      BroadcastPlaylistWorker.perform_async(room_id)
       {
         errors: @errors
       }

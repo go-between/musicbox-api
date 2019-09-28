@@ -23,7 +23,7 @@ RSpec.describe QueueManagementWorker, type: :worker do
     context "when its previous run processed the last song" do
       it "broadcasts to queue" do
         worker.perform(room.id)
-        expect(BroadcastQueueWorker).to have_enqueued_sidekiq_job(room.id)
+        expect(BroadcastPlaylistWorker).to have_enqueued_sidekiq_job(room.id)
       end
 
       it "broadcasts to now playing" do
@@ -44,7 +44,7 @@ RSpec.describe QueueManagementWorker, type: :worker do
 
       it "does not broadcasts to queue" do
         worker.perform(room.id)
-        expect(BroadcastQueueWorker).to_not have_enqueued_sidekiq_job(anything)
+        expect(BroadcastPlaylistWorker).to_not have_enqueued_sidekiq_job(anything)
       end
     end
   end
@@ -80,7 +80,7 @@ RSpec.describe QueueManagementWorker, type: :worker do
 
     it "broadcasts to queue" do
       worker.perform(room.id)
-      expect(BroadcastQueueWorker).to have_enqueued_sidekiq_job(room.id)
+      expect(BroadcastPlaylistWorker).to have_enqueued_sidekiq_job(room.id)
     end
 
     it "broadcasts to now playing" do
