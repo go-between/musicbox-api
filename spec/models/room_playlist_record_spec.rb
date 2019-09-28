@@ -35,14 +35,9 @@ RSpec.describe RoomPlaylistRecord, type: :model do
       expect(record).to be_waiting
     end
 
-    it "may be assigned a playing state" do
-      record.update!(play_state: :playing)
-      expect(record).to be_playing
-    end
-
-    it "may be assigned a finished state" do
-      record.update!(play_state: :finished)
-      expect(record).to be_finished
+    it "may be assigned a played state" do
+      record.update!(play_state: :played)
+      expect(record).to be_played
     end
   end
 end
