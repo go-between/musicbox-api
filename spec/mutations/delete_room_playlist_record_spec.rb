@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Create Song", type: :request do
+RSpec.describe "Delete Room Playlist Record", type: :request do
   include AuthHelper
   include JsonHelper
 
