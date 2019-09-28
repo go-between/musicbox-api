@@ -29,13 +29,20 @@ RSpec.describe Room, type: :model do
       expect(room.reload.users).to match_array([user1, user2])
     end
 
-    it "it has one current song" do
+    it "it has one current record" do
       start_time = Time.zone.now
+      record = create(:room_playlist_record, room: room)
+      room.update!(current_record: record)
+
+      expect(room.current_record).to eq(record)
+    end
+
+    it "has one song" do
       song = create(:song)
-      room.update!(current_song: song, current_song_start: start_time)
+      record = create(:room_playlist_record, room: room, song: song)
+      room.update!(current_record: record)
 
       expect(room.current_song).to eq(song)
-      expect(room.current_song_start).to eq(start_time)
     end
   end
 end
