@@ -29,7 +29,7 @@ module Mutations
     private
 
     def associate_song_to_user!(song)
-      SongUser.find_or_create_by!(song: song, user: context[:current_user])
+      UserLibraryRecord.find_or_create_by!(song: song, user: context[:current_user])
     end
 
     def set_attrs_from_youtube!(song)
