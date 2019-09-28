@@ -6,6 +6,6 @@ module Types
     field :delete_user_library_record, mutation: Mutations::DeleteUserLibraryRecord
 
     field :join_room, mutation: Mutations::JoinRoom
-    field :order_room_songs, mutation: Mutations::OrderRoomSongs
+    field :order_room_playlist_records, mutation: Mutations::OrderRoomPlaylistRecords
   end
 end
