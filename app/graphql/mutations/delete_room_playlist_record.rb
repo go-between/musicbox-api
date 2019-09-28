@@ -10,7 +10,7 @@ module Mutations
 
       room_id = record.room_id
       record.destroy!
-      BroadcastQueueWorker.perform_async(room_id)
+      BroadcastPlaylistWorker.perform_async(room_id)
 
       {
         errors: []
