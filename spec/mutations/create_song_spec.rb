@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Songs", type: :request do
+RSpec.describe "Create Song", type: :request do
   include AuthHelper
   include JsonHelper
 
@@ -30,6 +30,7 @@ RSpec.describe "Songs", type: :request do
       it "creates song and associates with current user" do
         video = OpenStruct.new(duration: 1500, title: "a title", description: "a description")
         expect(Yt::Video).to receive(:new).with(id: "an-id").and_return(video)
+
         authed_post('/api/v1/graphql', query: query(youtube_id: "an-id"))
         data = json_body.dig(:data, :createSong)
         id = data.dig(:song, :id)
@@ -51,28 +52,30 @@ RSpec.describe "Songs", type: :request do
 
         expect do
           authed_post('/api/v1/graphql', query: query(youtube_id: "the-youtube-id"))
-          data = json_body.dig(:data, :createSong)
-          id = data.dig(:song, :id)
+        end.to_not change(Song, :count)
 
-          expect(song.id).to eq(id)
-          expect(data[:errors]).to be_blank
-          expect(song.users).to include(current_user)
-        end.to change(Song, :count).by(0).and(change(SongUser, :count).by(1))
+        data = json_body.dig(:data, :createSong)
+        id = data.dig(:song, :id)
+
+        expect(song.id).to eq(id)
+        expect(data[:errors]).to be_blank
+        expect(song.users).to include(current_user)
       end
 
       it "does not modify song or association with user when already in library" do
         song = create(:song, youtube_id: "the-youtube-id")
-        SongUser.create!(song: song, user: current_user)
+        UserLibraryRecord.create!(song: song, user: current_user)
         expect(Yt::Video).to_not receive(:new)
 
         expect do
           authed_post('/api/v1/graphql', query: query(youtube_id: "the-youtube-id"))
-          data = json_body.dig(:data, :createSong)
-          id = data.dig(:song, :id)
+        end.to not_change(Song, :count).and(not_change(UserLibraryRecord, :count))
 
-          expect(song.id).to eq(id)
-          expect(data[:errors]).to be_blank
-        end.to change(Song, :count).by(0).and(change(SongUser, :count).by(0))
+        data = json_body.dig(:data, :createSong)
+        id = data.dig(:song, :id)
+
+        expect(song.id).to eq(id)
+        expect(data[:errors]).to be_blank
       end
     end
   end
@@ -82,11 +85,12 @@ RSpec.describe "Songs", type: :request do
       expect(Yt::Video).to_not receive(:new)
       expect do
         authed_post('/api/v1/graphql', query: query(youtube_id: nil))
-        data = json_body.dig(:data, :createSong)
-
-        expect(data[:song]).to be_nil
-        expect(data[:errors]).to match_array([include("Youtube can't be blank")])
       end.to_not change(Song, :count)
+
+      data = json_body.dig(:data, :createSong)
+
+      expect(data[:song]).to be_nil
+      expect(data[:errors]).to match_array([include("Youtube can't be blank")])
     end
   end
 end
