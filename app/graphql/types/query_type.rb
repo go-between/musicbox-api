@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module Types
   class QueryType < Types::BaseObject
-    graphql_name "Query"
+    graphql_name 'Query'
 
     field :room, Types::RoomType, null: true do
       argument :id, ID, required: true
@@ -32,16 +34,16 @@ module Types
     end
 
     def room_playlist_records(room_id:, for_user: false, historical: false)
-      unless for_user || historical
-        RoomSongDisplayer.new(room_id).waiting
-      else
+      if for_user || historical
         songs = RoomSong.where(room_id: room_id)
         songs = songs.where(user: context[:current_user]) if for_user
         if historical
-          songs.where(play_state: "finished").order(played_at: :desc)
+          songs.where(play_state: 'finished').order(played_at: :desc)
         else
-          songs.where(play_state: "waiting").order(:order)
+          songs.where(play_state: 'waiting').order(:order)
         end
+      else
+        RoomSongDisplayer.new(room_id).waiting
       end
     end
 

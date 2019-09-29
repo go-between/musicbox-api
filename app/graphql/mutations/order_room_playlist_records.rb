@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mutations
   class OrderRoomPlaylistRecords < Mutations::BaseMutation
     argument :room_id, ID, required: true
@@ -25,6 +27,7 @@ module Mutations
     def ensure_user_in_rotation!(room)
       room.with_lock do
         return if room.user_rotation.include?(context[:current_user].id)
+
         rotation = room.user_rotation << context[:current_user].id
 
         room.update!(user_rotation: rotation)
@@ -32,15 +35,18 @@ module Mutations
     end
 
     def initialize_records!(room_id, ordered_records)
-      ordered_records.map do |ordered_record, index|
+      ordered_records.map do |ordered_record, _index|
         record = initialize_record!(
-                   ordered_record[:room_playlist_record_id],
-                   ordered_record[:song_id],
-                   room_id
-                 )
+          ordered_record[:room_playlist_record_id],
+          ordered_record[:song_id],
+          room_id
+        )
 
         unless record
-          @errors << "Cannot order record id: #{ordered_record[:room_playlist_record_id]}, song id: #{ordered_record[:song_id]}"
+          msg = %W[
+            Cannot order record id: #{ordered_record[:room_playlist_record_id]}, song id: #{ordered_record[:song_id]}
+          ]
+          @errors << msg
           next
         end
 
@@ -57,6 +63,7 @@ module Mutations
         )
       else
         return unless Song.exists?(id: song_id)
+
         RoomPlaylistRecord.create!(
           room_id: room_id,
           song_id: song_id,

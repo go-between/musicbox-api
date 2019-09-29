@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class RoomPlaylistRecordType < Types::BaseObject
     graphql_name 'RoomPlaylistRecord'
