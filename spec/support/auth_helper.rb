@@ -9,11 +9,13 @@ module AuthHelper
 
   def token
     return @_token if defined? @_token
+
     @_token = Doorkeeper::AccessToken.create!(resource_owner_id: current_user.id)
   end
 
   def current_user
     return @_current_user if defined? @_current_user
+
     @_current_user = create(:user)
   end
 

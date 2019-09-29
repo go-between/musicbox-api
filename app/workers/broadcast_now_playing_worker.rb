@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class BroadcastNowPlayingWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'websocket_broadcast'

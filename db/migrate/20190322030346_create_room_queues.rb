@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateRoomQueues < ActiveRecord::Migration[5.2]
   def change
     create_table :room_queues, id: :uuid do |t|
