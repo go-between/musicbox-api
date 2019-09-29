@@ -6,7 +6,7 @@ git_source(:github) do |repo_name|
 end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '5.2.2'
+gem 'rails', '6.0.0'
 # Use sqlite3 as the database for Active Record
 # gem 'sqlite3'
 # Use Puma as the app server
@@ -40,7 +40,7 @@ gem 'devise', '4.7.1'
 group :development do
   gem 'listen', '3.1.5'
   gem 'rubocop', '0.74.0'
-  gem 'rubocop-rspec', '1.0.0'
+  gem 'rubocop-rspec', '1.36.0'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring', '2.1.0'
   gem 'spring-watcher-listen', '2.0.1'
