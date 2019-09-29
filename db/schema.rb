@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_27_234716) do
+ActiveRecord::Schema.define(version: 2019_09_28_195833) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -74,8 +74,7 @@ ActiveRecord::Schema.define(version: 2019_09_27_234716) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "current_song_id"
-    t.datetime "current_song_start"
+    t.uuid "current_record_id"
     t.uuid "user_rotation", default: [], array: true
   end
 
