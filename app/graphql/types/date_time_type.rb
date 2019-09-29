@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class DateTimeType < Types::BaseScalar
     def self.coerce_input(value, _context)

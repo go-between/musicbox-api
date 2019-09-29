@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   require 'sidekiq/web'
   mount Sidekiq::Web => '/workers'
@@ -5,7 +7,7 @@ Rails.application.routes.draw do
 
   scope path: '/api' do
     scope path: '/v1' do
-      post "/graphql", to: "graphql#execute"
+      post '/graphql', to: 'graphql#execute'
 
       devise_for :users
       use_doorkeeper

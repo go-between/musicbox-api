@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class RoomType < Types::BaseObject
     graphql_name 'Room'
