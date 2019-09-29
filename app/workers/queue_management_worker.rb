@@ -3,21 +3,18 @@ class QueueManagementWorker
   sidekiq_options queue: 'queue_management'
 
   def perform(room_id)
-    displayer = RoomSongDisplayer.new(room_id)
+    playlist = RoomPlaylist.new(room_id).generate_playlist
 
-    just_finished = displayer.now_playing
-    just_finished.update!(play_state: "finished", played_at: Time.zone.now) if just_finished.present?
+    next_record = playlist[0]
+    return empty_queue!(room_id) if next_record.blank?
 
-    next_queued_song = displayer.up_next
-    return empty_queue!(room_id) if next_queued_song.blank?
+    next_record.update!(play_state: "played", played_at: Time.zone.now)
 
-    next_queued_song.update!(play_state: "playing")
-
-    Room.find(room_id).update!(current_song_id: next_queued_song.id, current_song_start: Time.zone.now)
+    Room.find(room_id).update!(current_record: next_record)
 
     BroadcastNowPlayingWorker.perform_async(room_id)
     BroadcastPlaylistWorker.perform_async(room_id)
-    self.class.perform_in(next_queued_song.duration_in_seconds, room_id)
+    self.class.perform_in(next_record.song.duration_in_seconds, room_id)
   end
 
   private
@@ -25,8 +22,8 @@ class QueueManagementWorker
   def empty_queue!(room_id)
     room = Room.find(room_id)
 
-    if room.current_song.present?
-      room.update!(current_song: nil, current_song_start: nil)
+    if room.current_record.present?
+      room.update!(current_record: nil)
 
       BroadcastNowPlayingWorker.perform_async(room_id)
       BroadcastPlaylistWorker.perform_async(room_id)

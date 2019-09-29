@@ -6,6 +6,8 @@ class RoomPlaylist
   end
 
   def generate_playlist
+    return [] if user_rotation.blank?
+
     ordered_waiting_songs = []
     waiting_songs = RoomPlaylistRecord.where(room_id: room_id, play_state: "waiting")
 
