@@ -17,13 +17,21 @@ module Types
       Room.all
     end
 
-    field :room_songs, [Types::RoomSongType], null: true do
+    field :room_playlist, [Types::RoomPlaylistRecordType], null: true do
+      argument :room_id, ID, required: true
+    end
+
+    def room_playlist(room_id:)
+      RoomPlaylist.new(room_id).generate_playlist
+    end
+
+    field :room_playlist_records, [Types::RoomPlaylistRecordType], null: true do
       argument :room_id, ID, required: true
       argument :for_user, Boolean, required: false
       argument :historical, Boolean, required: false
     end
 
-    def room_songs(room_id:, for_user: false, historical: false)
+    def room_playlist_records(room_id:, for_user: false, historical: false)
       unless for_user || historical
         RoomSongDisplayer.new(room_id).waiting
       else

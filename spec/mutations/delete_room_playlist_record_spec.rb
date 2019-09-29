@@ -33,7 +33,7 @@ RSpec.describe "Delete Room Playlist Record", type: :request do
       room = create(:room)
       record = create(:room_playlist_record, room: room, user: current_user)
 
-      expect(BroadcastQueueWorker).to receive(:perform_async).with(room.id)
+      expect(BroadcastPlaylistWorker).to receive(:perform_async).with(room.id)
       authed_post('/api/v1/graphql', query: query(id: record.id))
     end
   end

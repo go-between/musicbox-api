@@ -1,4 +1,4 @@
-class BroadcastQueueWorker
+class BroadcastPlaylistWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'websocket_broadcast'
 
@@ -12,7 +12,7 @@ class BroadcastQueueWorker
   def query
     %(
       query($roomId: ID!) {
-        roomSongs(roomId: $roomId) {
+        roomPlaylist(roomId: $roomId) {
           id, order, song { id, name }, user { email }
         }
       }
