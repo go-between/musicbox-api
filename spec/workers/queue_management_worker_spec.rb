@@ -2,17 +2,17 @@ require 'rails_helper'
 RSpec.describe QueueManagementWorker, type: :worker do
   let(:started) { Time.zone.now }
   let(:song) { create(:song) }
-  let(:room) { create(:room, current_song: song, current_song_start: started) }
+  let(:room) { create(:room) }
   let(:user) { create(:user) }
   let(:worker) { QueueManagementWorker.new }
 
   context "when queue is empty" do
-    it "removes the current song" do
+    it "removes the current record" do
+      room.update!(current_record: create(:room_playlist_record, room: room))
       worker.perform(room.id)
 
       room.reload
-      expect(room.current_song).to eq(nil)
-      expect(room.current_song_start).to eq(nil)
+      expect(room.current_record).to eq(nil)
     end
 
     it "re-queues a new worker" do
@@ -21,6 +21,10 @@ RSpec.describe QueueManagementWorker, type: :worker do
     end
 
     context "when its previous run processed the last song" do
+      before(:each) do
+        room.update!(current_record: create(:room_playlist_record, room: room))
+      end
+
       it "broadcasts to queue" do
         worker.perform(room.id)
         expect(BroadcastPlaylistWorker).to have_enqueued_sidekiq_job(room.id)
@@ -33,10 +37,6 @@ RSpec.describe QueueManagementWorker, type: :worker do
     end
 
     context "when its previous run was empty" do
-      before(:each) do
-        room.update!(current_song: nil, current_song_start: nil)
-      end
-
       it "does not broadcast to now playing" do
         worker.perform(room.id)
         expect(BroadcastNowPlayingWorker).to_not have_enqueued_sidekiq_job(anything)
@@ -50,29 +50,38 @@ RSpec.describe QueueManagementWorker, type: :worker do
   end
 
   context "when queue has songs to play" do
-    let(:new_song) { create(:song) }
-
     before(:each) do
-      create(:room_song, room: room, song: new_song, user: user)
+      room.update!(user_rotation: [user.id])
+      @record = create(:room_playlist_record,
+        room: room,
+        song: song,
+        user: user,
+        play_state: "waiting"
+      )
     end
 
-    it "updates the room's current song" do
+    it "updates the room's current record" do
       Timecop.freeze(3000, 1, 1, 0, 0, 0) do
         worker.perform(room.id)
       end
 
       room.reload
-      expect(room.current_song).to eq(new_song)
-      expect(room.current_song_start).to eq("3000-01-01 00:00:00.000000000 +0000")
+      expect(room.current_record).to eq(@record)
+      expect(room.current_record.played_at).to eq("3000-01-01 00:00:00.000000000 +0000")
     end
 
-    it "destroys the queue record" do
-      worker.perform(room.id)
-      expect(RoomSong.exists?(room: room, song: song, user: user)).to eq(false)
+    it "sets the current record to played" do
+      Timecop.freeze(3000, 1, 1, 0, 0, 0) do
+        worker.perform(room.id)
+      end
+
+      room.reload
+      expect(room.current_record.played_at).to eq("3000-01-01 00:00:00.000000000 +0000")
+      expect(room.current_record).to be_played
     end
 
     it "re-enqueues a new worker" do
-      new_song.update!(duration_in_seconds: 432)
+      song.update!(duration_in_seconds: 432)
 
       expect(QueueManagementWorker).to receive(:perform_in).with(432.second, room.id)
       worker.perform(room.id)
