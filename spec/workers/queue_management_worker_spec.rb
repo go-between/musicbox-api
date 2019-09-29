@@ -1,5 +1,7 @@
 require 'rails_helper'
 RSpec.describe QueueManagementWorker, type: :worker do
+  include ActiveSupport::Testing::TimeHelpers
+
   let(:started) { Time.zone.now }
   let(:song) { create(:song) }
   let(:room) { create(:room) }
@@ -61,17 +63,14 @@ RSpec.describe QueueManagementWorker, type: :worker do
     end
 
     it "updates the room's current record" do
-      Timecop.freeze(3000, 1, 1, 0, 0, 0) do
-        worker.perform(room.id)
-      end
+      worker.perform(room.id)
 
       room.reload
       expect(room.current_record).to eq(@record)
-      expect(room.current_record.played_at).to eq("3000-01-01 00:00:00.000000000 +0000")
     end
 
     it "sets the current record to played" do
-      Timecop.freeze(3000, 1, 1, 0, 0, 0) do
+      travel_to(Time.utc(3000, 1, 1, 0, 0, 0)) do
         worker.perform(room.id)
       end
 
