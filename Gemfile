@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 git_source(:github) do |repo_name|
@@ -27,24 +29,24 @@ gem 'yt', '0.32.4'
 # gem 'capistrano-rails', group: :development
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
-gem 'rack-cors', '1.0.3'
 gem 'dotenv-rails', '2.7.5'
-gem "passenger", "6.0.4"
+gem 'passenger', '6.0.4'
+gem 'rack-cors', '1.0.3'
 gem 'redis', '4.1.3'
 gem 'sidekiq', '6.0.0'
 
-gem 'graphql', '1.9.12'
-gem 'doorkeeper', '5.2.1'
 gem 'devise', '4.7.1'
+gem 'doorkeeper', '5.2.1'
+gem 'graphql', '1.9.12'
 
 group :development do
   gem 'listen', '3.1.5'
   gem 'rubocop', '0.74.0'
   gem 'rubocop-rspec', '1.36.0'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  gem 'action-cable-testing', '0.6.0'
   gem 'spring', '2.1.0'
   gem 'spring-watcher-listen', '2.0.1'
-  gem 'action-cable-testing', '0.6.0'
 end
 
 group :development, :test do
@@ -52,8 +54,8 @@ group :development, :test do
 end
 
 group :test do
+  gem 'database_cleaner', '1.7.0'
   gem 'factory_bot_rails', '5.1.0'
   gem 'rspec-rails', '3.8.2'
   gem 'rspec-sidekiq', '3.0.3'
-  gem 'database_cleaner', '1.7.0'
 end

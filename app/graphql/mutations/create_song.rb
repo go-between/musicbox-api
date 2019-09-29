@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mutations
   class CreateSong < Mutations::BaseMutation
     argument :youtube_id, ID, required: true
@@ -8,21 +10,20 @@ module Mutations
     def resolve(youtube_id:)
       song = Song.find_or_initialize_by(youtube_id: youtube_id)
 
-      return {
-        song: nil,
-        errors: song.errors.full_messages,
-      } unless song.valid?
-
-
-      unless song.persisted?
-        set_attrs_from_youtube!(song)
+      unless song.valid?
+        return {
+          song: nil,
+          errors: song.errors.full_messages
+        }
       end
+
+      attrs_from_youtube!(song) unless song.persisted?
 
       associate_song_to_user!(song)
 
       {
         song: song,
-        errors: [],
+        errors: []
       }
     end
 
@@ -32,7 +33,7 @@ module Mutations
       UserLibraryRecord.find_or_create_by!(song: song, user: context[:current_user])
     end
 
-    def set_attrs_from_youtube!(song)
+    def attrs_from_youtube!(song)
       video = Yt::Video.new(id: song.youtube_id)
       song.update!(
         description: video.description,
