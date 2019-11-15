@@ -31,7 +31,7 @@ gem 'yt', '0.32.4'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'dotenv-rails', '2.7.5'
 gem 'passenger', '6.0.4'
-gem 'rack-cors', '1.0.3'
+gem 'rack-cors', '1.0.5'
 gem 'redis', '4.1.3'
 gem 'sidekiq', '6.0.0'
 
