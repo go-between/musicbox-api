@@ -49,7 +49,7 @@ group :development do
 end
 
 group :development, :test do
-  gem 'byebug', '11.0.1', platforms: %i[mri mingw x64_mingw]
+  gem "pry-byebug", "3.7.0"
 end
 
 group :test do
