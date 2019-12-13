@@ -60,6 +60,7 @@ GEM
     bcrypt (3.1.13)
     builder (3.2.4)
     byebug (11.0.1)
+    coderay (1.1.2)
     concurrent-ruby (1.1.5)
     connection_pool (2.2.2)
     crass (1.0.5)
@@ -117,6 +118,12 @@ GEM
       rack
       rake (>= 0.8.1)
     pg (1.1.4)
+    pry (0.12.2)
+      coderay (~> 1.1.0)
+      method_source (~> 0.9.0)
+    pry-byebug (3.7.0)
+      byebug (~> 11.0)
+      pry (~> 0.10)
     rack (2.0.7)
     rack-cors (1.0.5)
       rack (>= 1.6.0)
@@ -224,7 +231,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  byebug (= 11.0.1)
   database_cleaner (= 1.7.0)
   devise (= 4.7.1)
   doorkeeper (= 5.2.3)
@@ -234,6 +240,7 @@ DEPENDENCIES
   listen (= 3.1.5)
   passenger (= 6.0.4)
   pg (= 1.1.4)
+  pry-byebug (= 3.7.0)
   rack-cors (= 1.0.5)
   rails (= 6.0.1)
   redis (= 4.1.3)
