@@ -37,8 +37,8 @@ gem 'sidekiq', '6.0.0'
 
 gem 'devise', '4.7.1'
 gem 'doorkeeper', '5.2.3'
+gem 'graphiql-rails', '1.7.0'
 gem 'graphql', '1.9.16'
-gem "graphiql-rails", '1.7.0'
 
 group :development do
   gem 'listen', '3.1.5'
@@ -50,7 +50,7 @@ group :development do
 end
 
 group :development, :test do
-  gem "pry-byebug", "3.7.0"
+  gem 'pry-byebug', '3.7.0'
 end
 
 group :test do
