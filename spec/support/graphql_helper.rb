@@ -16,7 +16,7 @@ module GraphQLHelper
     )
   end
 
-  def order_room_playlist_records_mutation(room_id, records)
+  def order_room_playlist_records_mutation(room_id:, records:)
     input = records.map do |record|
       str = '{ '
       str += "songId: \"#{record[:song_id]}\""
@@ -31,6 +31,22 @@ module GraphQLHelper
           orderedRecords: [#{input.join(',')}]
         }) {
           errors
+        }
+      }
+    )
+  end
+
+  def room_playlist_query(room_id:)
+    %(
+      query {
+        roomPlaylist(roomId: "#{room_id}") {
+          id
+          song {
+            id
+          }
+          user{
+            id
+          }
         }
       }
     )

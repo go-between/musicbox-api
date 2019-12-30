@@ -13,7 +13,7 @@ RSpec.describe 'Requests Integration', type: :request do
   let!(:dan) { create(:user, name: "dan") }
   let!(:sean) { create(:user, name: "sean") }
 
-  it "Allows two users to share a meaningful experience together" do
+  it "Allows three users to share a meaningful experience together" do
     Sidekiq::Testing.inline! do
       # Everybody joins the room
       expect do
@@ -67,8 +67,11 @@ RSpec.describe 'Requests Integration', type: :request do
         expect(has_sean).to eq(true)
       }
 
+      # No one has joined the song rotation yet
+      expect(room.reload.user_rotation).to be_empty
+
       # Users add songs to their library
-      # which don't broadcast so we'll use factories
+      # this doesn't broadcast so we'll use factories
 
       star_fighter = create(:song, name: "Star Fighter", duration_in_seconds: 100)
       hootsforce = create(:song, name: "Hootsforce", duration_in_seconds: 100)
@@ -99,16 +102,21 @@ RSpec.describe 'Requests Integration', type: :request do
 
         authed_post(
           url: '/api/v1/graphql',
-          body: { query: order_room_playlist_records_mutation(room.id, records) },
+          body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
           user: dan
         )
       end.to broadcast_to(QueuesChannel.broadcasting_for(room)).with { |data|
         songs = data.dig("data", "roomPlaylist")
+        expect(songs.size).to eq(1)
+
         dan_unicorn_id = songs.first["id"]
 
         expect(songs.first.dig("song", "id")).to eq(unicorn.id)
         expect(songs.first.dig("user", "email")).to eq(dan.email)
       }
+
+      # Dan is now in song rotation
+      expect(room.reload.user_rotation).to eq([dan.id])
 
       # Dan enqueues another song
       expect do
@@ -119,11 +127,13 @@ RSpec.describe 'Requests Integration', type: :request do
 
         authed_post(
           url: '/api/v1/graphql',
-          body: { query: order_room_playlist_records_mutation(room.id, records) },
+          body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
           user: dan
         )
       end.to broadcast_to(QueuesChannel.broadcasting_for(room)).with { |data|
         songs = data.dig("data", "roomPlaylist")
+        expect(songs.size).to eq(2)
+
         expect(songs.first.dig("song", "id")).to eq(unicorn.id)
         expect(songs.first.dig("user", "email")).to eq(dan.email)
 
@@ -140,11 +150,12 @@ RSpec.describe 'Requests Integration', type: :request do
 
         authed_post(
           url: '/api/v1/graphql',
-          body: { query: order_room_playlist_records_mutation(room.id, records) },
+          body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
           user: truman
         )
       end.to broadcast_to(QueuesChannel.broadcasting_for(room)).with { |data|
         songs = data.dig("data", "roomPlaylist")
+        expect(songs.size).to eq(3)
         expect(songs.first["id"]).to eq(dan_unicorn_id)
 
         # Truman is second in rotation, so his first song comes after
@@ -156,29 +167,119 @@ RSpec.describe 'Requests Integration', type: :request do
         expect(songs.third["id"]).to eq(dan_midnight_city_id)
       }
 
-      # Truman enqueues another song
+      # Truman now follows Dan in rotation
+      expect(room.reload.user_rotation).to eq([dan.id, truman.id])
+
+      # Sean enqueues a song
       expect do
         records = [
-          { song_id: star_fighter.id, room_playlist_record_id: truman_starfighter_id },
-          { song_id: hootsforce.id }
+          { song_id: dont_move.id }
         ]
 
         authed_post(
           url: '/api/v1/graphql',
-          body: { query: order_room_playlist_records_mutation(room.id, records) },
+          body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+          user: sean
+        )
+      end.to broadcast_to(QueuesChannel.broadcasting_for(room)).with { |data|
+        songs = data.dig("data", "roomPlaylist")
+        expect(songs.size).to eq(4)
+
+        expect(songs.first["id"]).to eq(dan_unicorn_id)
+        expect(songs.second["id"]).to eq(truman_starfighter_id)
+
+        # Sean is third in rotation, so his first song comes after
+        # Truman's and Dan's first
+        sean_dont_move_id = songs.third["id"]
+        expect(songs.third.dig("song", "id")).to eq(dont_move.id)
+        expect(songs.third.dig("user", "email")).to eq(sean.email)
+
+        expect(songs.fourth["id"]).to eq(dan_midnight_city_id)
+      }
+
+      # Sean now follows Dan, Truman in rotation
+      expect(room.reload.user_rotation).to eq([dan.id, truman.id, sean.id])
+
+      # Sean enqueues another song
+      expect do
+        records = [
+          { song_id: dont_move.id, room_playlist_record_id: sean_dont_move_id },
+          { song_id: unicorn.id }
+        ]
+
+        authed_post(
+          url: '/api/v1/graphql',
+          body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+          user: sean
+        )
+      end.to broadcast_to(QueuesChannel.broadcasting_for(room)).with { |data|
+        songs = data.dig("data", "roomPlaylist")
+        expect(songs.size).to eq(5)
+
+        expect(songs.first["id"]).to eq(dan_unicorn_id)
+        expect(songs.second["id"]).to eq(truman_starfighter_id)
+        expect(songs.third["id"]).to eq(sean_dont_move_id)
+
+        # A full rotation is now complete, but Dan still has a song up next
+        expect(songs.fourth["id"]).to eq(dan_midnight_city_id)
+
+        # Followed by Sean
+        sean_unicorn_id = songs.fifth["id"]
+        expect(songs.fifth.dig("song", "id")).to eq(unicorn.id)
+        expect(songs.fifth.dig("user", "email")).to eq(sean.email)
+      }
+
+      # Truman enqueues his last song but swaps the order
+      # of the new song (hootsforce) and the previous (star fighter)
+      expect do
+        records = [
+          { song_id: hootsforce.id },
+          { song_id: star_fighter.id, room_playlist_record_id: truman_starfighter_id }
+        ]
+
+        authed_post(
+          url: '/api/v1/graphql',
+          body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
           user: truman
         )
       end.to broadcast_to(QueuesChannel.broadcasting_for(room)).with { |data|
         songs = data.dig("data", "roomPlaylist")
-        expect(songs.first["id"]).to eq(dan_unicorn_id)
-        expect(songs.second["id"]).to eq(truman_starfighter_id)
-        expect(songs.third["id"]).to eq(dan_midnight_city_id)
+        expect(songs.size).to eq(6)
 
-        truman_hootsforce_id = songs.fourth["id"]
-        expect(songs.fourth.dig("song", "id")).to eq(hootsforce.id)
-        expect(songs.fourth.dig("user", "email")).to eq(truman.email)
+        expect(songs.first["id"]).to eq(dan_unicorn_id)
+
+        # Truman's new song is now second
+        truman_hootsforce_id = songs.second["id"]
+        expect(songs.second.dig("song", "id")).to eq(hootsforce.id)
+        expect(songs.second.dig("user", "email")).to eq(truman.email)
+
+        # Followed by the other songs in order
+        expect(songs.third["id"]).to eq(sean_dont_move_id)
+        expect(songs.fourth["id"]).to eq(dan_midnight_city_id)
+        expect(songs.fifth["id"]).to eq(truman_starfighter_id)
+        expect(songs[5]["id"]).to eq(sean_unicorn_id)
       }
 
+      # A request for the room's playlist returns the correct order
+      authed_post(
+        url: '/api/v1/graphql',
+        body: { query: room_playlist_query(room_id: room.id) },
+        user: truman
+      )
+
+      songs = json_body.dig(:data, :roomPlaylist)
+      expect(songs.count).to eq(6)
+
+      playlist_song_ids = songs.map { |s| s[:id] }
+      expected_song_ids = [
+        dan_unicorn_id,
+        truman_hootsforce_id,
+        sean_dont_move_id,
+        dan_midnight_city_id,
+        truman_starfighter_id,
+        sean_unicorn_id
+      ]
+      expect(playlist_song_ids).to eq(expected_song_ids)
     end
   end
 end
