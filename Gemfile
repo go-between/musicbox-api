@@ -37,7 +37,8 @@ gem 'sidekiq', '6.0.0'
 
 gem 'devise', '4.7.1'
 gem 'doorkeeper', '5.2.3'
-gem 'graphql', '1.9.12'
+gem 'graphql', '1.9.16'
+gem "graphiql-rails", '1.7.0'
 
 group :development do
   gem 'listen', '3.1.5'
