@@ -7,11 +7,17 @@ RSpec.describe 'Create Song', type: :request do
   include GraphQLHelper
   include JsonHelper
 
+  let(:current_user) { create(:user) }
+
   describe 'success' do
     it 'adds the user to the room' do
       room = create(:room)
 
-      authed_post('/api/v1/graphql', query: join_room_mutation(room_id: room.id))
+      authed_post(
+        url: '/api/v1/graphql',
+        body: { query: join_room_mutation(room_id: room.id) },
+        user: current_user
+      )
       data = json_body.dig(:data, :joinRoom)
 
       expect(data.dig(:room, :id)).to eq(room.id)
@@ -23,14 +29,22 @@ RSpec.describe 'Create Song', type: :request do
       room = create(:room)
 
       expect(BroadcastUsersWorker).to receive(:perform_async).with(room.id)
-      authed_post('/api/v1/graphql', query: join_room_mutation(room_id: room.id))
+      authed_post(
+        url: '/api/v1/graphql',
+        body: { query: join_room_mutation(room_id: room.id) },
+        user: current_user
+      )
     end
   end
 
   describe 'error' do
     it 'does not allow a user to join a nonexistant room' do
       current_user.update!(room: nil)
-      authed_post('/api/v1/graphql', query: join_room_mutation(room_id: SecureRandom.uuid))
+      authed_post(
+        url: '/api/v1/graphql',
+        body: { query: join_room_mutation(room_id: SecureRandom.uuid) },
+        user: current_user
+      )
       data = json_body.dig(:data, :joinRoom)
 
       expect(data[:errors]).not_to be_empty
