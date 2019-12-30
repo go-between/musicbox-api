@@ -1,25 +1,20 @@
 # frozen_string_literal: true
 
 module AuthHelper
-  def auth_headers
+  def auth_headers(user)
     {
-      Authorization: "Bearer #{token.token}"
+      Authorization: "Bearer #{token(user).token}"
     }
   end
 
-  def token
-    return @_token if defined? @_token
+  def token(user)
+    @_token = {} unless defined? @_token
+    return @_token[user] if @_token.key?(user)
 
-    @_token = Doorkeeper::AccessToken.create!(resource_owner_id: current_user.id)
+    @_token[user] = Doorkeeper::AccessToken.create!(resource_owner_id: user.id)
   end
 
-  def current_user
-    return @_current_user if defined? @_current_user
-
-    @_current_user = create(:user)
-  end
-
-  def authed_post(url, body, headers = {})
-    post(url, params: body, headers: headers.merge(auth_headers))
+  def authed_post(url:, body:, headers: {}, user: create(:user))
+    post(url, params: body, headers: headers.merge(auth_headers(user)))
   end
 end

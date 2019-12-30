@@ -25,13 +25,21 @@ RSpec.describe 'Create Song', type: :request do
     )
   end
 
+  let(:current_user) { create(:user) }
+
   describe '#create' do
     context 'when song does not exist' do
       it 'creates song and associates with current user' do
         video = OpenStruct.new(duration: 1500, title: 'a title', description: 'a description')
         expect(Yt::Video).to receive(:new).with(id: 'an-id').and_return(video)
 
-        authed_post('/api/v1/graphql', query: query(youtube_id: 'an-id'))
+        authed_post(
+          url: '/api/v1/graphql',
+          body: {
+            query: query(youtube_id: 'an-id')
+          },
+          user: current_user
+        )
         data = json_body.dig(:data, :createSong)
         id = data.dig(:song, :id)
 
@@ -51,7 +59,13 @@ RSpec.describe 'Create Song', type: :request do
         expect(Yt::Video).not_to receive(:new)
 
         expect do
-          authed_post('/api/v1/graphql', query: query(youtube_id: 'the-youtube-id'))
+          authed_post(
+            url: '/api/v1/graphql',
+            body: {
+              query: query(youtube_id: 'the-youtube-id')
+            },
+            user: current_user
+          )
         end.not_to change(Song, :count)
 
         data = json_body.dig(:data, :createSong)
@@ -68,7 +82,13 @@ RSpec.describe 'Create Song', type: :request do
         expect(Yt::Video).not_to receive(:new)
 
         expect do
-          authed_post('/api/v1/graphql', query: query(youtube_id: 'the-youtube-id'))
+          authed_post(
+            url: '/api/v1/graphql',
+            body: {
+              query: query(youtube_id: 'the-youtube-id')
+            },
+            user: current_user
+          )
         end.to not_change(Song, :count).and(not_change(UserLibraryRecord, :count))
 
         data = json_body.dig(:data, :createSong)
@@ -84,7 +104,13 @@ RSpec.describe 'Create Song', type: :request do
     it 'fails to persist when youtube_id is not specified' do
       expect(Yt::Video).not_to receive(:new)
       expect do
-        authed_post('/api/v1/graphql', query: query(youtube_id: nil))
+        authed_post(
+          url: '/api/v1/graphql',
+          body: {
+            query: query(youtube_id: nil)
+          },
+          user: current_user
+        )
       end.not_to change(Song, :count)
 
       data = json_body.dig(:data, :createSong)
