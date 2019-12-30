@@ -4,8 +4,10 @@ require 'rails_helper'
 
 RSpec.describe 'Create Song', type: :request do
   include AuthHelper
+  include GraphQLHelper
   include JsonHelper
 
+  let(:current_user) { create(:user) }
   let(:room) { create(:room) }
 
   describe 'song ordering' do
@@ -17,7 +19,11 @@ RSpec.describe 'Create Song', type: :request do
         { song_id: record2.song_id, room_playlist_record_id: record2.id },
         { song_id: record1.song_id, room_playlist_record_id: record1.id }
       ]
-      authed_post('/api/v1/graphql', query: order_room_playlist_records_mutation(room.id, records))
+      authed_post(
+        url: '/api/v1/graphql',
+        body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+        user: current_user
+      )
 
       expect(record1.reload.order).to eq(1)
       expect(record2.reload.order).to eq(0)
@@ -33,7 +39,11 @@ RSpec.describe 'Create Song', type: :request do
         { song_id: record.song_id, room_playlist_record_id: record.id },
         { song_id: song2.id }
       ]
-      authed_post('/api/v1/graphql', query: order_room_playlist_records_mutation(room.id, records))
+      authed_post(
+        url: '/api/v1/graphql',
+        body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+        user: current_user
+      )
 
       new_record1 = RoomPlaylistRecord.find_by(user: current_user, song_id: song1.id, room: room)
       new_record2 = RoomPlaylistRecord.find_by(user: current_user, song_id: song2.id, room: room)
@@ -50,7 +60,11 @@ RSpec.describe 'Create Song', type: :request do
       room.update!(user_rotation: [])
 
       records = [{ song_id: song.id }]
-      authed_post('/api/v1/graphql', query: order_room_playlist_records_mutation(room.id, records))
+      authed_post(
+        url: '/api/v1/graphql',
+        body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+        user: current_user
+      )
 
       new_record = RoomPlaylistRecord.find_by(user: current_user, song_id: song.id, room: room)
       expect(new_record.order).to eq(0)
@@ -63,7 +77,11 @@ RSpec.describe 'Create Song', type: :request do
       room.update!(user_rotation: [existing_user_id])
 
       records = [{ song_id: song.id }]
-      authed_post('/api/v1/graphql', query: order_room_playlist_records_mutation(room.id, records))
+      authed_post(
+        url: '/api/v1/graphql',
+        body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+        user: current_user
+      )
 
       new_record = RoomPlaylistRecord.find_by(user: current_user, song_id: song.id, room: room)
       expect(new_record.order).to eq(0)
@@ -76,7 +94,11 @@ RSpec.describe 'Create Song', type: :request do
       room.update!(user_rotation: [current_user.id, existing_user_id])
 
       records = [{ song_id: song.id }]
-      authed_post('/api/v1/graphql', query: order_room_playlist_records_mutation(room.id, records))
+      authed_post(
+        url: '/api/v1/graphql',
+        body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+        user: current_user
+      )
 
       new_record = RoomPlaylistRecord.find_by(user: current_user, song_id: song.id, room: room)
       expect(new_record.order).to eq(0)
@@ -98,7 +120,11 @@ RSpec.describe 'Create Song', type: :request do
         { song_id: other_record.song_id, room_playlist_record_id: other_record.id },
         { song_id: song.id }
       ]
-      authed_post('/api/v1/graphql', query: order_room_playlist_records_mutation(room.id, records))
+      authed_post(
+        url: '/api/v1/graphql',
+        body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+        user: current_user
+      )
 
       data = json_body.dig(:data, :orderRoomPlaylistRecords)
       expect(data[:errors].size).to eq(2)
