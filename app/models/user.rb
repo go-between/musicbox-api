@@ -6,8 +6,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  belongs_to :room, optional: true, foreign_key: :active_room_id
-  belongs_to :team, optional: true, foreign_key: :active_team_id
+  belongs_to :active_room, optional: true, foreign_key: :active_room_id, class_name: 'Room'
+  belongs_to :active_team, optional: true, foreign_key: :active_team_id, class_name: 'Team'
 
   has_many :user_library_records
   has_many :songs, through: :user_library_records

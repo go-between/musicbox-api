@@ -8,8 +8,8 @@ RSpec.describe BroadcastUsersWorker, type: :worker do
 
   describe '#perform' do
     it 'broadcasts a list of users in the room' do
-      user1 = create(:user, room: room)
-      user2 = create(:user, room: room)
+      user1 = create(:user, active_room: room)
+      user2 = create(:user, active_room: room)
 
       expect do
         worker.perform(room.id)
