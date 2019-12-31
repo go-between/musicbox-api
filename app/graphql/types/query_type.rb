@@ -9,7 +9,9 @@ module Types
     end
 
     def room(id:)
-      Room.find(id)
+      rooms = Room.where(id: id)
+      rooms = rooms.where(team: context[:current_user].teams) if context[:current_user].present?
+      rooms.first
     end
 
     field :rooms, [Types::RoomType], null: true do
@@ -27,26 +29,6 @@ module Types
       RoomPlaylist.new(room_id).generate_playlist
     end
 
-    field :room_playlist_records, [Types::RoomPlaylistRecordType], null: true do
-      argument :room_id, ID, required: true
-      argument :for_user, Boolean, required: false
-      argument :historical, Boolean, required: false
-    end
-
-    def room_playlist_records(room_id:, for_user: false, historical: false)
-      if for_user || historical
-        songs = RoomSong.where(room_id: room_id)
-        songs = songs.where(user: context[:current_user]) if for_user
-        if historical
-          songs.where(play_state: 'finished').order(played_at: :desc)
-        else
-          songs.where(play_state: 'waiting').order(:order)
-        end
-      else
-        RoomSongDisplayer.new(room_id).waiting
-      end
-    end
-
     field :song, Types::SongType, null: true do
       argument :id, ID, required: true
     end
@@ -60,13 +42,6 @@ module Types
 
     def songs
       context[:current_user].songs
-    end
-
-    field :users, [Types::UserType], null: true do
-    end
-
-    def users
-      User.all
     end
   end
 end
