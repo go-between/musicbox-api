@@ -16,7 +16,7 @@ module GraphQLHelper
     )
   end
 
-  def order_room_playlist_records_mutation(room_id:, records:) # rubocop:disable Metrics/MethodLength
+  def order_room_playlist_records_mutation(records:)
     input = records.map do |record|
       str = '{ '
       str += "songId: \"#{record[:song_id]}\""
@@ -27,7 +27,6 @@ module GraphQLHelper
     %(
       mutation {
         orderRoomPlaylistRecords(input:{
-          roomId: "#{room_id}",
           orderedRecords: [#{input.join(',')}]
         }) {
           errors

@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Room, type: :model do
-  let(:room) { described_class.create! }
+  let(:room) { described_class.create!(team: create(:team)) }
 
   describe 'relationships' do
     it 'has many playlist records' do
@@ -25,8 +25,8 @@ RSpec.describe Room, type: :model do
     end
 
     it 'has many users' do
-      user1 = create(:user, room: room)
-      user2 = create(:user, room: room)
+      user1 = create(:user, active_room: room)
+      user2 = create(:user, active_room: room)
 
       expect(room.reload.users).to match_array([user1, user2])
     end

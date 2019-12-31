@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_190_929_003_240) do
+ActiveRecord::Schema.define(version: 20_191_231_020_447) do
   # These are extensions that must be enabled in order to support this database
   enable_extension 'pgcrypto'
   enable_extension 'plpgsql'
@@ -77,6 +77,7 @@ ActiveRecord::Schema.define(version: 20_190_929_003_240) do
     t.datetime 'updated_at', null: false
     t.uuid 'current_record_id'
     t.uuid 'user_rotation', default: [], array: true
+    t.uuid 'team_id'
   end
 
   create_table 'songs', id: :uuid, default: -> { 'gen_random_uuid()' }, force: :cascade do |t|
@@ -87,6 +88,22 @@ ActiveRecord::Schema.define(version: 20_190_929_003_240) do
     t.string 'youtube_id'
     t.string 'description'
     t.index ['youtube_id'], name: 'index_songs_on_youtube_id'
+  end
+
+  create_table 'teams', id: :uuid, default: -> { 'gen_random_uuid()' }, force: :cascade do |t|
+    t.string 'name'
+    t.uuid 'owner_id'
+    t.datetime 'created_at', precision: 6, null: false
+    t.datetime 'updated_at', precision: 6, null: false
+  end
+
+  create_table 'teams_users', id: :uuid, default: -> { 'gen_random_uuid()' }, force: :cascade do |t|
+    t.uuid 'team_id'
+    t.uuid 'user_id'
+    t.datetime 'created_at', precision: 6, null: false
+    t.datetime 'updated_at', precision: 6, null: false
+    t.index ['team_id'], name: 'index_teams_users_on_team_id'
+    t.index ['user_id'], name: 'index_teams_users_on_user_id'
   end
 
   create_table 'user_library_records', id: :uuid, default: -> { 'gen_random_uuid()' }, force: :cascade do |t|
@@ -107,10 +124,11 @@ ActiveRecord::Schema.define(version: 20_190_929_003_240) do
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
     t.string 'name'
-    t.uuid 'room_id'
+    t.uuid 'active_room_id'
+    t.uuid 'active_team_id'
+    t.index ['active_room_id'], name: 'index_users_on_active_room_id'
     t.index ['email'], name: 'index_users_on_email', unique: true
     t.index ['reset_password_token'], name: 'index_users_on_reset_password_token', unique: true
-    t.index ['room_id'], name: 'index_users_on_room_id'
   end
 
   add_foreign_key 'oauth_access_grants', 'oauth_applications', column: 'application_id'
