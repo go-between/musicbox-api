@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_191_231_013_211) do
+ActiveRecord::Schema.define(version: 20_191_231_014_000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension 'pgcrypto'
   enable_extension 'plpgsql'
@@ -87,6 +87,13 @@ ActiveRecord::Schema.define(version: 20_191_231_013_211) do
     t.string 'youtube_id'
     t.string 'description'
     t.index ['youtube_id'], name: 'index_songs_on_youtube_id'
+  end
+
+  create_table 'teams', id: :uuid, default: -> { 'gen_random_uuid()' }, force: :cascade do |t|
+    t.string 'name'
+    t.uuid 'owner_id'
+    t.datetime 'created_at', precision: 6, null: false
+    t.datetime 'updated_at', precision: 6, null: false
   end
 
   create_table 'user_library_records', id: :uuid, default: -> { 'gen_random_uuid()' }, force: :cascade do |t|
