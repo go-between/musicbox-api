@@ -21,5 +21,13 @@ RSpec.describe Team, type: :model do
 
       expect(team.reload.users).to match_array([user1, user2])
     end
+
+    it 'may have many rooms' do
+      team = described_class.create!(owner: owner)
+      room1 = create(:room, team: team)
+      room2 = create(:room, team: team)
+
+      expect(team.reload.rooms).to match_array([room1, room2])
+    end
   end
 end
