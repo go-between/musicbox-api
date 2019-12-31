@@ -27,16 +27,16 @@ RSpec.describe User, type: :model do
 
     it 'may belong to one active room' do
       room = create(:room)
-      user.update!(room: room)
+      user.update!(active_room: room)
 
-      expect(user.room).to eq(room)
+      expect(user.active_room).to eq(room)
     end
 
     it 'may belong to one active team' do
       team = create(:team)
-      user.update!(team: team)
+      user.update!(active_team: team)
 
-      expect(user.team).to eq(team)
+      expect(user.active_team).to eq(team)
     end
 
     it 'may be part of many teams' do
