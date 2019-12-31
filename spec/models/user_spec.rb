@@ -31,5 +31,15 @@ RSpec.describe User, type: :model do
 
       expect(user.room).to eq(room)
     end
+
+    it 'may be part of many teams' do
+      team1 = create(:team)
+      team2 = create(:team)
+
+      user.teams << team1
+      user.teams << team2
+
+      expect(user.reload.teams).to match_array([team1, team2])
+    end
   end
 end
