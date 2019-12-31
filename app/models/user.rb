@@ -7,6 +7,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   belongs_to :room, optional: true, foreign_key: :active_room_id
+  belongs_to :team, optional: true, foreign_key: :active_team_id
+
   has_many :user_library_records
   has_many :songs, through: :user_library_records
   has_many :team_users
