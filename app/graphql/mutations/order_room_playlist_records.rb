@@ -7,15 +7,16 @@ module Mutations
     field :errors, [String], null: true
 
     def resolve(ordered_records:)
-      room = Room.find(room_id)
+      room = Room.find(context[:current_user].active_room_id)
+
       ensure_user_in_rotation!(room)
 
       @errors = []
 
-      records = initialize_records!(room_id, ordered_records)
+      records = initialize_records!(room.id, ordered_records)
       records.each_with_index { |r, i| r.update!(order: i) }
 
-      BroadcastPlaylistWorker.perform_async(room_id)
+      BroadcastPlaylistWorker.perform_async(room.id)
       {
         errors: @errors
       }

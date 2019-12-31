@@ -7,8 +7,8 @@ RSpec.describe 'Create Song', type: :request do
   include GraphQLHelper
   include JsonHelper
 
-  let(:current_user) { create(:user) }
   let(:room) { create(:room) }
+  let(:current_user) { create(:user, active_room_id: room.id) }
 
   describe 'song ordering' do
     it 'reorders existing songs' do
@@ -21,7 +21,7 @@ RSpec.describe 'Create Song', type: :request do
       ]
       authed_post(
         url: '/api/v1/graphql',
-        body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+        body: { query: order_room_playlist_records_mutation(records: records) },
         user: current_user
       )
 
@@ -41,7 +41,7 @@ RSpec.describe 'Create Song', type: :request do
       ]
       authed_post(
         url: '/api/v1/graphql',
-        body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+        body: { query: order_room_playlist_records_mutation(records: records) },
         user: current_user
       )
 
@@ -62,7 +62,7 @@ RSpec.describe 'Create Song', type: :request do
       records = [{ song_id: song.id }]
       authed_post(
         url: '/api/v1/graphql',
-        body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+        body: { query: order_room_playlist_records_mutation(records: records) },
         user: current_user
       )
 
@@ -79,7 +79,7 @@ RSpec.describe 'Create Song', type: :request do
       records = [{ song_id: song.id }]
       authed_post(
         url: '/api/v1/graphql',
-        body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+        body: { query: order_room_playlist_records_mutation(records: records) },
         user: current_user
       )
 
@@ -96,7 +96,7 @@ RSpec.describe 'Create Song', type: :request do
       records = [{ song_id: song.id }]
       authed_post(
         url: '/api/v1/graphql',
-        body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+        body: { query: order_room_playlist_records_mutation(records: records) },
         user: current_user
       )
 
@@ -122,7 +122,7 @@ RSpec.describe 'Create Song', type: :request do
       ]
       authed_post(
         url: '/api/v1/graphql',
-        body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+        body: { query: order_room_playlist_records_mutation(records: records) },
         user: current_user
       )
 
