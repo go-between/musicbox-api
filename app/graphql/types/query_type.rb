@@ -18,7 +18,7 @@ module Types
     end
 
     def rooms
-      Room.all
+      Room.where(team: context[:current_user].active_team)
     end
 
     field :room_playlist, [Types::RoomPlaylistRecordType], null: true do
