@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_191_231_014_524) do
+ActiveRecord::Schema.define(version: 20_191_231_015_122) do
   # These are extensions that must be enabled in order to support this database
   enable_extension 'pgcrypto'
   enable_extension 'plpgsql'
@@ -95,6 +95,15 @@ ActiveRecord::Schema.define(version: 20_191_231_014_524) do
     t.uuid 'owner_id'
     t.datetime 'created_at', precision: 6, null: false
     t.datetime 'updated_at', precision: 6, null: false
+  end
+
+  create_table 'teams_users', id: :uuid, default: -> { 'gen_random_uuid()' }, force: :cascade do |t|
+    t.uuid 'team_id'
+    t.uuid 'user_id'
+    t.datetime 'created_at', precision: 6, null: false
+    t.datetime 'updated_at', precision: 6, null: false
+    t.index ['team_id'], name: 'index_teams_users_on_team_id'
+    t.index ['user_id'], name: 'index_teams_users_on_user_id'
   end
 
   create_table 'user_library_records', id: :uuid, default: -> { 'gen_random_uuid()' }, force: :cascade do |t|
