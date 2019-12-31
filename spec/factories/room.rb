@@ -4,5 +4,6 @@ FactoryBot.define do
   factory :room do
     name { 'Banjo Town' }
     current_record { nil }
+    team
   end
 end
