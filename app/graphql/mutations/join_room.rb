@@ -8,7 +8,7 @@ module Mutations
     field :errors, [String], null: true
 
     def resolve(room_id:)
-      room = Room.find_by(id: room_id)
+      room = Room.find_by(id: room_id, team: context[:current_user].teams)
       if room.blank?
         return {
           room: nil,

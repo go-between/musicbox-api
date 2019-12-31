@@ -7,11 +7,12 @@ RSpec.describe 'Join Room', type: :request do
   include GraphQLHelper
   include JsonHelper
 
-  let(:current_user) { create(:user) }
+  let(:team) { create(:team) }
+  let(:current_user) { create(:user, teams: [team]) }
 
   describe 'success' do
     it 'adds the user to the room' do
-      room = create(:room)
+      room = create(:room, team: team)
 
       authed_post(
         url: '/api/v1/graphql',
@@ -26,7 +27,7 @@ RSpec.describe 'Join Room', type: :request do
     end
 
     it 'enqueues a broadcast room worker' do
-      room = create(:room)
+      room = create(:room, team: team)
 
       expect(BroadcastUsersWorker).to receive(:perform_async).with(room.id)
       authed_post(
@@ -43,6 +44,21 @@ RSpec.describe 'Join Room', type: :request do
       authed_post(
         url: '/api/v1/graphql',
         body: { query: join_room_mutation(room_id: SecureRandom.uuid) },
+        user: current_user
+      )
+      data = json_body.dig(:data, :joinRoom)
+
+      expect(data[:errors]).not_to be_empty
+      expect(current_user.reload.active_room).to be_nil
+    end
+
+    it 'does not allow a user to join a room from another team' do
+      other_team = create(:team)
+      room = create(:room, team: other_team)
+
+      authed_post(
+        url: '/api/v1/graphql',
+        body: { query: join_room_mutation(room_id: room.id) },
         user: current_user
       )
       data = json_body.dig(:data, :joinRoom)

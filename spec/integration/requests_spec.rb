@@ -8,10 +8,11 @@ RSpec.describe 'Requests Integration', type: :request do
   include GraphQLHelper
   include JsonHelper
 
-  let!(:room) { create(:room) }
-  let!(:truman) { create(:user, name: 'truman') }
-  let!(:dan) { create(:user, name: 'dan') }
-  let!(:sean) { create(:user, name: 'sean') }
+  let!(:team) { create(:team) }
+  let!(:room) { create(:room, team: team) }
+  let!(:truman) { create(:user, name: 'truman', teams: [team]) }
+  let!(:dan) { create(:user, name: 'dan', teams: [team]) }
+  let!(:sean) { create(:user, name: 'sean', teams: [team]) }
 
   it 'Allows three users to share a meaningful experience together' do
     Sidekiq::Testing.inline! do
