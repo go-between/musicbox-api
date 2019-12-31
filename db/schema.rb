@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_191_231_014_000) do
+ActiveRecord::Schema.define(version: 20_191_231_014_524) do
   # These are extensions that must be enabled in order to support this database
   enable_extension 'pgcrypto'
   enable_extension 'plpgsql'
@@ -77,6 +77,7 @@ ActiveRecord::Schema.define(version: 20_191_231_014_000) do
     t.datetime 'updated_at', null: false
     t.uuid 'current_record_id'
     t.uuid 'user_rotation', default: [], array: true
+    t.uuid 'team_id'
   end
 
   create_table 'songs', id: :uuid, default: -> { 'gen_random_uuid()' }, force: :cascade do |t|
