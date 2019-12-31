@@ -12,10 +12,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_191_231_020_447) do
+ActiveRecord::Schema.define(version: 20_191_231_155_941) do
   # These are extensions that must be enabled in order to support this database
   enable_extension 'pgcrypto'
   enable_extension 'plpgsql'
+
+  create_table 'invitations', id: :uuid, default: -> { 'gen_random_uuid()' }, force: :cascade do |t|
+    t.string 'email'
+    t.uuid 'token'
+    t.uuid 'invited_by_id'
+    t.uuid 'team_id'
+    t.datetime 'created_at', precision: 6, null: false
+    t.datetime 'updated_at', precision: 6, null: false
+    t.index ['token'], name: 'index_invitations_on_token'
+  end
 
   create_table 'oauth_access_grants', id: :uuid, default: -> { 'gen_random_uuid()' }, force: :cascade do |t|
     t.uuid 'resource_owner_id', null: false
