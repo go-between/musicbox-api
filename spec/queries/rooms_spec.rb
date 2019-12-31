@@ -28,7 +28,7 @@ RSpec.describe 'Rooms Query', type: :request do
       user = create(:user, teams: [team], active_team: team)
 
       graphql_request(
-        body: { query: query },
+        query: query,
         user: user
       )
 
@@ -43,7 +43,7 @@ RSpec.describe 'Rooms Query', type: :request do
       user = create(:user, teams: [team], active_team: nil)
 
       graphql_request(
-        body: { query: query },
+        query: query,
         user: user
       )
 
