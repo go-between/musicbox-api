@@ -2,21 +2,21 @@
 
 module Mutations
   class OrderRoomPlaylistRecords < Mutations::BaseMutation
-    argument :room_id, ID, required: true
     argument :ordered_records, [Types::OrderedRoomPlaylistRecord], required: true
 
     field :errors, [String], null: true
 
-    def resolve(room_id:, ordered_records:)
-      room = Room.find(room_id)
+    def resolve(ordered_records:)
+      room = Room.find(context[:current_user].active_room_id)
+
       ensure_user_in_rotation!(room)
 
       @errors = []
 
-      records = initialize_records!(room_id, ordered_records)
+      records = initialize_records!(room.id, ordered_records)
       records.each_with_index { |r, i| r.update!(order: i) }
 
-      BroadcastPlaylistWorker.perform_async(room_id)
+      BroadcastPlaylistWorker.perform_async(room.id)
       {
         errors: @errors
       }

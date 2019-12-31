@@ -25,11 +25,28 @@ RSpec.describe User, type: :model do
       expect(user.reload.songs).to match_array([song1, song2, song2])
     end
 
-    it 'may belong to a room' do
+    it 'may belong to one active room' do
       room = create(:room)
-      user.update!(room: room)
+      user.update!(active_room: room)
 
-      expect(user.room).to eq(room)
+      expect(user.active_room).to eq(room)
+    end
+
+    it 'may belong to one active team' do
+      team = create(:team)
+      user.update!(active_team: team)
+
+      expect(user.active_team).to eq(team)
+    end
+
+    it 'may be part of many teams' do
+      team1 = create(:team)
+      team2 = create(:team)
+
+      user.teams << team1
+      user.teams << team2
+
+      expect(user.reload.teams).to match_array([team1, team2])
     end
   end
 end

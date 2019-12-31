@@ -8,10 +8,11 @@ RSpec.describe 'Requests Integration', type: :request do
   include GraphQLHelper
   include JsonHelper
 
-  let!(:room) { create(:room) }
-  let!(:truman) { create(:user, name: 'truman') }
-  let!(:dan) { create(:user, name: 'dan') }
-  let!(:sean) { create(:user, name: 'sean') }
+  let!(:team) { create(:team) }
+  let!(:room) { create(:room, team: team) }
+  let!(:truman) { create(:user, name: 'truman', teams: [team]) }
+  let!(:dan) { create(:user, name: 'dan', teams: [team]) }
+  let!(:sean) { create(:user, name: 'sean', teams: [team]) }
 
   it 'Allows three users to share a meaningful experience together' do
     Sidekiq::Testing.inline! do
@@ -102,7 +103,7 @@ RSpec.describe 'Requests Integration', type: :request do
 
         authed_post(
           url: '/api/v1/graphql',
-          body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+          body: { query: order_room_playlist_records_mutation(records: records) },
           user: dan
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
@@ -127,7 +128,7 @@ RSpec.describe 'Requests Integration', type: :request do
 
         authed_post(
           url: '/api/v1/graphql',
-          body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+          body: { query: order_room_playlist_records_mutation(records: records) },
           user: dan
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
@@ -150,7 +151,7 @@ RSpec.describe 'Requests Integration', type: :request do
 
         authed_post(
           url: '/api/v1/graphql',
-          body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+          body: { query: order_room_playlist_records_mutation(records: records) },
           user: truman
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
@@ -178,7 +179,7 @@ RSpec.describe 'Requests Integration', type: :request do
 
         authed_post(
           url: '/api/v1/graphql',
-          body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+          body: { query: order_room_playlist_records_mutation(records: records) },
           user: sean
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
@@ -209,7 +210,7 @@ RSpec.describe 'Requests Integration', type: :request do
 
         authed_post(
           url: '/api/v1/graphql',
-          body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+          body: { query: order_room_playlist_records_mutation(records: records) },
           user: sean
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
@@ -239,7 +240,7 @@ RSpec.describe 'Requests Integration', type: :request do
 
         authed_post(
           url: '/api/v1/graphql',
-          body: { query: order_room_playlist_records_mutation(room_id: room.id, records: records) },
+          body: { query: order_room_playlist_records_mutation(records: records) },
           user: truman
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
