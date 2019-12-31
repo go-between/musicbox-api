@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_190_929_003_240) do
+ActiveRecord::Schema.define(version: 20_191_231_013_211) do
   # These are extensions that must be enabled in order to support this database
   enable_extension 'pgcrypto'
   enable_extension 'plpgsql'
@@ -107,10 +107,10 @@ ActiveRecord::Schema.define(version: 20_190_929_003_240) do
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
     t.string 'name'
-    t.uuid 'room_id'
+    t.uuid 'active_room_id'
+    t.index ['active_room_id'], name: 'index_users_on_active_room_id'
     t.index ['email'], name: 'index_users_on_email', unique: true
     t.index ['reset_password_token'], name: 'index_users_on_reset_password_token', unique: true
-    t.index ['room_id'], name: 'index_users_on_room_id'
   end
 
   add_foreign_key 'oauth_access_grants', 'oauth_applications', column: 'application_id'
