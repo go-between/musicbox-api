@@ -13,4 +13,12 @@ RSpec.describe Invitation, type: :model do
       expect(invitation.team).to eq(team)
     end
   end
+
+  describe '#self.token' do
+    it 'delegates to a secure random generator' do
+      expect(SecureRandom).to receive(:uuid).and_return('fbb586a9-b798-4a31-a634-66d28a661375')
+      token = described_class.token
+      expect(token).to eq('fbb586a9-b798-4a31-a634-66d28a661375')
+    end
+  end
 end
