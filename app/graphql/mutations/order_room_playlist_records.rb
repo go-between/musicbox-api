@@ -2,12 +2,11 @@
 
 module Mutations
   class OrderRoomPlaylistRecords < Mutations::BaseMutation
-    argument :room_id, ID, required: true
     argument :ordered_records, [Types::OrderedRoomPlaylistRecord], required: true
 
     field :errors, [String], null: true
 
-    def resolve(room_id:, ordered_records:)
+    def resolve(ordered_records:)
       room = Room.find(room_id)
       ensure_user_in_rotation!(room)
 

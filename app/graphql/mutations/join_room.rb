@@ -16,7 +16,7 @@ module Mutations
         }
       end
 
-      context[:current_user].update!(room_id: room_id)
+      context[:current_user].update!(active_room_id: room_id)
       BroadcastUsersWorker.perform_async(room.id)
 
       {
