@@ -23,7 +23,7 @@ RSpec.describe 'Rooms Query', type: :request do
   describe 'query' do
     it "returns a list of rooms for the user's active team" do
       other_team = create(:team)
-      other_room = create(:room, team: other_team)
+      create(:room, team: other_team)
 
       user = create(:user, teams: [team], active_team: team)
 
@@ -38,7 +38,7 @@ RSpec.describe 'Rooms Query', type: :request do
 
     it 'does not return rooms when user has no active team' do
       other_team = create(:team)
-      other_room = create(:room, team: other_team)
+      create(:room, team: other_team)
 
       user = create(:user, teams: [team], active_team: nil)
 

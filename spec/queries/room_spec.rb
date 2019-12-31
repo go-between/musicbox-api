@@ -35,7 +35,7 @@ RSpec.describe 'Room Query', type: :request do
     end
 
     it 'does not return details of a room that the user may not view' do
-      user1 = create(:user, teams: [team], active_room: room)
+      create(:user, teams: [team], active_room: room)
       other_team = create(:team)
       user2 = create(:user, teams: [other_team])
 
