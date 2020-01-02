@@ -26,6 +26,7 @@ module Mutations
     def ensure_complete_invite!(invite)
       invite.token = Invitation.token if invite.token.blank?
       invite.inviting_user = current_user if invite.inviting_user.blank?
+      invite.invitation_state = :pending unless invite.accepted?
     end
   end
 end

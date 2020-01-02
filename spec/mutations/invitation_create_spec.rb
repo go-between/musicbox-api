@@ -37,6 +37,7 @@ RSpec.describe 'Invitation Create', type: :request do
       expect(invitation.inviting_user).to eq(current_user)
       expect(invitation.team).to eq(current_user.active_team)
       expect(invitation.token).to eq('fbb586a9-b798-4a31-a634-66d28a661375')
+      expect(invitation).to be_pending
     end
 
     it 'allows a new invitation for a different team' do
@@ -61,6 +62,7 @@ RSpec.describe 'Invitation Create', type: :request do
       expect(other_invitation.email).to eq('an-invited-user@atdot.com')
       expect(other_invitation.team).to eq(team)
       expect(other_invitation.inviting_user).to eq(current_user)
+      expect(other_invitation).to be_pending
     end
 
     it 'does not create a new invitation when one exists for a team' do
@@ -90,6 +92,28 @@ RSpec.describe 'Invitation Create', type: :request do
       expect(invitation.email).to eq('an-invited-user@atdot.com')
       expect(invitation.team).to eq(team)
       expect(invitation.inviting_user).to eq(current_user)
+      expect(invitation).to be_pending
+    end
+
+    it 'does not reset state when previously accepted' do
+      team = create(:team)
+      current_user.update!(active_team: team)
+      invitation = Invitation.create!(
+        email: 'an-invited-user@atdot.com',
+        team: team,
+        token: 'fbb586a9-b798-4a31-a634-66d28a661375',
+        inviting_user: current_user,
+        invitation_state: :accepted
+      )
+
+      expect(Invitation).to_not receive(:token)
+      graphql_request(
+        query: query(email: 'an-invited-user@atdot.com'),
+        user: current_user
+      )
+
+      invitation.reload
+      expect(invitation).to be_accepted
     end
   end
 
