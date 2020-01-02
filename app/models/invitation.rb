@@ -7,4 +7,9 @@ class Invitation < ApplicationRecord
   def self.token
     SecureRandom.uuid
   end
+
+  enum invitation_state: {
+    pending: 'pending',
+    accepted: 'accepted'
+  }
 end
