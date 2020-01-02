@@ -27,7 +27,7 @@ RSpec.describe 'Room Query', type: :request do
       user2 = create(:user, teams: [team], active_room: room)
 
       graphql_request(
-        body: { query: query(room_id: room.id) },
+        query: query(room_id: room.id),
         user: user1
       )
       active_user_ids = json_body.dig(:data, :room, :users).map { |u| u[:id] }
@@ -40,7 +40,7 @@ RSpec.describe 'Room Query', type: :request do
       user2 = create(:user, teams: [other_team])
 
       graphql_request(
-        body: { query: query(room_id: room.id) },
+        query: query(room_id: room.id),
         user: user2
       )
       expect(json_body.dig(:data, :room)).to be_nil
