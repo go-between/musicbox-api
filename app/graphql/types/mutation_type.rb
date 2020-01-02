@@ -7,6 +7,7 @@ module Types
     field :delete_room_playlist_record, mutation: Mutations::DeleteRoomPlaylistRecord
     field :delete_user_library_record, mutation: Mutations::DeleteUserLibraryRecord
 
+    field :invitation_accept, mutation: Mutations::InvitationAccept
     field :invitation_create, mutation: Mutations::InvitationCreate
 
     field :join_room, mutation: Mutations::JoinRoom

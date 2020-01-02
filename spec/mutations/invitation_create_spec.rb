@@ -106,7 +106,7 @@ RSpec.describe 'Invitation Create', type: :request do
         invitation_state: :accepted
       )
 
-      expect(Invitation).to_not receive(:token)
+      expect(Invitation).not_to receive(:token)
       graphql_request(
         query: query(email: 'an-invited-user@atdot.com'),
         user: current_user
