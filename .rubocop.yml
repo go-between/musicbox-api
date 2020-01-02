@@ -63,6 +63,7 @@ AllCops:
     - 'vendor/**/*'
     - '.git/**/*'
     - 'db/migrate/*'
+    - 'db/schema.rb'
 
   # Default formatter will be used if no `-f/--format` option is given.
   DefaultFormatter: progress
