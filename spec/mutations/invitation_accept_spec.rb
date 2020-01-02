@@ -45,9 +45,9 @@ RSpec.describe 'Invitation Create', type: :request do
         name: 'Blorg Blargaborg'
       )
 
-      graphql_request(
-        query: query,
-        user: inviting_user
+      post(
+        '/api/v1/graphql',
+        params: { query: query }
       )
 
       invitation.reload
@@ -73,9 +73,9 @@ RSpec.describe 'Invitation Create', type: :request do
       )
 
       expect do
-        graphql_request(
-          query: query,
-          user: inviting_user
+        post(
+          '/api/v1/graphql',
+          params: { query: query }
         )
       end.not_to change(User, :count)
 
@@ -94,9 +94,9 @@ RSpec.describe 'Invitation Create', type: :request do
       )
 
       expect do
-        graphql_request(
-          query: query,
-          user: inviting_user
+        post(
+          '/api/v1/graphql',
+          params: { query: query }
         )
       end.not_to change(User, :count)
 
@@ -115,9 +115,9 @@ RSpec.describe 'Invitation Create', type: :request do
       )
 
       expect do
-        graphql_request(
-          query: query,
-          user: inviting_user
+        post(
+          '/api/v1/graphql',
+          params: { query: query }
         )
       end.not_to change(User, :count)
 
@@ -137,9 +137,9 @@ RSpec.describe 'Invitation Create', type: :request do
       )
 
       expect do
-        graphql_request(
-          query: query,
-          user: inviting_user
+        post(
+          '/api/v1/graphql',
+          params: { query: query }
         )
       end.not_to change(User, :count)
 
@@ -161,9 +161,9 @@ RSpec.describe 'Invitation Create', type: :request do
       )
 
       expect do
-        graphql_request(
-          query: query,
-          user: inviting_user
+        post(
+          '/api/v1/graphql',
+          params: { query: query }
         )
       end.not_to change(User, :count)
 
@@ -186,9 +186,9 @@ RSpec.describe 'Invitation Create', type: :request do
       )
 
       expect do
-        graphql_request(
-          query: query,
-          user: inviting_user
+        post(
+          '/api/v1/graphql',
+          params: { query: query }
         )
       end.not_to change(User, :count)
 
