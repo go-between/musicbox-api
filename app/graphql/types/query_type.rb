@@ -10,7 +10,7 @@ module Types
 
     def room(id:)
       rooms = Room.where(id: id)
-      rooms = rooms.where(team: context[:current_user].teams) if context[:current_user].present?
+      rooms = rooms.where(team: current_user.teams) if current_user.present?
       rooms.first
     end
 
@@ -18,7 +18,7 @@ module Types
     end
 
     def rooms
-      Room.where(team: context[:current_user].active_team)
+      Room.where(team: current_user.active_team)
     end
 
     field :room_playlist, [Types::RoomPlaylistRecordType], null: true do
@@ -41,7 +41,20 @@ module Types
     end
 
     def songs
-      context[:current_user].songs
+      current_user.songs
+    end
+
+    field :user, Types::UserType, null: false do
+    end
+
+    def user
+      current_user
+    end
+
+    private
+
+    def current_user
+      context[:current_user]
     end
   end
 end
