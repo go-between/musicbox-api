@@ -10,6 +10,8 @@ module Types
     field :invitation_accept, mutation: Mutations::InvitationAccept
     field :invitation_create, mutation: Mutations::InvitationCreate
 
+    field :team_activate, mutation: Mutations::TeamActivate
+
     field :join_room, mutation: Mutations::JoinRoom
     field :order_room_playlist_records, mutation: Mutations::OrderRoomPlaylistRecords
   end
