@@ -20,7 +20,7 @@ RSpec.describe 'Requests Integration', type: :request do
       expect do
         authed_post(
           url: '/api/v1/graphql',
-          body: { query: join_room_mutation(room_id: room.id) },
+          body: { query: room_activate_mutation(room_id: room.id) },
           user: truman
         )
       end.to(broadcast_to(UsersChannel.broadcasting_for(room)).with do |data|
@@ -37,7 +37,7 @@ RSpec.describe 'Requests Integration', type: :request do
       expect do
         authed_post(
           url: '/api/v1/graphql',
-          body: { query: join_room_mutation(room_id: room.id) },
+          body: { query: room_activate_mutation(room_id: room.id) },
           user: dan
         )
       end.to(broadcast_to(UsersChannel.broadcasting_for(room)).with do |data|
@@ -54,7 +54,7 @@ RSpec.describe 'Requests Integration', type: :request do
       expect do
         authed_post(
           url: '/api/v1/graphql',
-          body: { query: join_room_mutation(room_id: room.id) },
+          body: { query: room_activate_mutation(room_id: room.id) },
           user: sean
         )
       end.to(broadcast_to(UsersChannel.broadcasting_for(room)).with do |data|

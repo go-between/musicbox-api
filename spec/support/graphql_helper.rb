@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 module GraphQLHelper
-  def join_room_mutation(room_id:)
+  def room_activate_mutation(room_id:)
     %(
       mutation {
-        joinRoom(input:{
+        roomActivate(input:{
           roomId: "#{room_id}"
         }) {
           room {

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Join Room', type: :request do
+RSpec.describe 'Room Activate', type: :request do
   include AuthHelper
   include GraphQLHelper
   include JsonHelper
@@ -16,10 +16,11 @@ RSpec.describe 'Join Room', type: :request do
 
       authed_post(
         url: '/api/v1/graphql',
-        body: { query: join_room_mutation(room_id: room.id) },
+        body: { query: room_activate_mutation(room_id: room.id) },
         user: current_user
       )
-      data = json_body.dig(:data, :joinRoom)
+
+      data = json_body.dig(:data, :roomActivate)
 
       expect(data.dig(:room, :id)).to eq(room.id)
       expect(data[:errors]).to be_empty
@@ -32,7 +33,7 @@ RSpec.describe 'Join Room', type: :request do
       expect(BroadcastUsersWorker).to receive(:perform_async).with(room.id)
       authed_post(
         url: '/api/v1/graphql',
-        body: { query: join_room_mutation(room_id: room.id) },
+        body: { query: room_activate_mutation(room_id: room.id) },
         user: current_user
       )
     end
@@ -43,10 +44,10 @@ RSpec.describe 'Join Room', type: :request do
       current_user.update!(active_room: nil)
       authed_post(
         url: '/api/v1/graphql',
-        body: { query: join_room_mutation(room_id: SecureRandom.uuid) },
+        body: { query: room_activate_mutation(room_id: SecureRandom.uuid) },
         user: current_user
       )
-      data = json_body.dig(:data, :joinRoom)
+      data = json_body.dig(:data, :roomActivate)
 
       expect(data[:errors]).not_to be_empty
       expect(current_user.reload.active_room).to be_nil
@@ -58,10 +59,10 @@ RSpec.describe 'Join Room', type: :request do
 
       authed_post(
         url: '/api/v1/graphql',
-        body: { query: join_room_mutation(room_id: room.id) },
+        body: { query: room_activate_mutation(room_id: room.id) },
         user: current_user
       )
-      data = json_body.dig(:data, :joinRoom)
+      data = json_body.dig(:data, :roomActivate)
 
       expect(data[:errors]).not_to be_empty
       expect(current_user.reload.active_room).to be_nil
