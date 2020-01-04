@@ -24,9 +24,8 @@ RSpec.describe 'Delete Room Playlist Record', type: :request do
     it 'deletes a room playlist record belonging to the user' do
       record = create(:room_playlist_record, user: current_user)
 
-      authed_post(
-        url: '/api/v1/graphql',
-        body: { query: query(id: record.id) },
+      graphql_request(
+        query: query(id: record.id),
         user: current_user
       )
       data = json_body.dig(:data, :deleteRoomPlaylistRecord)
@@ -40,9 +39,8 @@ RSpec.describe 'Delete Room Playlist Record', type: :request do
       record = create(:room_playlist_record, room: room, user: current_user)
 
       expect(BroadcastPlaylistWorker).to receive(:perform_async).with(room.id)
-      authed_post(
-        url: '/api/v1/graphql',
-        body: { query: query(id: record.id) },
+      graphql_request(
+        query: query(id: record.id),
         user: current_user
       )
     end
@@ -52,9 +50,8 @@ RSpec.describe 'Delete Room Playlist Record', type: :request do
     it 'does not delete a playlist record belonging to another user' do
       record = create(:room_playlist_record, user: create(:user))
 
-      authed_post(
-        url: '/api/v1/graphql',
-        body: { query: query(id: record.id) },
+      graphql_request(
+        query: query(id: record.id),
         user: current_user
       )
       data = json_body.dig(:data, :deleteRoomPlaylistRecord)

@@ -14,9 +14,8 @@ RSpec.describe 'Room Activate', type: :request do
     it 'adds the user to the room' do
       room = create(:room, team: team)
 
-      authed_post(
-        url: '/api/v1/graphql',
-        body: { query: room_activate_mutation(room_id: room.id) },
+      graphql_request(
+        query: room_activate_mutation(room_id: room.id),
         user: current_user
       )
 
@@ -31,9 +30,8 @@ RSpec.describe 'Room Activate', type: :request do
       room = create(:room, team: team)
 
       expect(BroadcastUsersWorker).to receive(:perform_async).with(room.id)
-      authed_post(
-        url: '/api/v1/graphql',
-        body: { query: room_activate_mutation(room_id: room.id) },
+      graphql_request(
+        query: room_activate_mutation(room_id: room.id),
         user: current_user
       )
     end
@@ -42,9 +40,8 @@ RSpec.describe 'Room Activate', type: :request do
   describe 'error' do
     it 'does not allow a user to join a nonexistant room' do
       current_user.update!(active_room: nil)
-      authed_post(
-        url: '/api/v1/graphql',
-        body: { query: room_activate_mutation(room_id: SecureRandom.uuid) },
+      graphql_request(
+        query: room_activate_mutation(room_id: SecureRandom.uuid),
         user: current_user
       )
       data = json_body.dig(:data, :roomActivate)
@@ -57,9 +54,8 @@ RSpec.describe 'Room Activate', type: :request do
       other_team = create(:team)
       room = create(:room, team: other_team)
 
-      authed_post(
-        url: '/api/v1/graphql',
-        body: { query: room_activate_mutation(room_id: room.id) },
+      graphql_request(
+        query: room_activate_mutation(room_id: room.id),
         user: current_user
       )
       data = json_body.dig(:data, :roomActivate)
