@@ -99,7 +99,7 @@ RSpec.describe 'Requests Integration', type: :request do
         ]
 
         graphql_request(
-          query: order_room_playlist_records_mutation(records: records),
+          query: room_playlist_records_reorder_mutation(records: records),
           user: dan
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
@@ -123,7 +123,7 @@ RSpec.describe 'Requests Integration', type: :request do
         ]
 
         graphql_request(
-          query: order_room_playlist_records_mutation(records: records),
+          query: room_playlist_records_reorder_mutation(records: records),
           user: dan
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
@@ -145,7 +145,7 @@ RSpec.describe 'Requests Integration', type: :request do
         ]
 
         graphql_request(
-          query: order_room_playlist_records_mutation(records: records),
+          query: room_playlist_records_reorder_mutation(records: records),
           user: truman
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
@@ -172,7 +172,7 @@ RSpec.describe 'Requests Integration', type: :request do
         ]
 
         graphql_request(
-          query: order_room_playlist_records_mutation(records: records),
+          query: room_playlist_records_reorder_mutation(records: records),
           user: sean
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
@@ -202,7 +202,7 @@ RSpec.describe 'Requests Integration', type: :request do
         ]
 
         graphql_request(
-          query: order_room_playlist_records_mutation(records: records),
+          query: room_playlist_records_reorder_mutation(records: records),
           user: sean
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
@@ -231,7 +231,7 @@ RSpec.describe 'Requests Integration', type: :request do
         ]
 
         graphql_request(
-          query: order_room_playlist_records_mutation(records: records),
+          query: room_playlist_records_reorder_mutation(records: records),
           user: truman
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|

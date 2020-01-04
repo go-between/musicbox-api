@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Create Song', type: :request do
+RSpec.describe 'Room Playlist Records Reorder', type: :request do
   include AuthHelper
   include GraphQLHelper
   include JsonHelper
@@ -20,7 +20,7 @@ RSpec.describe 'Create Song', type: :request do
         { song_id: record1.song_id, room_playlist_record_id: record1.id }
       ]
       graphql_request(
-        query: order_room_playlist_records_mutation(records: records),
+        query: room_playlist_records_reorder_mutation(records: records),
         user: current_user
       )
 
@@ -39,7 +39,7 @@ RSpec.describe 'Create Song', type: :request do
         { song_id: song2.id }
       ]
       graphql_request(
-        query: order_room_playlist_records_mutation(records: records),
+        query: room_playlist_records_reorder_mutation(records: records),
         user: current_user
       )
 
@@ -59,7 +59,7 @@ RSpec.describe 'Create Song', type: :request do
 
       records = [{ song_id: song.id }]
       graphql_request(
-        query: order_room_playlist_records_mutation(records: records),
+        query: room_playlist_records_reorder_mutation(records: records),
         user: current_user
       )
 
@@ -75,7 +75,7 @@ RSpec.describe 'Create Song', type: :request do
 
       records = [{ song_id: song.id }]
       graphql_request(
-        query: order_room_playlist_records_mutation(records: records),
+        query: room_playlist_records_reorder_mutation(records: records),
         user: current_user
       )
 
@@ -91,7 +91,7 @@ RSpec.describe 'Create Song', type: :request do
 
       records = [{ song_id: song.id }]
       graphql_request(
-        query: order_room_playlist_records_mutation(records: records),
+        query: room_playlist_records_reorder_mutation(records: records),
         user: current_user
       )
 
@@ -116,11 +116,11 @@ RSpec.describe 'Create Song', type: :request do
         { song_id: song.id }
       ]
       graphql_request(
-        query: order_room_playlist_records_mutation(records: records),
+        query: room_playlist_records_reorder_mutation(records: records),
         user: current_user
       )
 
-      data = json_body.dig(:data, :orderRoomPlaylistRecords)
+      data = json_body.dig(:data, :roomPlaylistRecordsReorder)
       expect(data[:errors].size).to eq(2)
       expect(data[:errors]).to match_array([include(nonexistant_song_id), include(other_record.id)])
 

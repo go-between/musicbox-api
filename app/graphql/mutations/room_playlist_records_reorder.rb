@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
 module Mutations
-  class OrderRoomPlaylistRecords < Mutations::BaseMutation
-    argument :ordered_records, [Types::OrderedRoomPlaylistRecord], required: true
+  class RoomPlaylistRecordsReorder < Mutations::BaseMutation
+    class OrderedPlaylistRecordInputObject < Types::BaseInputObject
+      argument :room_playlist_record_id, ID, required: false
+      argument :song_id, ID, required: true
+    end
+
+    argument :ordered_records, [OrderedPlaylistRecordInputObject], required: true
 
     field :errors, [String], null: true
 

@@ -2,14 +2,14 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Delete Room Playlist Record', type: :request do
+RSpec.describe 'Room Playlist Record Delete', type: :request do
   include AuthHelper
   include JsonHelper
 
   def query(id:)
     %(
       mutation {
-        deleteRoomPlaylistRecord(input:{
+        roomPlaylistRecordDelete(input:{
           id: "#{id}"
         }) {
           errors
@@ -28,7 +28,7 @@ RSpec.describe 'Delete Room Playlist Record', type: :request do
         query: query(id: record.id),
         user: current_user
       )
-      data = json_body.dig(:data, :deleteRoomPlaylistRecord)
+      data = json_body.dig(:data, :roomPlaylistRecordDelete)
 
       expect(data[:errors]).to be_empty
       expect(RoomPlaylistRecord.find_by(id: record.id)).not_to be_present
@@ -54,7 +54,7 @@ RSpec.describe 'Delete Room Playlist Record', type: :request do
         query: query(id: record.id),
         user: current_user
       )
-      data = json_body.dig(:data, :deleteRoomPlaylistRecord)
+      data = json_body.dig(:data, :roomPlaylistRecordDelete)
 
       expect(data[:errors]).not_to be_empty
       expect(RoomPlaylistRecord.find_by(id: record.id)).to be_present

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Mutations
-  class CreateSong < Mutations::BaseMutation
+  class SongCreate < Mutations::BaseMutation
     argument :youtube_id, ID, required: true
 
     field :song, Types::SongType, null: true
