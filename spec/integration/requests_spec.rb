@@ -18,9 +18,8 @@ RSpec.describe 'Requests Integration', type: :request do
     Sidekiq::Testing.inline! do
       # Everybody joins the room
       expect do
-        authed_post(
-          url: '/api/v1/graphql',
-          body: { query: join_room_mutation(room_id: room.id) },
+        graphql_request(
+          query: room_activate_mutation(room_id: room.id),
           user: truman
         )
       end.to(broadcast_to(UsersChannel.broadcasting_for(room)).with do |data|
@@ -35,9 +34,8 @@ RSpec.describe 'Requests Integration', type: :request do
       end)
 
       expect do
-        authed_post(
-          url: '/api/v1/graphql',
-          body: { query: join_room_mutation(room_id: room.id) },
+        graphql_request(
+          query: room_activate_mutation(room_id: room.id),
           user: dan
         )
       end.to(broadcast_to(UsersChannel.broadcasting_for(room)).with do |data|
@@ -52,9 +50,8 @@ RSpec.describe 'Requests Integration', type: :request do
       end)
 
       expect do
-        authed_post(
-          url: '/api/v1/graphql',
-          body: { query: join_room_mutation(room_id: room.id) },
+        graphql_request(
+          query: room_activate_mutation(room_id: room.id),
           user: sean
         )
       end.to(broadcast_to(UsersChannel.broadcasting_for(room)).with do |data|
@@ -101,9 +98,8 @@ RSpec.describe 'Requests Integration', type: :request do
           { song_id: unicorn.id }
         ]
 
-        authed_post(
-          url: '/api/v1/graphql',
-          body: { query: order_room_playlist_records_mutation(records: records) },
+        graphql_request(
+          query: room_playlist_records_reorder_mutation(records: records),
           user: dan
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
@@ -126,9 +122,8 @@ RSpec.describe 'Requests Integration', type: :request do
           { song_id: midnight_city.id }
         ]
 
-        authed_post(
-          url: '/api/v1/graphql',
-          body: { query: order_room_playlist_records_mutation(records: records) },
+        graphql_request(
+          query: room_playlist_records_reorder_mutation(records: records),
           user: dan
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
@@ -149,9 +144,8 @@ RSpec.describe 'Requests Integration', type: :request do
           { song_id: star_fighter.id }
         ]
 
-        authed_post(
-          url: '/api/v1/graphql',
-          body: { query: order_room_playlist_records_mutation(records: records) },
+        graphql_request(
+          query: room_playlist_records_reorder_mutation(records: records),
           user: truman
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
@@ -177,9 +171,8 @@ RSpec.describe 'Requests Integration', type: :request do
           { song_id: dont_move.id }
         ]
 
-        authed_post(
-          url: '/api/v1/graphql',
-          body: { query: order_room_playlist_records_mutation(records: records) },
+        graphql_request(
+          query: room_playlist_records_reorder_mutation(records: records),
           user: sean
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
@@ -208,9 +201,8 @@ RSpec.describe 'Requests Integration', type: :request do
           { song_id: unicorn.id }
         ]
 
-        authed_post(
-          url: '/api/v1/graphql',
-          body: { query: order_room_playlist_records_mutation(records: records) },
+        graphql_request(
+          query: room_playlist_records_reorder_mutation(records: records),
           user: sean
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
@@ -238,9 +230,8 @@ RSpec.describe 'Requests Integration', type: :request do
           { song_id: star_fighter.id, room_playlist_record_id: truman_starfighter_id }
         ]
 
-        authed_post(
-          url: '/api/v1/graphql',
-          body: { query: order_room_playlist_records_mutation(records: records) },
+        graphql_request(
+          query: room_playlist_records_reorder_mutation(records: records),
           user: truman
         )
       end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
@@ -262,9 +253,8 @@ RSpec.describe 'Requests Integration', type: :request do
       end)
 
       # A request for the room's playlist returns the correct order
-      authed_post(
-        url: '/api/v1/graphql',
-        body: { query: room_playlist_query(room_id: room.id) },
+      graphql_request(
+        query: room_playlist_query(room_id: room.id),
         user: truman
       )
 

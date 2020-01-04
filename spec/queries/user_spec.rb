@@ -36,7 +36,7 @@ RSpec.describe 'Room Query', type: :request do
       user = create(:user, name: 'flooper', teams: [team, other_team], active_room: room, active_team: team)
 
       graphql_request(
-        query: query(room_id: room.id),
+        query: query,
         user: user
       )
 

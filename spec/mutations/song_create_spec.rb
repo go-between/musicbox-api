@@ -2,14 +2,14 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Create Song', type: :request do
+RSpec.describe 'Song Create', type: :request do
   include AuthHelper
   include JsonHelper
 
   def query(youtube_id:)
     %(
       mutation {
-        createSong(input:{
+        songCreate(input:{
           youtubeId: "#{youtube_id}"
         }) {
           song {
@@ -40,7 +40,7 @@ RSpec.describe 'Create Song', type: :request do
           },
           user: current_user
         )
-        data = json_body.dig(:data, :createSong)
+        data = json_body.dig(:data, :songCreate)
         id = data.dig(:song, :id)
 
         song = Song.find(id)
@@ -68,7 +68,7 @@ RSpec.describe 'Create Song', type: :request do
           )
         end.not_to change(Song, :count)
 
-        data = json_body.dig(:data, :createSong)
+        data = json_body.dig(:data, :songCreate)
         id = data.dig(:song, :id)
 
         expect(song.id).to eq(id)
@@ -91,7 +91,7 @@ RSpec.describe 'Create Song', type: :request do
           )
         end.to not_change(Song, :count).and(not_change(UserLibraryRecord, :count))
 
-        data = json_body.dig(:data, :createSong)
+        data = json_body.dig(:data, :songCreate)
         id = data.dig(:song, :id)
 
         expect(song.id).to eq(id)
@@ -113,7 +113,7 @@ RSpec.describe 'Create Song', type: :request do
         )
       end.not_to change(Song, :count)
 
-      data = json_body.dig(:data, :createSong)
+      data = json_body.dig(:data, :songCreate)
 
       expect(data[:song]).to be_nil
       expect(data[:errors]).to match_array([include("Youtube can't be blank")])

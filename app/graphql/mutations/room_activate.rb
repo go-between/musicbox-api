@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Mutations
-  class JoinRoom < Mutations::BaseMutation
+  class RoomActivate < Mutations::BaseMutation
     argument :room_id, ID, required: true
 
     field :room, Types::RoomType, null: true
