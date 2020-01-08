@@ -2,13 +2,8 @@
 
 class UsersChannel < ApplicationCable::Channel
   def subscribed
-    room = Room.find(params[:room_id])
-    stream_for room
-  end
+    return reject if current_user.active_room.blank?
 
-  def unsubscribed
-    room_id = current_user.room_id
-    current_user.update!(room: nil)
-    BroadcastUsersWorker.perform_async(room_id)
+    stream_for current_user.active_room
   end
 end
