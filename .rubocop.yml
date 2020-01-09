@@ -149,7 +149,7 @@ Bundler/GemComment:
     - '**/*.gemfile'
     - '**/Gemfile'
     - '**/gems.rb'
-  Whitelist: []
+  IgnoredGems: []
 
 Bundler/InsecureProtocolSource:
   Description: >-
@@ -222,7 +222,7 @@ Layout/AccessModifierIndentation:
   # But it can be overridden by setting this parameter
   IndentationWidth: ~
 
-Layout/AlignArguments:
+Layout/ArgumentAlignment:
   Description: >-
                  Align the arguments of a method call if they span more
                  than one line.
@@ -250,7 +250,7 @@ Layout/AlignArguments:
   # But it can be overridden by setting this parameter
   IndentationWidth: ~
 
-Layout/AlignArray:
+Layout/ArrayAlignment:
   Description: >-
                  Align the elements of an array literal if they span more than
                  one line.
@@ -258,7 +258,7 @@ Layout/AlignArray:
   Enabled: true
   VersionAdded: '0.49'
 
-Layout/AlignHash:
+Layout/HashAlignment:
   Description: >-
                  Align the elements of a hash literal if they span more than
                  one line.
@@ -335,7 +335,7 @@ Layout/AlignHash:
     - ignore_implicit
     - ignore_explicit
 
-Layout/AlignParameters:
+Layout/ParameterAlignment:
   Description: >-
                  Align the parameters of a method definition if they span more
                  than one line.
@@ -664,7 +664,7 @@ Layout/HeredocArgumentClosingParenthesis:
   StyleGuide: '#heredoc-argument-closing-parentheses'
   VersionAdded: '0.68'
 
-Layout/IndentAssignment:
+Layout/AssignmentIndentation:
   Description: >-
                  Checks the indentation of the first line of the
                  right-hand-side of a multi-line assignment.
@@ -674,7 +674,7 @@ Layout/IndentAssignment:
   # But it can be overridden by setting this parameter
   IndentationWidth: ~
 
-Layout/IndentFirstArgument:
+Layout/FirstArgumentIndentation:
   Description: 'Checks the indentation of the first argument in a method call.'
   Enabled: true
   VersionAdded: '0.68'
@@ -698,7 +698,7 @@ Layout/IndentFirstArgument:
   # But it can be overridden by setting this parameter
   IndentationWidth: ~
 
-Layout/IndentFirstArrayElement:
+Layout/FirstArrayElementIndentation:
   Description: >-
                  Checks the indentation of the first element in an array
                  literal.
@@ -724,7 +724,7 @@ Layout/IndentFirstArrayElement:
   # But it can be overridden by setting this parameter
   IndentationWidth: ~
 
-Layout/IndentFirstHashElement:
+Layout/FirstHashElementIndentation:
   Description: 'Checks the indentation of the first key in a hash literal.'
   Enabled: true
   VersionAdded: '0.68'
@@ -748,7 +748,7 @@ Layout/IndentFirstHashElement:
   # But it can be overridden by setting this parameter
   IndentationWidth: ~
 
-Layout/IndentFirstParameter:
+Layout/FirstParameterIndentation:
   Description: >-
                  Checks the indentation of the first parameter in a
                  method definition.
@@ -763,7 +763,7 @@ Layout/IndentFirstParameter:
   # But it can be overridden by setting this parameter
   IndentationWidth: ~
 
-Layout/IndentHeredoc:
+Layout/HeredocIndentation:
   Description: 'This cop checks the indentation of the here document bodies.'
   StyleGuide: '#squiggly-heredocs'
   Enabled: true
@@ -810,7 +810,7 @@ Layout/InitialIndentation:
   Enabled: true
   VersionAdded: '0.49'
 
-Layout/LeadingBlankLines:
+Layout/LeadingEmptyLines:
   Description: Check for unnecessary blank lines at the beginning of a file.
   Enabled: true
   VersionAdded: '0.57'
@@ -1206,7 +1206,7 @@ Layout/Tab:
   # replace each tab.
   IndentationWidth: ~
 
-Layout/TrailingBlankLines:
+Layout/TrailingEmptyLines:
   Description: 'Checks trailing blank lines and final newline.'
   StyleGuide: '#newline-eof'
   Enabled: true
@@ -1299,7 +1299,7 @@ Lint/DuplicateMethods:
   Enabled: true
   VersionAdded: '0.29'
 
-Lint/DuplicatedKey:
+Lint/DuplicateHashKey:
   Description: 'Check for duplicate keys in hash literals.'
   Enabled: true
   VersionAdded: '0.34'
@@ -1371,7 +1371,7 @@ Lint/FormatParameterMismatch:
   Enabled: true
   VersionAdded: '0.33'
 
-Lint/HandleExceptions:
+Lint/SuppressedException:
   Description: "Don't suppress exception."
   StyleGuide: '#dont-hide-exceptions'
   Enabled: true
@@ -1448,7 +1448,7 @@ Lint/MissingCopEnableDirective:
   # .inf for any size
   MaximumRangeSize: .inf
 
-Lint/MultipleCompare:
+Lint/MultipleComparison:
   Description: "Use `&&` operator to compare multiple value."
   Enabled: true
   VersionAdded: '0.47'
@@ -1562,7 +1562,7 @@ Lint/SafeNavigationChain:
   Enabled: true
   VersionAdded: '0.47'
   VersionChanged: '0.56'
-  Whitelist:
+  AllowedMethods:
     - present?
     - blank?
     - presence
@@ -1576,7 +1576,7 @@ Lint/SafeNavigationConsistency:
                  for all method calls on that same object.
   Enabled: true
   VersionAdded: '0.55'
-  Whitelist:
+  AllowedMethods:
     - present?
     - blank?
     - presence
@@ -1616,7 +1616,7 @@ Lint/ShadowingOuterLocalVariable:
   Enabled: true
   VersionAdded: '0.9'
 
-Lint/StringConversionInInterpolation:
+Lint/RedundantStringCoercion:
   Description: 'Checks for Object#to_s usage in string interpolation.'
   StyleGuide: '#no-to-s'
   Enabled: true
@@ -1644,7 +1644,7 @@ Lint/UnifiedInteger:
   Enabled: true
   VersionAdded: '0.43'
 
-Lint/UnneededCopDisableDirective:
+Lint/RedundantCopDisableDirective:
   Description: >-
                  Checks for rubocop:disable comments that can be removed.
                  Note: this cop is not disabled when disabling all cops.
@@ -1652,20 +1652,19 @@ Lint/UnneededCopDisableDirective:
   Enabled: true
   VersionAdded: '0.53'
 
-Lint/UnneededCopEnableDirective:
+Lint/RedundantCopEnableDirective:
   Description: Checks for rubocop:enable comments that can be removed.
   Enabled: true
   VersionAdded: '0.53'
 
-Lint/UnneededRequireStatement:
+Lint/RedundantRequireStatement:
   Description: 'Checks for unnecessary `require` statement.'
   Enabled: true
   VersionAdded: '0.51'
 
-Lint/UnneededSplatExpansion:
+Lint/RedundantSplatExpansion:
   Description: 'Checks for splat unnecessarily being called on literals.'
   Enabled: true
-  VersionAdded: '0.43'
   VersionChanged: '0.74'
 
 Lint/UnreachableCode:
@@ -1799,7 +1798,7 @@ Metrics/CyclomaticComplexity:
   VersionAdded: '0.25'
   Max: 6
 
-Metrics/LineLength:
+Layout/LineLength:
   Description: 'Limit lines to 80 characters.'
   StyleGuide: '#80-character-limits'
   Enabled: true
@@ -1970,7 +1969,7 @@ Naming/HeredocDelimiterNaming:
   StyleGuide: '#heredoc-delimiters'
   Enabled: true
   VersionAdded: '0.50'
-  Blacklist:
+  ForbiddenDelimiters:
     - !ruby/regexp '/(^|\s)(EO[A-Z]{1}|END)(\s|$)/'
 
 Naming/MemoizedInstanceVariableName:
@@ -2007,13 +2006,13 @@ Naming/PredicateName:
     - has_
     - have_
   # Predicate name prefixes that should be removed.
-  NamePrefixBlacklist:
+  ForbiddenPrefixes:
     - is_
     - has_
     - have_
   # Predicate names which, despite having a blacklisted prefix, or no `?`,
   # should still be accepted
-  NameWhitelist:
+  AllowedMethods:
     - is_a?
   # Method definition macros for dynamically generated methods.
   MethodDefinitionMacros:
@@ -2031,7 +2030,7 @@ Naming/RescuedExceptionsVariableName:
   VersionChanged: '0.68'
   PreferredName: e
 
-Naming/UncommunicativeBlockParamName:
+Naming/BlockParameterName:
   Description: >-
                 Checks for block parameter names that contain capital letters,
                 end in numbers, or do not meet a minimal length.
@@ -2045,7 +2044,7 @@ Naming/UncommunicativeBlockParamName:
   # Blacklisted names that will register an offense
   ForbiddenNames: []
 
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   Description: >-
                 Checks for method parameter names that contain capital letters,
                 end in numbers, or do not meet a minimal length.
@@ -2865,7 +2864,7 @@ Style/IpAddresses:
   Enabled: false
   VersionAdded: '0.58'
   # Allow strings to be whitelisted
-  Whitelist:
+  AllowedAddresses:
     - "::"
     # :: is a valid IPv6 address, but could potentially be legitimately in code
 
@@ -3138,7 +3137,7 @@ Style/NestedParenthesizedCalls:
   Enabled: true
   VersionAdded: '0.36'
   VersionChanged: '0.50'
-  Whitelist:
+  AllowedMethods:
     - be
     - be_a
     - be_an
@@ -3491,7 +3490,7 @@ Style/SafeNavigation:
   # Safe navigation may cause a statement to start returning `nil` in addition
   # to whatever it used to return.
   ConvertCodeThatCanStartToReturnNil: false
-  Whitelist:
+  AllowedMethods:
     - present?
     - blank?
     - presence
@@ -3788,7 +3787,7 @@ Style/TrivialAccessors:
   # Commonly used in DSLs
   AllowDSLWriters: false
   IgnoreClassMethods: false
-  Whitelist:
+  AllowedMethods:
     - to_ary
     - to_a
     - to_c
@@ -3815,29 +3814,28 @@ Style/UnlessElse:
   Enabled: true
   VersionAdded: '0.9'
 
-Style/UnneededCapitalW:
+Style/RedundantCapitalW:
   Description: 'Checks for %W when interpolation is not needed.'
   Enabled: true
   VersionAdded: '0.21'
-  VersionChanged: '0.24'
 
-Style/UnneededCondition:
+Style/RedundantCondition:
   Description: 'Checks for unnecessary conditional expressions.'
   Enabled: true
   VersionAdded: '0.57'
 
-Style/UnneededInterpolation:
+Style/RedundantInterpolation:
   Description: 'Checks for strings that are just an interpolated expression.'
   Enabled: true
   VersionAdded: '0.36'
 
-Style/UnneededPercentQ:
+Style/RedundantPercentQ:
   Description: 'Checks for %q/%Q when single quotes or double quotes would do.'
   StyleGuide: '#percent-q'
   Enabled: true
   VersionAdded: '0.24'
 
-Style/UnneededSort:
+Style/RedundantSort:
   Description: >-
                   Use `min` instead of `sort.first`,
                   `max_by` instead of `sort_by...last`, etc.
