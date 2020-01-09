@@ -14,11 +14,7 @@ def system!(*args)
 end
 
 def dc_run!(service, cmd)
-  if PRODLIKE
-    system! "docker-compose -f docker-compose.yml -f docker-compose.prodlike.yml run --rm #{service} bash -c '#{cmd}'"
-  else
-    system! "docker-compose run --rm #{service} bash -c '#{cmd}'"
-  end
+  system! "docker-compose run --rm #{service} bash -c '#{cmd}'"
 end
 
 chdir APP_ROOT do
@@ -33,9 +29,10 @@ chdir APP_ROOT do
   puts "== Building images ==\n"
   system! 'docker-compose build'
 
-  puts "== Preparing Core and Rule Databases ==\n"
+  puts "== Preparing the Database ==\n"
   dc_run! 'app', 'bin/wait-for-it.sh db:5432 -- bin/rake db:create'
   dc_run! 'app', 'bin/wait-for-it.sh db:5432 -- bin/rake db:migrate db:test:prepare'
+  dc_run! 'app', 'bin/wait-for-it.sh db:5432 -- bin/rake db:seed'
 
   puts "== Shutting down containers ==\n"
   system! 'docker-compose stop'
