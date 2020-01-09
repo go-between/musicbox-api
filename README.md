@@ -32,6 +32,7 @@ Note that setting up the services with `bin/setup` will create the appropriate d
 
 - [http://localhost:3000/graphiql](http://localhost:3000/graphiql)
   - The GraphQL graphical query interface.  Allows you to perform arbitrary queries and see results.
+  - **NOTE:** Many queries/mutations execute within the context of the current authenticated user.  The [graphiql initialize](config/initializers/graphiql.rb) assumes that the seed script has been run and will attempt to use the user identified by the email **a@a.a**.  If this user does not exist, you'll probably get a bunch of errors on the graphiql page.
 - [http://localhost:3000/workers](http://localhost:3000/workers)
   - The Sidekiq dashboard where you can see your background workers while away the hours while waiting on work to do.
 
