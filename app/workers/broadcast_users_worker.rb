@@ -15,7 +15,11 @@ class BroadcastUsersWorker
     %(
       query($id: ID!) {
         room(id: $id) {
-          users { id, email }
+          users {
+            id
+            name
+            email
+          }
         }
       }
     )
