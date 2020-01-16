@@ -40,6 +40,23 @@ RSpec.describe "Room Create", type: :request do
       expect(room.name).to eq("Rush Fans")
       expect(data[:errors]).to be_blank
     end
+
+    it 'creates new room belonging to the current users active team' do
+      team = Team.create!(owner: current_user)
+      current_user.update!(active_team: team)
+      authed_post(
+        url: '/api/v1/graphql',
+        body: {
+          query: query(name: 'Rush Fans')
+        },
+        user: current_user
+      )
+      data = json_body.dig(:data, :roomCreate)
+      id = data.dig(:room, :id)
+
+      room = Room.find(id)
+      expect(room.team).to eq(team)
+    end
   end
 
   context "when missing required attributes" do

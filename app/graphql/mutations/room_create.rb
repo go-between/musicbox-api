@@ -18,11 +18,18 @@ module Mutations
       end
 
       room.save!
+      set_room_team_to_current_user_active_team!(room)
 
       {
         room: room,
         errors: []
       }
+    end
+
+    private
+
+    def set_room_team_to_current_user_active_team!(room)
+      room.update!(team: context[:current_user].active_team)
     end
   end
 end
