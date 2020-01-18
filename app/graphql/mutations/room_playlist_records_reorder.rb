@@ -9,6 +9,7 @@ module Mutations
 
     argument :ordered_records, [OrderedPlaylistRecordInputObject], required: true
 
+    field :room_playlist_records, [Types::RoomPlaylistRecordType], null: true
     field :errors, [String], null: true
 
     def resolve(ordered_records:)
@@ -22,7 +23,9 @@ module Mutations
       records.each_with_index { |r, i| r.update!(order: i) }
 
       BroadcastPlaylistWorker.perform_async(room.id)
+
       {
+        room_playlist_records: records,
         errors: @errors
       }
     end
