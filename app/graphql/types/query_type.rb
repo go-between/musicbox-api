@@ -29,6 +29,17 @@ module Types
       RoomPlaylist.new(room_id).generate_playlist
     end
 
+    field :room_playlist_for_user, [Types::RoomPlaylistRecordType], null: true do
+      argument :historical, Boolean, required: true
+    end
+
+    def room_playlist_for_user(historical:)
+      records = current_user.room_playlist_records.where(room_id: current_user.active_room_id)
+      return records.played.order(played_at: :desc) if historical
+
+      records.waiting.order(:order)
+    end
+
     field :song, Types::SongType, null: true do
       argument :id, ID, required: true
     end
