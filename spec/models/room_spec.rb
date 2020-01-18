@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Room, type: :model do
-  let(:room) { described_class.create!(team: create(:team)) }
+  let(:room) { described_class.create!(name: 'Rush Fans', team: create(:team)) }
 
   describe 'relationships' do
     it 'has many playlist records' do
