@@ -15,7 +15,7 @@ module AuthHelper
   end
 
   def graphql_request(query:, headers: {}, user: create(:user))
-    post('/api/v1/graphql', params: { query: query }, headers: headers.merge(auth_headers(user)))
+    post("/api/v1/graphql", params: { query: query }, headers: headers.merge(auth_headers(user)))
   end
 
   def authed_post(url:, body:, headers: {}, user:)

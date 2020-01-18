@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe 'User Library Record Delete', type: :request do
+RSpec.describe "User Library Record Delete", type: :request do
   include AuthHelper
   include JsonHelper
 
@@ -20,8 +20,8 @@ RSpec.describe 'User Library Record Delete', type: :request do
 
   let(:current_user) { create(:user) }
 
-  describe 'success' do
-    it 'deletes a room playlist record belonging to the user' do
+  describe "success" do
+    it "deletes a room playlist record belonging to the user" do
       record = create(:user_library_record, user: current_user)
 
       graphql_request(
@@ -35,8 +35,8 @@ RSpec.describe 'User Library Record Delete', type: :request do
     end
   end
 
-  describe 'error' do
-    it 'does not delete a playlist record belonging to another user' do
+  describe "error" do
+    it "does not delete a playlist record belonging to another user" do
       record = create(:user_library_record, user: create(:user))
 
       graphql_request(

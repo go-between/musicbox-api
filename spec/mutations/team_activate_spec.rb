@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe 'Team Activate', type: :request do
+RSpec.describe "Team Activate", type: :request do
   include AuthHelper
   include JsonHelper
 
@@ -21,8 +21,8 @@ RSpec.describe 'Team Activate', type: :request do
   let(:team) { create(:team) }
   let(:current_user) { create(:user, teams: [team]) }
 
-  describe 'success' do
-    it 'updates the active team for the user' do
+  describe "success" do
+    it "updates the active team for the user" do
       current_user.update!(active_team: nil)
 
       graphql_request(
@@ -45,8 +45,8 @@ RSpec.describe 'Team Activate', type: :request do
     end
   end
 
-  describe 'error' do
-    it 'does not allow a user to activate a team they are not on' do
+  describe "error" do
+    it "does not allow a user to activate a team they are not on" do
       not_their_team = create(:team)
       graphql_request(
         query: query(team_id: not_their_team.id),

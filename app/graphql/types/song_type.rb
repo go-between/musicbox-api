@@ -2,7 +2,7 @@
 
 module Types
   class SongType < Types::BaseObject
-    graphql_name 'Song'
+    graphql_name "Song"
 
     field :id, ID, null: false
     field :description, String, null: true

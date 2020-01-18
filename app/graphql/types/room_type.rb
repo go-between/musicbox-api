@@ -2,7 +2,7 @@
 
 module Types
   class RoomType < Types::BaseObject
-    graphql_name 'Room'
+    graphql_name "Room"
 
     field :current_record, Types::RoomPlaylistRecordType, null: true
     field :current_song, Types::SongType, null: true

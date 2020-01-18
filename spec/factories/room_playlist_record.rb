@@ -6,6 +6,6 @@ FactoryBot.define do
     song
     user
     order { 1 }
-    play_state { 'waiting' }
+    play_state { "waiting" }
   end
 end

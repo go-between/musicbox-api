@@ -12,16 +12,16 @@ module Mutations
 
       unless room.valid?
         return {
-                 room: nil,
-                 errors: room.errors.full_messages,
-               }
+          room: nil,
+          errors: room.errors.full_messages
+        }
       end
 
       room.save!
 
       {
         room: room,
-        errors: [],
+        errors: []
       }
     end
   end

@@ -11,7 +11,7 @@ class RoomPlaylist
     return [] if user_rotation.blank?
 
     ordered_waiting_songs = []
-    waiting_songs = RoomPlaylistRecord.where(room_id: room_id, play_state: 'waiting')
+    waiting_songs = RoomPlaylistRecord.where(room_id: room_id, play_state: "waiting")
 
     waiting_user_rotation.each_with_index do |user_id, idx|
       user_waiting_songs = waiting_songs.where(user_id: user_id).order(:order)

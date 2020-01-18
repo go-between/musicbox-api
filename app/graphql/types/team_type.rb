@@ -2,7 +2,7 @@
 
 module Types
   class TeamType < Types::BaseObject
-    graphql_name 'Team'
+    graphql_name "Team"
 
     field :id, ID, null: false
     field :name, String, null: true

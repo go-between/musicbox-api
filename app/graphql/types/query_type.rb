@@ -2,7 +2,7 @@
 
 module Types
   class QueryType < Types::BaseObject
-    graphql_name 'Query'
+    graphql_name "Query"
 
     field :room, Types::RoomType, null: true do
       argument :id, ID, required: true

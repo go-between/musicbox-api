@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe 'Room Playlist Records Reorder', type: :request do
+RSpec.describe "Room Playlist Records Reorder", type: :request do
   include AuthHelper
   include GraphQLHelper
   include JsonHelper
@@ -10,8 +10,8 @@ RSpec.describe 'Room Playlist Records Reorder', type: :request do
   let(:room) { create(:room) }
   let(:current_user) { create(:user, active_room_id: room.id) }
 
-  describe 'song ordering' do
-    it 'reorders existing songs' do
+  describe "song ordering" do
+    it "reorders existing songs" do
       record1 = create(:room_playlist_record, room: room, order: 0, user: current_user)
       record2 = create(:room_playlist_record, room: room, order: 1, user: current_user)
 
@@ -28,7 +28,7 @@ RSpec.describe 'Room Playlist Records Reorder', type: :request do
       expect(record2.reload.order).to eq(0)
     end
 
-    it 'places new songs in order' do
+    it "places new songs in order" do
       record = create(:room_playlist_record, room: room, order: 0, user: current_user)
       song1 = create(:song)
       song2 = create(:song)
@@ -51,10 +51,10 @@ RSpec.describe 'Room Playlist Records Reorder', type: :request do
     end
   end
 
-  describe 'user rotation' do
+  describe "user rotation" do
     let(:song) { create(:song) }
 
-    it 'places the user in the song rotation when the rotation is empty' do
+    it "places the user in the song rotation when the rotation is empty" do
       room.update!(user_rotation: [])
 
       records = [{ song_id: song.id }]
@@ -69,7 +69,7 @@ RSpec.describe 'Room Playlist Records Reorder', type: :request do
       expect(room.reload.user_rotation).to eq([current_user.id])
     end
 
-    it 'places the user at the end of an existing song rotation' do
+    it "places the user at the end of an existing song rotation" do
       existing_user_id = SecureRandom.uuid
       room.update!(user_rotation: [existing_user_id])
 
@@ -85,7 +85,7 @@ RSpec.describe 'Room Playlist Records Reorder', type: :request do
       expect(room.reload.user_rotation).to eq([existing_user_id, current_user.id])
     end
 
-    it 'does not re-add the user if they are already in the song rotation' do
+    it "does not re-add the user if they are already in the song rotation" do
       existing_user_id = SecureRandom.uuid
       room.update!(user_rotation: [current_user.id, existing_user_id])
 
@@ -102,8 +102,8 @@ RSpec.describe 'Room Playlist Records Reorder', type: :request do
     end
   end
 
-  describe 'errors' do
-    it 'ignores songs that can not be ordered' do
+  describe "errors" do
+    it "ignores songs that can not be ordered" do
       own_record = create(:room_playlist_record, room: room, order: 0, user: current_user)
       song = create(:song)
       user = create(:user)

@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 RSpec.describe BroadcastNowPlayingWorker, type: :worker do
   let(:played_at) { Time.zone.now }
   let(:song) { create(:song) }
   let(:room) { create(:room) }
   let(:worker) { described_class.new }
 
-  describe '#perform' do
-    it 'broadcasts the current song and its start time' do
+  describe "#perform" do
+    it "broadcasts the current song and its start time" do
       record = create(:room_playlist_record, room: room, song: song, play_state: :played, played_at: played_at)
       room.update!(current_record: record)
 

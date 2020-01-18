@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe 'Room Query', type: :request do
+RSpec.describe "Room Query", type: :request do
   include AuthHelper
   include JsonHelper
 
@@ -31,9 +31,9 @@ RSpec.describe 'Room Query', type: :request do
   let(:other_team) { create(:team) }
   let(:room) { create(:room, team: team) }
 
-  describe 'query' do
-    it 'returns the details of the current user' do
-      user = create(:user, name: 'flooper', teams: [team, other_team], active_room: room, active_team: team)
+  describe "query" do
+    it "returns the details of the current user" do
+      user = create(:user, name: "flooper", teams: [team, other_team], active_room: room, active_team: team)
 
       graphql_request(
         query: query,

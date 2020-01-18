@@ -3602,9 +3602,8 @@ Style/StringLiterals:
   Enabled: true
   VersionAdded: '0.9'
   VersionChanged: '0.36'
-  EnforcedStyle: single_quotes
+  EnforcedStyle: double_quotes
   SupportedStyles:
-    - single_quotes
     - double_quotes
   # If `true`, strings which span multiple lines using `\` for continuation must
   # use the same type of quotes on each line.
