@@ -7,7 +7,6 @@ include FileUtils # rubocop:disable Style/MixinUsage
 
 # path to your application root.
 APP_ROOT = Pathname.new File.expand_path('..', __dir__)
-PRODLIKE = ENV['PRODLIKE'] == 'true'
 
 def system!(*args)
   system(*args) || abort("\n== Command #{args} failed ==")
