@@ -2,7 +2,7 @@
 
 class BroadcastUsersWorker
   include Sidekiq::Worker
-  sidekiq_options queue: 'websocket_broadcast'
+  sidekiq_options queue: "websocket_broadcast"
 
   def perform(room_id)
     queue = MusicboxApiSchema.execute(query: query, variables: { id: room_id })

@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :team do
-    name { 'Fine Musical Folks' }
+    name { "Fine Musical Folks" }
     owner { create(:user) }
   end
 end

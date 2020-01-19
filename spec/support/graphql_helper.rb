@@ -18,10 +18,10 @@ module GraphQLHelper
 
   def room_playlist_records_reorder_mutation(records:)
     input = records.map do |record|
-      str = '{ '
+      str = "{ "
       str += "songId: \"#{record[:song_id]}\""
       str += ", roomPlaylistRecordId: \"#{record[:room_playlist_record_id]}\""
-      str + ' }'
+      str + " }"
     end
 
     %(

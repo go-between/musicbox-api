@@ -2,7 +2,7 @@
 
 module Types
   class RoomPlaylistRecordType < Types::BaseObject
-    graphql_name 'RoomPlaylistRecord'
+    graphql_name "RoomPlaylistRecord"
 
     field :id, ID, null: false
     field :order, Int, null: false

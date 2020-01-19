@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe 'Room Create', type: :request do
+RSpec.describe "Room Create", type: :request do
   include AuthHelper
   include JsonHelper
 
@@ -24,12 +24,12 @@ RSpec.describe 'Room Create', type: :request do
 
   let(:current_user) { create(:user) }
 
-  describe '#create' do
-    it 'creates room' do
+  describe "#create" do
+    it "creates room" do
       authed_post(
-        url: '/api/v1/graphql',
+        url: "/api/v1/graphql",
         body: {
-          query: query(name: 'Rush Fans')
+          query: query(name: "Rush Fans")
         },
         user: current_user
       )
@@ -37,16 +37,16 @@ RSpec.describe 'Room Create', type: :request do
       id = data.dig(:room, :id)
 
       room = Room.find(id)
-      expect(room.name).to eq('Rush Fans')
+      expect(room.name).to eq("Rush Fans")
       expect(data[:errors]).to be_blank
     end
   end
 
-  context 'when missing required attributes' do
-    it 'fails to persist when name is not specified' do
+  context "when missing required attributes" do
+    it "fails to persist when name is not specified" do
       expect do
         authed_post(
-          url: '/api/v1/graphql',
+          url: "/api/v1/graphql",
           body: {
             query: query(name: nil)
           },

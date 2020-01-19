@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe UserLibraryRecord, type: :model do
-  describe 'relationships' do
-    it 'can belong to a song and user' do
+  describe "relationships" do
+    it "can belong to a song and user" do
       song = create(:song)
       user = create(:user)
 

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe 'Rooms Query', type: :request do
+RSpec.describe "Rooms Query", type: :request do
   include AuthHelper
   include JsonHelper
 
@@ -20,7 +20,7 @@ RSpec.describe 'Rooms Query', type: :request do
   let!(:room) { create(:room, team: team) }
   let!(:room2) { create(:room, team: team) }
 
-  describe 'query' do
+  describe "query" do
     it "returns a list of rooms for the user's active team" do
       other_team = create(:team)
       create(:room, team: other_team)
@@ -36,7 +36,7 @@ RSpec.describe 'Rooms Query', type: :request do
       expect(room_ids).to match_array([room.id, room2.id])
     end
 
-    it 'does not return rooms when user has no active team' do
+    it "does not return rooms when user has no active team" do
       other_team = create(:team)
       create(:room, team: other_team)
 

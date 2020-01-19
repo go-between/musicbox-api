@@ -2,7 +2,7 @@
 
 class QueueManagementWorker
   include Sidekiq::Worker
-  sidekiq_options queue: 'queue_management'
+  sidekiq_options queue: "queue_management"
 
   def perform(room_id) # rubocop:disable Metrics/AbcSize
     playlist = RoomPlaylist.new(room_id).generate_playlist
@@ -10,7 +10,7 @@ class QueueManagementWorker
     next_record = playlist[0]
     return empty_queue!(room_id) if next_record.blank?
 
-    next_record.update!(play_state: 'played', played_at: Time.zone.now)
+    next_record.update!(play_state: "played", played_at: Time.zone.now)
 
     Room.find(room_id).update!(current_record: next_record)
 

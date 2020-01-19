@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe 'Room Activate', type: :request do
+RSpec.describe "Room Activate", type: :request do
   include AuthHelper
   include GraphQLHelper
   include JsonHelper
@@ -10,8 +10,8 @@ RSpec.describe 'Room Activate', type: :request do
   let(:team) { create(:team) }
   let(:current_user) { create(:user, teams: [team]) }
 
-  describe 'success' do
-    it 'adds the user to the room' do
+  describe "success" do
+    it "adds the user to the room" do
       room = create(:room, team: team)
 
       graphql_request(
@@ -26,7 +26,7 @@ RSpec.describe 'Room Activate', type: :request do
       expect(current_user.reload.active_room).to eq(room)
     end
 
-    it 'enqueues a broadcast room worker' do
+    it "enqueues a broadcast room worker" do
       room = create(:room, team: team)
 
       expect(BroadcastUsersWorker).to receive(:perform_async).with(room.id)
@@ -37,8 +37,8 @@ RSpec.describe 'Room Activate', type: :request do
     end
   end
 
-  describe 'error' do
-    it 'does not allow a user to join a nonexistant room' do
+  describe "error" do
+    it "does not allow a user to join a nonexistant room" do
       current_user.update!(active_room: nil)
       graphql_request(
         query: room_activate_mutation(room_id: SecureRandom.uuid),
@@ -50,7 +50,7 @@ RSpec.describe 'Room Activate', type: :request do
       expect(current_user.reload.active_room).to be_nil
     end
 
-    it 'does not allow a user to join a room from another team' do
+    it "does not allow a user to join a room from another team" do
       other_team = create(:team)
       room = create(:room, team: other_team)
 

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 RSpec.describe BroadcastUsersWorker, type: :worker do
   let(:played_at) { Time.zone.now }
   let(:room) { create(:room) }
   let(:worker) { described_class.new }
 
-  describe '#perform' do
-    it 'broadcasts a list of users in the room' do
+  describe "#perform" do
+    it "broadcasts a list of users in the room" do
       user1 = create(:user, active_room: room)
       user2 = create(:user, active_room: room)
 

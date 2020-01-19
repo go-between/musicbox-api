@@ -6,7 +6,7 @@ module Mutations
     field :errors, [String], null: true
 
     def resolve(email:)
-      return { errors: ['Must be on an active team'] } unless current_user.active_team.present?
+      return { errors: ["Must be on an active team"] } unless current_user.active_team.present?
 
       invite = Invitation.find_or_initialize_by(
         email: email,
