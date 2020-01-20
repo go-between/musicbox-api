@@ -17,13 +17,17 @@ We use Docker to run the api and its constituent services, but we still need rub
 1.  Make sure that docker is running
 2.  Ensure that the appropriate ruby version is installed
     > rbenv install
-3.  Install gems
+3.  You may need to update your version of bundler
+    > gem update bundler
+4.  You may need to install postgresql
+    > brew install postgresql
+5.  Install gems
     > bin/bundle install
-4.  Copy the env template (Replace any ENV vars that need replacing.)
+6.  Copy the env template (Replace any ENV vars that need replacing.)
     > cp .env.template .env
-5.  Setup the services
+7.  Setup the services
     > bin/setup
-6.  Bring everything up (in the background)
+8.  Bring everything up (in the background)
     > docker-compose up -d
 
 Note that setting up the services with `bin/setup` will create the appropriate databases, run migrations, and execute a small seed data task.  Now the API should be available!
