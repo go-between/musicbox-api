@@ -6,7 +6,7 @@ class BroadcastPlaylistWorker
 
   def perform(room_id)
     queue = MusicboxApiSchema.execute(query: query, variables: { roomId: room_id })
-    QueuesChannel.broadcast_to(Room.find(room_id), queue.to_h)
+    RoomPlaylistChannel.broadcast_to(Room.find(room_id), queue.to_h)
   end
 
   private
