@@ -102,7 +102,7 @@ RSpec.describe "Requests Integration", type: :request do
           query: room_playlist_records_reorder_mutation(records: records),
           user: dan
         )
-      end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
+      end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
         songs = data.dig("data", "roomPlaylist")
         expect(songs.size).to eq(1)
 
@@ -126,7 +126,7 @@ RSpec.describe "Requests Integration", type: :request do
           query: room_playlist_records_reorder_mutation(records: records),
           user: dan
         )
-      end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
+      end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
         songs = data.dig("data", "roomPlaylist")
         expect(songs.size).to eq(2)
 
@@ -148,7 +148,7 @@ RSpec.describe "Requests Integration", type: :request do
           query: room_playlist_records_reorder_mutation(records: records),
           user: truman
         )
-      end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
+      end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
         songs = data.dig("data", "roomPlaylist")
         expect(songs.size).to eq(3)
         expect(songs.first["id"]).to eq(dan_unicorn_id)
@@ -175,7 +175,7 @@ RSpec.describe "Requests Integration", type: :request do
           query: room_playlist_records_reorder_mutation(records: records),
           user: sean
         )
-      end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
+      end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
         songs = data.dig("data", "roomPlaylist")
         expect(songs.size).to eq(4)
 
@@ -205,7 +205,7 @@ RSpec.describe "Requests Integration", type: :request do
           query: room_playlist_records_reorder_mutation(records: records),
           user: sean
         )
-      end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
+      end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
         songs = data.dig("data", "roomPlaylist")
         expect(songs.size).to eq(5)
 
@@ -234,7 +234,7 @@ RSpec.describe "Requests Integration", type: :request do
           query: room_playlist_records_reorder_mutation(records: records),
           user: truman
         )
-      end.to(broadcast_to(QueuesChannel.broadcasting_for(room)).with do |data|
+      end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
         songs = data.dig("data", "roomPlaylist")
         expect(songs.size).to eq(6)
 

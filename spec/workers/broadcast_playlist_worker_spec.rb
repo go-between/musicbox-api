@@ -51,7 +51,7 @@ RSpec.describe BroadcastPlaylistWorker, type: :worker do
 
       expect do
         worker.perform(room.id)
-      end.to(have_broadcasted_to(room).from_channel(QueuesChannel).with do |msg|
+      end.to(have_broadcasted_to(room).from_channel(RoomPlaylistChannel).with do |msg|
         songs = msg.dig(:data, :roomPlaylist)
 
         expect(songs.dig(0, :id)).to eq(user1_record1.id)
