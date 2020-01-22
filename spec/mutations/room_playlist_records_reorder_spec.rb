@@ -11,7 +11,7 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
   let(:current_user) { create(:user, active_room_id: room.id) }
 
   describe "song ordering" do
-    it "reorders existing songs" do
+    it "reorders existing records" do
       record1 = create(:room_playlist_record, room: room, order: 0, user: current_user)
       record2 = create(:room_playlist_record, room: room, order: 1, user: current_user)
 
@@ -28,7 +28,34 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
       expect(record2.reload.order).to eq(0)
     end
 
-    it "places new songs in order" do
+    it "removes records that are not present in a new ordering for this user and room" do
+      record1 = create(:room_playlist_record, room: room, order: 0, user: current_user)
+      record2 = create(:room_playlist_record, room: room, order: 1, user: current_user)
+      record3 = create(:room_playlist_record, room: room, order: 2, user: current_user)
+      other_room_record = create(:room_playlist_record, room: create(:room), order: 2, user: current_user)
+      other_user_record = create(:room_playlist_record, room: room, order: 2, user: create(:user))
+      played_record = create(:room_playlist_record, room: room, order: 2, user: current_user, play_state: :played)
+
+      record2_id = record2.id
+
+      records = [
+        { song_id: record3.song_id, room_playlist_record_id: record3.id },
+        { song_id: record1.song_id, room_playlist_record_id: record1.id }
+      ]
+      graphql_request(
+        query: room_playlist_records_reorder_mutation(records: records),
+        user: current_user
+      )
+
+      expect(RoomPlaylistRecord.exists?(id: record2_id)).to eq(false)
+      expect(record3.reload.order).to eq(0)
+      expect(record1.reload.order).to eq(1)
+      expect(other_room_record.reload).to be_persisted
+      expect(other_user_record.reload).to be_persisted
+      expect(played_record.reload).to be_persisted
+    end
+
+    it "places new records in order" do
       record = create(:room_playlist_record, room: room, order: 0, user: current_user)
       song1 = create(:song)
       song2 = create(:song)
@@ -103,7 +130,7 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
   end
 
   describe "errors" do
-    it "ignores songs that can not be ordered" do
+    it "ignores records that can not be ordered" do
       own_record = create(:room_playlist_record, room: room, order: 0, user: current_user)
       song = create(:song)
       user = create(:user)
