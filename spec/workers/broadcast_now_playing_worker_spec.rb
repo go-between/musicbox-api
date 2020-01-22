@@ -15,8 +15,8 @@ RSpec.describe BroadcastNowPlayingWorker, type: :worker do
       expect do
         worker.perform(room.id)
       end.to(have_broadcasted_to(room).from_channel(NowPlayingChannel).with do |msg|
-        current_song_id = msg.dig(:data, :room, :currentSong, :id)
-        expect(current_song_id).to eq(song.id)
+        current_song_name = msg.dig(:data, :room, :currentRecord, :song, :name)
+        expect(current_song_name).to eq(song.name)
 
         record_start = msg.dig(:data, :room, :currentRecord, :playedAt)
         expect(record_start).to eq(played_at.iso8601)
