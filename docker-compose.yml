@@ -27,4 +27,4 @@ services:
     environment:
       <<: *app-environment
       DB_POOL: 1
-      SIDEKIQ_CONCURRENCY: 1
+      SIDEKIQ_CONCURRENCY: 5
