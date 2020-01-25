@@ -7,7 +7,7 @@ module Mutations
     field :errors, [String], null: true
 
     def resolve(id:)
-      record = UserLibraryRecord.find_by(id: id, user: context[:current_user])
+      record = UserLibraryRecord.find_by(song_id: id, user: context[:current_user])
       return { errors: ["Can't find song to delete"] } if record.blank?
 
       record.destroy!
