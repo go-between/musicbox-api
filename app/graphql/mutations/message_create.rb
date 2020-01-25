@@ -15,8 +15,11 @@ module Mutations
         }
       end
 
+      new_message = create_message!(message)
+      BroadcastMessageWorker.perform_async(current_user.active_room_id, new_message.id)
+
       {
-        message: create_message!(message),
+        message: new_message,
         errors: []
       }
     end

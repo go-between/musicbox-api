@@ -35,6 +35,13 @@ RSpec.describe "Invitation Create", type: :request do
       expect(message.room).to eq(room)
       expect(message.user).to eq(current_user)
     end
+
+    it "enqueues a broadcast" do
+      graphql_request(query: query, variables: { message: "Heyo" }, user: current_user)
+      id = json_body.dig(:data, :messageCreate, :message, :id)
+
+      expect(BroadcastMessageWorker).to have_enqueued_sidekiq_job(room.id, id)
+    end
   end
 
   describe "failure" do

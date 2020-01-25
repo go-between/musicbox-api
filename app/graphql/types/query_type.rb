@@ -4,6 +4,14 @@ module Types
   class QueryType < Types::BaseObject
     graphql_name "Query"
 
+    field :message, Types::MessageType, null: false do
+      argument :id, ID, required: true
+    end
+
+    def message(id:)
+      Message.find(id)
+    end
+
     field :messages, [Types::MessageType], null: false do
       argument :from, Types::DateTimeType, required: false
       argument :to, Types::DateTimeType, required: false
