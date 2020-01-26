@@ -14,8 +14,8 @@ module AuthHelper
     @_token[user] = Doorkeeper::AccessToken.create!(resource_owner_id: user.id)
   end
 
-  def graphql_request(query:, headers: {}, user: create(:user))
-    post("/api/v1/graphql", params: { query: query }, headers: headers.merge(auth_headers(user)))
+  def graphql_request(query:, variables: {}, headers: {}, user: create(:user))
+    post("/api/v1/graphql", params: { query: query, variables: variables }, headers: headers.merge(auth_headers(user)))
   end
 
   def authed_post(url:, body:, headers: {}, user:)

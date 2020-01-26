@@ -4,6 +4,30 @@ module Types
   class QueryType < Types::BaseObject
     graphql_name "Query"
 
+    field :message, Types::MessageType, null: false do
+      argument :id, ID, required: true
+    end
+
+    def message(id:)
+      Message.find(id)
+    end
+
+    field :messages, [Types::MessageType], null: false do
+      argument :from, Types::DateTimeType, required: false
+      argument :to, Types::DateTimeType, required: false
+    end
+
+    def messages(from: nil, to: nil) # rubocop:disable Metrics/AbcSize
+      return [] if current_user.active_room.blank?
+
+      t = Message.arel_table
+      messages = Message.where(room_id: current_user.active_room_id)
+      messages = messages.where(t[:created_at].gteq(from)) if from.present?
+      messages = messages.where(t[:created_at].lteq(to)) if to.present?
+
+      messages.order(created_at: :asc)
+    end
+
     field :room, Types::RoomType, null: true do
       argument :id, ID, required: true
     end
