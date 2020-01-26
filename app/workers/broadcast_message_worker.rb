@@ -15,6 +15,7 @@ class BroadcastMessageWorker
     %(
       query($id: ID!) {
         message(id: $id) {
+          id
           message
           createdAt
           roomPlaylistRecord {
