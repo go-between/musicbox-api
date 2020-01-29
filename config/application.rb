@@ -35,6 +35,9 @@ module MusicboxApi
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    # Allow requests from any host
+    config.hosts << ENV["ALLOWED_HOST"]
+
     config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins "*"
