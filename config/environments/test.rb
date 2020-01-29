@@ -6,6 +6,9 @@
 # and recreated between test runs. Don't rely on the data there!
 
 Rails.application.configure do
+  # Allow RSpec's example host to make api calls.
+  config.hosts << "www.example.com"
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   config.cache_classes = false
