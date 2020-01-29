@@ -19,6 +19,7 @@ gem "pg", "1.2.1"
 gem "yt", "0.32.5"
 
 gem "dotenv-rails", "2.7.5"
+gem "health_check", "3.0.0"
 gem "passenger", "6.0.4"
 gem "rack-cors", "1.1.1"
 gem "redis", "4.1.3"
