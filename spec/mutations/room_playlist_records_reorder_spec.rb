@@ -10,6 +10,23 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
   let(:room) { create(:room) }
   let(:current_user) { create(:user, active_room_id: room.id) }
 
+  describe "waiting song state" do
+    it "indicates that the room has songs waiting to be played" do
+      room.update!(waiting_songs: false)
+      record1 = create(:room_playlist_record, room: room, order: 0, user: current_user)
+
+      records = [
+        { song_id: record1.song_id, room_playlist_record_id: record1.id }
+      ]
+      graphql_request(
+        query: room_playlist_records_reorder_mutation(records: records),
+        user: current_user
+      )
+
+      expect(room.reload.waiting_songs).to eq(true)
+    end
+  end
+
   describe "song ordering" do
     it "reorders existing records" do
       record1 = create(:room_playlist_record, room: room, order: 0, user: current_user)

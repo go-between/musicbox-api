@@ -14,7 +14,7 @@ module Mutations
 
     def resolve(ordered_records:)
       @errors = []
-      ensure_user_in_rotation!
+      ensure_room_state!
 
       records = initialize_records!(ordered_records)
       destroy_absent_records!(records)
@@ -30,13 +30,13 @@ module Mutations
 
     private
 
-    def ensure_user_in_rotation!
+    def ensure_room_state!
       room = Room.find(current_user.active_room_id)
       room.with_lock do
+        room.update!(waiting_songs: true)
         return if room.user_rotation.include?(current_user.id)
 
         rotation = room.user_rotation << current_user.id
-
         room.update!(user_rotation: rotation)
       end
     end
