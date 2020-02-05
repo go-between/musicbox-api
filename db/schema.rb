@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_05_052424) do
+ActiveRecord::Schema.define(version: 2020_02_05_061306) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -100,6 +100,7 @@ ActiveRecord::Schema.define(version: 2020_02_05_052424) do
     t.uuid "user_rotation", default: [], array: true
     t.uuid "team_id"
     t.datetime "playing_until"
+    t.boolean "waiting_songs"
     t.index ["playing_until"], name: "index_rooms_on_playing_until"
   end
 
