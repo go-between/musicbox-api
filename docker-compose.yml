@@ -20,6 +20,10 @@ services:
   redis:
     image: redis:5.0.3
     ports: ["6379:6379"]
+  app-poll-room-queue:
+    <<: *app-common
+    command: bin/wait-for-it.sh db:5432 -- bin/wait-for-it.sh redis:6379 -- rake room:poll_queue
+    ports: []
   app-sidekiq-workers:
     <<: *app-common
     command: bin/wait-for-it.sh db:5432 -- bin/wait-for-it.sh redis:6379 -- bundle exec sidekiq

@@ -5,7 +5,7 @@ RSpec.describe QueueManagementWorker, type: :worker do
   include ActiveSupport::Testing::TimeHelpers
 
   let(:started) { Time.zone.now }
-  let(:song) { create(:song) }
+  let(:song) { create(:song, duration_in_seconds: 10) }
   let(:room) { create(:room) }
   let(:user) { create(:user) }
   let(:worker) { described_class.new }
@@ -17,11 +17,8 @@ RSpec.describe QueueManagementWorker, type: :worker do
 
       room.reload
       expect(room.current_record).to eq(nil)
-    end
-
-    it "re-queues a new worker" do
-      expect(described_class).to receive(:perform_in).with(1.second, room.id)
-      worker.perform(room.id)
+      expect(room.playing_until).to eq(nil)
+      expect(room.waiting_songs).to eq(false)
     end
 
     context "when its previous run processed the last song" do
@@ -66,6 +63,21 @@ RSpec.describe QueueManagementWorker, type: :worker do
              play_state: "waiting")
     end
 
+    it "does nothing if already playing" do
+      travel_to(Time.utc(3000, 1, 1, 0, 0, 0)) do
+        previous_record = create(:room_playlist_record, user: user)
+        playing_until = 1.minute.from_now
+        room.update!(playing_until: playing_until, current_record: previous_record)
+        worker.perform(room.id)
+
+        room.reload
+        expect(room.current_record).to eq(previous_record)
+        expect(room.playing_until).to eq(playing_until)
+        expect(BroadcastNowPlayingWorker).not_to have_enqueued_sidekiq_job(room.id)
+        expect(BroadcastPlaylistWorker).not_to have_enqueued_sidekiq_job(room.id)
+      end
+    end
+
     it "updates the room's current record" do
       worker.perform(room.id)
 
@@ -83,11 +95,13 @@ RSpec.describe QueueManagementWorker, type: :worker do
       expect(room.current_record).to be_played
     end
 
-    it "re-enqueues a new worker" do
-      song.update!(duration_in_seconds: 432)
+    it "sets the room's playing until to the song's duration" do
+      travel_to(Time.utc(3000, 1, 1, 0, 0, 0)) do
+        worker.perform(room.id)
+      end
 
-      expect(described_class).to receive(:perform_in).with(432.second, room.id)
-      worker.perform(room.id)
+      room.reload
+      expect(room.playing_until).to eq("3000-01-01 00:00:10.000000000 +0000")
     end
 
     it "broadcasts to queue" do
