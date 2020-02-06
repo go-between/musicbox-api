@@ -64,16 +64,18 @@ RSpec.describe QueueManagementWorker, type: :worker do
     end
 
     it "does nothing if already playing" do
-      previous_record = create(:room_playlist_record, user: user)
-      playing_until = 1.minute.from_now
-      room.update!(playing_until: playing_until, current_record: previous_record)
-      worker.perform(room.id)
+      travel_to(Time.utc(3000, 1, 1, 0, 0, 0)) do
+        previous_record = create(:room_playlist_record, user: user)
+        playing_until = 1.minute.from_now
+        room.update!(playing_until: playing_until, current_record: previous_record)
+        worker.perform(room.id)
 
-      room.reload
-      expect(room.current_record).to eq(previous_record)
-      expect(room.playing_until).to eq(playing_until)
-      expect(BroadcastNowPlayingWorker).not_to have_enqueued_sidekiq_job(room.id)
-      expect(BroadcastPlaylistWorker).not_to have_enqueued_sidekiq_job(room.id)
+        room.reload
+        expect(room.current_record).to eq(previous_record)
+        expect(room.playing_until).to eq(playing_until)
+        expect(BroadcastNowPlayingWorker).not_to have_enqueued_sidekiq_job(room.id)
+        expect(BroadcastPlaylistWorker).not_to have_enqueued_sidekiq_job(room.id)
+      end
     end
 
     it "updates the room's current record" do
