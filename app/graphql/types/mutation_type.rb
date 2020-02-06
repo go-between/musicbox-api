@@ -16,6 +16,7 @@ module Types
     field :song_create, mutation: Mutations::SongCreate
 
     field :team_activate, mutation: Mutations::TeamActivate
+    field :team_create, mutation: Mutations::TeamCreate
 
     field :user_library_record_delete, mutation: Mutations::UserLibraryRecordDelete
   end

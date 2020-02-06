@@ -16,8 +16,11 @@ class ApplicationController < ActionController::API
     #        when we accept an invitation.  But I'd prefer not to push auth
     #        down in to every query/mutation, and I'd prefer not to support
     #        a separate api resource just for accepting invitations.
+    # Note:  Yeah but it's the rule of THREES so one more of these and then
+    #        we'll figure out what to do instead of this.
     graphql_query = params[:query].gsub(/\s+/, "")
-    return if graphql_query[0..25] == "mutation{invitationAccept("
+    return if /^mutation.*\{invitationAccept/ =~ graphql_query
+    return if /^mutation.*\{teamCreate/ =~ graphql_query
 
     doorkeeper_authorize!
   end
