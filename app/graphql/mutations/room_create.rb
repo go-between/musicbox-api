@@ -8,7 +8,10 @@ module Mutations
     field :errors, [String], null: true
 
     def resolve(name:)
-      room = Room.new(name: name)
+      room = Room.new(
+        name: name,
+        team: current_user.active_team
+      )
 
       unless room.valid?
         return {
@@ -18,18 +21,11 @@ module Mutations
       end
 
       room.save!
-      set_room_team_to_current_user_active_team!(room)
 
       {
         room: room,
         errors: []
       }
-    end
-
-    private
-
-    def set_room_team_to_current_user_active_team!(room)
-      room.update!(team: context[:current_user].active_team)
     end
   end
 end

@@ -22,7 +22,7 @@ RSpec.describe "Room Create", type: :request do
     )
   end
 
-  let(:current_user) { create(:user) }
+  let(:current_user) { create(:user, active_team: create(:team)) }
 
   describe "#create" do
     it "creates room" do
@@ -59,8 +59,27 @@ RSpec.describe "Room Create", type: :request do
     end
   end
 
-  context "when missing required attributes" do
-    it "fails to persist when name is not specified" do
+  context 'when missing required attributes' do
+    it 'fails to persist user is not on an active team' do
+      current_user.update!(active_team: nil)
+
+      expect do
+        authed_post(
+          url: '/api/v1/graphql',
+          body: {
+            query: query(name: 'A room')
+          },
+          user: current_user
+        )
+      end.not_to change(Room, :count)
+
+      data = json_body.dig(:data, :roomCreate)
+
+      expect(data[:room]).to be_nil
+      expect(data[:errors]).to match_array([include('Team must exist')])
+    end
+
+    it 'fails to persist when name is not specified' do
       expect do
         authed_post(
           url: "/api/v1/graphql",
