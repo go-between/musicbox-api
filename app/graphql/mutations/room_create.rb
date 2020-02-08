@@ -8,7 +8,10 @@ module Mutations
     field :errors, [String], null: true
 
     def resolve(name:)
-      room = Room.new(name: name)
+      room = Room.new(
+        name: name,
+        team: current_user.active_team
+      )
 
       unless room.valid?
         return {
