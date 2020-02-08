@@ -12,7 +12,7 @@ class QueueManagementWorker
       playlist = RoomPlaylist.new(room_id).generate_playlist
 
       next_record = playlist.first
-      return idle!(room) if next_record.blank?
+      return room.idle! if next_record.blank?
 
       next_record.update!(play_state: "played", played_at: Time.zone.now)
       playing_until = next_record.song.duration_in_seconds.seconds.from_now
@@ -21,17 +21,5 @@ class QueueManagementWorker
       BroadcastNowPlayingWorker.perform_async(room_id)
       BroadcastPlaylistWorker.perform_async(room_id)
     end
-  end
-
-  private
-
-  def idle!(room)
-    just_finished = room.current_record.present?
-    room.update!(current_record: nil, playing_until: nil, waiting_songs: false)
-
-    return unless just_finished
-
-    BroadcastNowPlayingWorker.perform_async(room.id)
-    BroadcastPlaylistWorker.perform_async(room.id)
   end
 end
