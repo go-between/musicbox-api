@@ -6,11 +6,12 @@ RSpec.describe "Invitation Create", type: :request do
   include AuthHelper
   include JsonHelper
 
-  def query(email:)
+  def query
     %(
-      mutation {
+      mutation InvitationCreate($email: String!, $name: String!) {
         invitationCreate(input:{
-          email: "#{email}"
+          email: $email,
+          name: $name
         }) {
           errors
         }
@@ -28,8 +29,9 @@ RSpec.describe "Invitation Create", type: :request do
       # Ensure that we delegate to SecureRandom for token generation
       expect(Invitation).to receive(:token).and_return("fbb586a9-b798-4a31-a634-66d28a661375")
       graphql_request(
-        query: query(email: "an-invited-user@atdot.com"),
-        user: current_user
+        query: query,
+        user: current_user,
+        variables: { email: "an-invited-user@atdot.com", name: "the user" }
       )
 
       invitation = Invitation.find_by(email: "an-invited-user@atdot.com")
@@ -38,6 +40,7 @@ RSpec.describe "Invitation Create", type: :request do
       expect(invitation.team).to eq(current_user.active_team)
       expect(invitation.token).to eq("fbb586a9-b798-4a31-a634-66d28a661375")
       expect(invitation).to be_pending
+      expect(EmailInvitationWorker).to have_enqueued_sidekiq_job(invitation.id)
     end
 
     it "allows a new invitation for a different team" do
@@ -54,8 +57,9 @@ RSpec.describe "Invitation Create", type: :request do
       # Ensure that we delegate to SecureRandom for token generation
       expect(Invitation).to receive(:token).and_return("c20f47c1-f267-44da-8fc3-462c20bdadb5")
       graphql_request(
-        query: query(email: "an-invited-user@atdot.com"),
-        user: current_user
+        query: query,
+        user: current_user,
+        variables: { email: "an-invited-user@atdot.com", name: "the user" }
       )
 
       other_invitation = Invitation.find_by(token: "c20f47c1-f267-44da-8fc3-462c20bdadb5")
@@ -80,8 +84,9 @@ RSpec.describe "Invitation Create", type: :request do
       other_user = create(:user, active_team: team)
       expect do
         graphql_request(
-          query: query(email: "an-invited-user@atdot.com"),
-          user: other_user
+          query: query,
+          user: other_user,
+          variables: { email: "an-invited-user@atdot.com", name: "the user" }
         )
 
         expect(json_body.dig(:data, :invitationCreate, :errors)).to be_empty
@@ -108,8 +113,9 @@ RSpec.describe "Invitation Create", type: :request do
 
       expect(Invitation).not_to receive(:token)
       graphql_request(
-        query: query(email: "an-invited-user@atdot.com"),
-        user: current_user
+        query: query,
+        user: current_user,
+        variables: { email: "an-invited-user@atdot.com", name: "the user" }
       )
 
       invitation.reload
@@ -122,8 +128,9 @@ RSpec.describe "Invitation Create", type: :request do
       current_user.update!(active_team: nil)
       expect do
         graphql_request(
-          query: query(email: "an-invited-user@atdot.com"),
-          user: current_user
+          query: query,
+          user: current_user,
+          variables: { email: "an-invited-user@atdot.com", name: "the user" }
         )
 
         errors = json_body.dig(:data, :invitationCreate, :errors)

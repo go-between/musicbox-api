@@ -2,7 +2,7 @@
 
 module Mutations
   class RoomCreate < Mutations::BaseMutation
-    argument :name, ID, required: true
+    argument :name, String, required: true
 
     field :room, Types::RoomType, null: true
     field :errors, [String], null: true
