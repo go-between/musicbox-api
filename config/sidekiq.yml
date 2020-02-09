@@ -7,4 +7,4 @@
   - [broadcast_now_playing, 1]
   - [broadcast_playlist, 1]
   - [broadcast_users, 1]
-  - [email_invitations]
+  - [email_invitations, 1]
