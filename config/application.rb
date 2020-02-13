@@ -36,9 +36,13 @@ module MusicboxApi
     config.api_only = true
 
     # Allow requests from any host
-    ENV.fetch("ALLOWED_HOSTS") { "" }.split("&").each do |host_regex|
-      config.hosts << /#{host_regex}/
+    host_regexes = ENV.fetch("ALLOWED_HOSTS") { "" }.split("&").map { |h| /#{h}/ }
+
+    host_regexes.each do |host_regex|
+      config.hosts << host_regex
     end
+
+    config.action_cable.allowed_request_origins = host_regexes
 
     config.middleware.insert_before 0, Rack::Cors do
       allow do

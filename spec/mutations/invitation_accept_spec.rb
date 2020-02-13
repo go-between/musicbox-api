@@ -6,15 +6,15 @@ RSpec.describe "Invitation Create", type: :request do
   include AuthHelper
   include JsonHelper
 
-  def query(email:, password:, name:, token:)
+  def query
     %(
-      mutation {
+      mutation InvitationAccept($email: String!, $password: String!, $token: ID!, $name: String!){
         invitationAccept(input:{
           invitation: {
-            email: "#{email}",
-            password: "#{password}",
-            token: "#{token}",
-            name: "#{name}"
+            email: $email,
+            password: $password,
+            token: $token,
+            name: $name
           }
         }) {
           accessToken
@@ -38,16 +38,15 @@ RSpec.describe "Invitation Create", type: :request do
 
   describe "success" do
     it "accepts an invitation" do
-      query = query(
+      variables = {
         email: "an-invited-user@atdot.com",
         password: "foobar",
         token: "fbb586a9-b798-4a31-a634-66d28a661375",
         name: "Blorg Blargaborg"
-      )
-
+      }
       post(
         "/api/v1/graphql",
-        params: { query: query }
+        params: { query: query, variables: variables }
       )
 
       invitation.reload
@@ -65,17 +64,17 @@ RSpec.describe "Invitation Create", type: :request do
       other_team = create(:team)
       user = User.create!(email: "an-invited-user@atdot.com", password: "foobar", teams: [other_team])
 
-      query = query(
+      variables = {
         email: "an-invited-user@atdot.com",
         password: "foobar",
         token: "fbb586a9-b798-4a31-a634-66d28a661375",
         name: "Blorg Blargaborg"
-      )
+      }
 
       expect do
         post(
           "/api/v1/graphql",
-          params: { query: query }
+          params: { query: query, variables: variables }
         )
       end.not_to change(User, :count)
 
@@ -86,17 +85,17 @@ RSpec.describe "Invitation Create", type: :request do
     it "does not duplicate teams for a user" do
       user = User.create!(email: "an-invited-user@atdot.com", password: "foobar", teams: [team])
 
-      query = query(
+      variables = {
         email: "an-invited-user@atdot.com",
         password: "foobar",
         token: "fbb586a9-b798-4a31-a634-66d28a661375",
         name: "Blorg Blargaborg"
-      )
+      }
 
       expect do
         post(
           "/api/v1/graphql",
-          params: { query: query }
+          params: { query: query, variables: variables }
         )
       end.not_to change(User, :count)
 
@@ -107,17 +106,17 @@ RSpec.describe "Invitation Create", type: :request do
 
   describe "error" do
     it "does not accept the invitation with an invalid email" do
-      query = query(
+      variables = {
         email: "an-invited-user@atdotdotdotdotdot.com",
         password: "foobar",
         token: "fbb586a9-b798-4a31-a634-66d28a661375",
         name: "Blorg Blargaborg"
-      )
+      }
 
       expect do
         post(
           "/api/v1/graphql",
-          params: { query: query }
+          params: { query: query, variables: variables }
         )
       end.not_to change(User, :count)
 
@@ -129,17 +128,17 @@ RSpec.describe "Invitation Create", type: :request do
     end
 
     it "does not accept the invitation with an invalid token" do
-      query = query(
+      variables = {
         email: "an-invited-user@atdot.com",
         password: "foobar",
         token: "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
         name: "Blorg Blargaborg"
-      )
+      }
 
       expect do
         post(
           "/api/v1/graphql",
-          params: { query: query }
+          params: { query: query, variables: variables }
         )
       end.not_to change(User, :count)
 
@@ -153,17 +152,17 @@ RSpec.describe "Invitation Create", type: :request do
     it "does not accept an invitation when user exists and does not auth" do
       user = User.create!(email: "an-invited-user@atdot.com", password: "foobar", teams: [])
 
-      query = query(
+      variables = {
         email: "an-invited-user@atdot.com",
         password: "wrongwrongwrong",
         token: "fbb586a9-b798-4a31-a634-66d28a661375",
         name: "Blorg Blargaborg"
-      )
+      }
 
       expect do
         post(
           "/api/v1/graphql",
-          params: { query: query }
+          params: { query: query, variables: variables }
         )
       end.not_to change(User, :count)
 
@@ -178,17 +177,17 @@ RSpec.describe "Invitation Create", type: :request do
     end
 
     it "does not allow a user to be created with an insecure password" do
-      query = query(
+      variables = {
         email: "an-invited-user@atdot.com",
         password: "bird",
         token: "fbb586a9-b798-4a31-a634-66d28a661375",
         name: "Blorg Blargaborg"
-      )
+      }
 
       expect do
         post(
           "/api/v1/graphql",
-          params: { query: query }
+          params: { query: query, variables: variables }
         )
       end.not_to change(User, :count)
 
