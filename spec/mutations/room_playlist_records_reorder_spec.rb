@@ -164,13 +164,13 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
         user: current_user
       )
 
-      data = json_body.dig(:data, :roomPlaylistRecordsReorder)
-      expect(data[:errors].size).to eq(2)
-      expect(data[:errors]).to match_array([include(nonexistant_song_id), include(other_record.id)])
-
-      expect(own_record.reload.order).to eq(0)
+      # Note:  We ignore records that we cannot process but don't care too
+      #        much to keep things strictly ordered from 0-N.  Relative ordering
+      #        is fine, so `own_record` is in slot "1", and `new_record` is in
+      #        slot "3" (instead of "0", "1", respectively).
+      expect(own_record.reload.order).to eq(1)
       new_record = RoomPlaylistRecord.find_by(user: current_user, song_id: song.id, room: room)
-      expect(new_record.order).to eq(1)
+      expect(new_record.order).to eq(3)
     end
   end
 end
