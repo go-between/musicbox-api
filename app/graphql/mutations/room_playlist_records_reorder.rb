@@ -13,13 +13,11 @@ module Mutations
     field :errors, [String], null: true
 
     def resolve(ordered_records:)
-      @errors = []
-      ensure_room_state!
+      room = Room.find(current_user.active_room_id)
+      return { errors: ["Not in active room"] } if room.blank?
 
-      records = initialize_records!(ordered_records)
-      destroy_absent_records!(records)
-
-      records.each_with_index { |r, i| r.update!(order: i) }
+      existing_record_ids = ordered_records.map { |r| r[:room_playlist_record_id] }.compact
+      records = update_records!(room, ordered_records, existing_record_ids)
       BroadcastPlaylistWorker.perform_async(current_user.active_room_id)
 
       {
@@ -30,60 +28,67 @@ module Mutations
 
     private
 
-    def ensure_room_state!
-      room = Room.find(current_user.active_room_id)
+    def update_records!(room, ordered_records, existing_record_ids)
       room.with_lock do
-        room.update!(waiting_songs: true)
-        return if room.user_rotation.include?(current_user.id)
+        ensure_user_in_rotation!(room)
+        # Note:  We may actually be removing the last song from the room
+        #        in this call, but we'll allow the queue management
+        #        worker to clean that up.
+        room.update!(waiting_songs: true) unless room.waiting_songs
+        destroy_absent_records!(existing_record_ids)
 
-        rotation = room.user_rotation << current_user.id
-        room.update!(user_rotation: rotation)
+        existing_records = existing_records_by_id(existing_record_ids).to_a
+        ordered_records.map.with_index do |ordered_record, idx|
+          ensure_record!(
+            record_id: ordered_record[:room_playlist_record_id],
+            song_id: ordered_record[:song_id],
+            order: idx,
+            existing_records: existing_records
+          )
+        end.compact
       end
     end
 
-    def destroy_absent_records!(records)
+    def ensure_user_in_rotation!(room)
+      return if room.user_rotation.include?(current_user.id)
+
+      rotation = room.user_rotation << current_user.id
+      room.update!(user_rotation: rotation)
+    end
+
+    def destroy_absent_records!(existing_record_ids)
       t = RoomPlaylistRecord.arel_table
       RoomPlaylistRecord
         .where(user: current_user, room_id: current_user.active_room_id)
         .waiting
-        .where(t[:id].not_in(records.map(&:id)))
+        .where(t[:id].not_in(existing_record_ids))
         .destroy_all
     end
 
-    def initialize_records!(ordered_records)
-      ordered_records.map do |ordered_record, _index|
-        record = initialize_record!(
-          ordered_record[:room_playlist_record_id],
-          ordered_record[:song_id]
-        )
-
-        unless record
-          msg = %W[
-            Cannot order record id: #{ordered_record[:room_playlist_record_id]}, song id: #{ordered_record[:song_id]}
-          ]
-          @errors << msg
-          next
-        end
-
-        record
-      end.compact
+    def existing_records_by_id(existing_record_ids)
+      RoomPlaylistRecord.where(
+        id: existing_record_ids,
+        user: current_user,
+        play_state: :waiting
+      )
     end
 
-    def initialize_record!(room_playlist_record_id, song_id)
-      if room_playlist_record_id.present?
-        RoomPlaylistRecord.find_by(
-          id: room_playlist_record_id,
-          user: current_user,
-          play_state: :waiting
-        )
+    def ensure_record!(record_id:, song_id:, order:, existing_records:)
+      if record_id.present?
+        existing_record = existing_records.find { |r| r[:id] == record_id }
+        return if existing_record.blank?
+
+        existing_record.update!(order: order)
+        existing_record
       else
-        return unless Song.exists?(id: song_id)
+        return unless Song.exists?(song_id)
 
         RoomPlaylistRecord.create!(
           room_id: current_user.active_room_id,
           song_id: song_id,
           user: current_user,
-          play_state: :waiting
+          play_state: :waiting,
+          order: order
         )
       end
     end
