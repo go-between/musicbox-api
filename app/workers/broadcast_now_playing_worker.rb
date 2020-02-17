@@ -17,6 +17,7 @@ class BroadcastNowPlayingWorker
       query($id: ID!) {
         room(id: $id) {
           currentRecord {
+            id
             playedAt
             song {
               name
