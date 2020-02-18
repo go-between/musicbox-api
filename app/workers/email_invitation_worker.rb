@@ -19,11 +19,12 @@ class EmailInvitationWorker
 
   private
 
-  def request(uri, invitation)
+  def request(uri, invitation) # rubocop:disable Metrics/MethodLength
     template_variables = {
       inviter_name: invitation.inviting_user.name,
       team_name: invitation.team.name,
-      token: invitation.token
+      token: invitation.token,
+      email: invitation.email
     }
 
     req = Net::HTTP::Post.new(uri)
