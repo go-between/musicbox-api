@@ -4,6 +4,24 @@ module Types
   class QueryType < Types::BaseObject
     graphql_name "Query"
 
+    field :invitation, Types::InvitationType, null: true do
+      argument :token, ID, required: true
+      argument :email, String, required: true
+    end
+
+    def invitation(token:, email:)
+      Invitation.find_by(token: token, email: email&.downcase)
+    end
+
+    field :invitations, [Types::InvitationType], null: false do
+    end
+
+    def invitations
+      return [] if current_user.active_team_id.blank?
+
+      Invitation.where(inviting_user: current_user, team: current_user.active_team)
+    end
+
     field :message, Types::MessageType, null: false do
       argument :id, ID, required: true
     end

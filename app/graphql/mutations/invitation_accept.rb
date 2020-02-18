@@ -14,7 +14,7 @@ module Mutations
     field :errors, [String], null: true
 
     def resolve(invitation:)
-      invite = Invitation.find_by(email: invitation[:email], token: invitation[:token])
+      invite = Invitation.find_by(email: invitation[:email].downcase, token: invitation[:token])
       return { errors: ["Invalid invitation"] } if invite.blank?
 
       invited_user = ensure_invited_user!(invitation)
@@ -29,14 +29,6 @@ module Mutations
     end
 
     private
-
-    def access_token_for(user_id)
-      Doorkeeper::AccessToken.create!(
-        resource_owner_id: user_id,
-        expires_in: Doorkeeper.configuration.access_token_expires_in.to_i,
-        scopes: ""
-      ).token
-    end
 
     def ensure_invited_user!(email:, password:, name:, **_kwargs)
       user = User.find_for_database_authentication(email: email)
