@@ -4,6 +4,15 @@ module Types
   class QueryType < Types::BaseObject
     graphql_name "Query"
 
+    field :invitation, Types::InvitationType, null: true do
+      argument :token, ID, required: true
+      argument :email, String, required: true
+    end
+
+    def invitation(token:, email:)
+      Invitation.find_by(token: token, email: email&.downcase)
+    end
+
     field :invitations, [Types::InvitationType], null: false do
     end
 

@@ -14,7 +14,7 @@ module Mutations
     field :errors, [String], null: true
 
     def resolve(invitation:)
-      invite = Invitation.find_by(email: invitation[:email], token: invitation[:token])
+      invite = Invitation.find_by(email: invitation[:email].downcase, token: invitation[:token])
       return { errors: ["Invalid invitation"] } if invite.blank?
 
       invited_user = ensure_invited_user!(invitation)
