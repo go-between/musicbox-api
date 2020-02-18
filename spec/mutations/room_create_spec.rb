@@ -6,11 +6,11 @@ RSpec.describe "Room Create", type: :request do
   include AuthHelper
   include JsonHelper
 
-  def query(name:)
+  def query
     %(
-      mutation {
+      mutation RoomCreate($name: String!) {
         roomCreate(input:{
-          name: "#{name}"
+          name: $name
         }) {
           room {
             id
@@ -26,11 +26,9 @@ RSpec.describe "Room Create", type: :request do
 
   describe "#create" do
     it "creates room" do
-      authed_post(
-        url: "/api/v1/graphql",
-        body: {
-          query: query(name: "Rush Fans")
-        },
+      graphql_request(
+        query: query,
+        variables: { name: "Rush Fans" },
         user: current_user
       )
       data = json_body.dig(:data, :roomCreate)
@@ -44,11 +42,9 @@ RSpec.describe "Room Create", type: :request do
     it "creates new room belonging to the current users active team" do
       team = Team.create!(owner: current_user)
       current_user.update!(active_team: team)
-      authed_post(
-        url: "/api/v1/graphql",
-        body: {
-          query: query(name: "Rush Fans")
-        },
+      graphql_request(
+        query: query,
+        variables: { name: "Rush Fans" },
         user: current_user
       )
       data = json_body.dig(:data, :roomCreate)
@@ -64,11 +60,9 @@ RSpec.describe "Room Create", type: :request do
       current_user.update!(active_team: nil)
 
       expect do
-        authed_post(
-          url: "/api/v1/graphql",
-          body: {
-            query: query(name: "A room")
-          },
+        graphql_request(
+          query: query,
+          variables: { name: "A room" },
           user: current_user
         )
       end.not_to change(Room, :count)
@@ -81,11 +75,9 @@ RSpec.describe "Room Create", type: :request do
 
     it "fails to persist when name is not specified" do
       expect do
-        authed_post(
-          url: "/api/v1/graphql",
-          body: {
-            query: query(name: nil)
-          },
+        graphql_request(
+          query: query,
+          variables: { name: "" },
           user: current_user
         )
       end.not_to change(Room, :count)
