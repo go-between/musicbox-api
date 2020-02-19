@@ -13,6 +13,10 @@ module Mutations
     field :access_token, ID, null: true
     field :errors, [String], null: true
 
+    def ready?(**_args)
+      true
+    end
+
     def resolve(team_owner:, team_name:)
       # Note:  Presumably we also will accept a billing object
       #        and ensure that it contains a valid payment mechanism

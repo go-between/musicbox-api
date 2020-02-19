@@ -121,6 +121,21 @@ RSpec.describe "Invitation Create", type: :request do
       invitation.reload
       expect(invitation).to be_accepted
     end
+
+    it "is unauthorized if user is not logged in" do
+      post(
+        "/api/v1/graphql",
+        params: {
+          query: query,
+          variables: {
+            email: "an-invited-user@atdot.com",
+            name: "the user"
+          }
+        }
+      )
+
+      expect(response).to be_unauthorized
+    end
   end
 
   describe "error" do

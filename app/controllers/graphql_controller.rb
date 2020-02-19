@@ -11,6 +11,8 @@ class GraphqlController < ApplicationController
 
     result = MusicboxApiSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result
+  rescue NotAuthenticatedError
+    render status: 401
   rescue StandardError => e
     raise e unless Rails.env.development?
 

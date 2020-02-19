@@ -13,6 +13,10 @@ module Mutations
     field :access_token, ID, null: true
     field :errors, [String], null: true
 
+    def ready?(**_args)
+      true
+    end
+
     def resolve(invitation:)
       invite = Invitation.find_by(email: invitation[:email].downcase, token: invitation[:token])
       return { errors: ["Invalid invitation"] } if invite.blank?
