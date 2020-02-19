@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::API
-  # rescue_from Exception do |e|
-  #   # handle_exception(e)
-  # end
-
   before_action :conditional_authorize!
 
   private
@@ -21,6 +17,7 @@ class ApplicationController < ActionController::API
     graphql_query = params[:query].gsub(/\s+/, "")
     return if /^mutation.*\{invitationAccept/ =~ graphql_query
     return if /^mutation.*\{teamCreate/ =~ graphql_query
+    return if /^query.*\{invitation/ =~ graphql_query
 
     doorkeeper_authorize!
   end
