@@ -5,7 +5,11 @@ class BroadcastNowPlayingWorker
   sidekiq_options queue: "broadcast_now_playing"
 
   def perform(room_id)
-    now_playing = MusicboxApiSchema.execute(query: query, variables: { id: room_id })
+    now_playing = MusicboxApiSchema.execute(
+      query: query,
+      context: { override_current_user: true },
+      variables: { id: room_id }
+    )
 
     NowPlayingChannel.broadcast_to(Room.find(room_id), now_playing.to_h)
   end

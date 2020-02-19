@@ -28,7 +28,7 @@ RSpec.describe "Invitation Query", type: :request do
     it "returns an invitation if queried" do
       variables = {
         email: "jimbo@derp.com",
-        token: SecureRandom.uuid,
+        token: SecureRandom.uuid
       }
       post("/api/v1/graphql", params: { query: query, variables: variables })
 

@@ -45,5 +45,11 @@ RSpec.describe "Room Query", type: :request do
       )
       expect(json_body.dig(:data, :room)).to be_nil
     end
+
+    it "returns unauthorized if a user is not signed in" do
+      post("/api/v1/graphql", params: { query: query(room_id: room.id) })
+
+      expect(response).to be_unauthorized
+    end
   end
 end

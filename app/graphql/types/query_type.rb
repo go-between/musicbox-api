@@ -17,6 +17,7 @@ module Types
     end
 
     def invitations
+      confirm_current_user!
       return [] if current_user.active_team_id.blank?
 
       Invitation.where(inviting_user: current_user, team: current_user.active_team)
@@ -27,6 +28,7 @@ module Types
     end
 
     def message(id:)
+      confirm_current_user!
       Message.find(id)
     end
 
@@ -36,6 +38,7 @@ module Types
     end
 
     def messages(from: nil, to: nil) # rubocop:disable Metrics/AbcSize
+      confirm_current_user!
       return [] if current_user.active_room.blank?
 
       t = Message.arel_table
@@ -51,6 +54,7 @@ module Types
     end
 
     def room(id:)
+      confirm_current_user!
       rooms = Room.where(id: id)
       rooms = rooms.where(team: current_user.teams) if current_user.present?
       rooms.first
@@ -60,6 +64,7 @@ module Types
     end
 
     def rooms
+      confirm_current_user!
       Room.where(team: current_user.active_team)
     end
 
@@ -68,6 +73,7 @@ module Types
     end
 
     def room_playlist(room_id:)
+      confirm_current_user!
       RoomPlaylist.new(room_id).generate_playlist
     end
 
@@ -76,6 +82,7 @@ module Types
     end
 
     def room_playlist_for_user(historical:)
+      confirm_current_user!
       records = current_user.room_playlist_records.where(room_id: current_user.active_room_id)
       return records.played.order(played_at: :desc) if historical
 
@@ -87,6 +94,7 @@ module Types
     end
 
     def song(id:)
+      confirm_current_user!
       Song.find(id)
     end
 
@@ -94,6 +102,7 @@ module Types
     end
 
     def songs
+      confirm_current_user!
       current_user.songs
     end
 
@@ -101,6 +110,7 @@ module Types
     end
 
     def user
+      confirm_current_user!
       current_user
     end
 
@@ -108,6 +118,11 @@ module Types
 
     def current_user
       context[:current_user]
+    end
+
+    def confirm_current_user!
+      return if context[:override_current_user]
+      raise NotAuthenticatedError unless current_user
     end
   end
 end
