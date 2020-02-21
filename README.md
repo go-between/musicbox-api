@@ -76,7 +76,7 @@ We run migrations as one-off ECS tasks.  They also currently pull their applicat
   - AWS_PRIVATE_SUBNETS: The IDs of the private subnets in the VPC that you're deploying into, e.g., `subnet-xxxxxxxxxxxxxxxxx,subnet-yyyyyyyyyyyyyyyyy`
   - AWS_SECURITY_GROUPS: The IDs of the ECR and ECS Tasks security groups, e.g., `sg-xxxxxxxxxxxxxxxxx,sg-yyyyyyyyyyyyyyyyy`
   - EX: `AWS_TASK_DEFINITION=musicbox-app-task-staging-db-create AWS_ECS_CLUSTER=musicbox-cluster-staging AWS_PRIVATE_SUBNETS=subnet-xxxxxxxxxxxxxxxxx,subnet-yyyyyyyyyyyyyyyyy AWS_SECURITY_GROUPS=sg-xxxxxxxxxxxxxxxxx,sg-yyyyyyyyyyyyyyyyy bin/db-create.sh`
-  - Yowzo!
+  - Yowza!
 
 - Database Migrations: `bin/db-migrate.sh` (remember that this task uses the **latest** tag by default so we'll have to figure out how to get around that!)
   - AWS_ECS_CLUSTER: `musicbox-cluster-staging`
@@ -84,7 +84,14 @@ We run migrations as one-off ECS tasks.  They also currently pull their applicat
   - AWS_PRIVATE_SUBNETS: The IDs of the private subnets in the VPC that you're deploying into, e.g., `subnet-xxxxxxxxxxxxxxxxx,subnet-yyyyyyyyyyyyyyyyy`
   - AWS_SECURITY_GROUPS: The IDs of the ECR and ECS Tasks security groups, e.g., `sg-xxxxxxxxxxxxxxxxx,sg-yyyyyyyyyyyyyyyyy`
   - EX: `AWS_TASK_DEFINITION=musicbox-app-task-staging-db-migrate AWS_ECS_CLUSTER=musicbox-cluster-staging AWS_PRIVATE_SUBNETS=subnet-xxxxxxxxxxxxxxxxx,subnet-yyyyyyyyyyyyyyyyy AWS_SECURITY_GROUPS=sg-xxxxxxxxxxxxxxxxx,sg-yyyyyyyyyyyyyyyyy bin/db-migrate.sh`
-  - Yowzo!
+  - Whazoo!
 
 ## Operationaling
 
+Our RDS database runs inside of Amazon in a virtual private cloud.  It is not accessible publicly, so we use Amazon's Simple Systems Manager, which is only sort of simple. In order to connect to a deployed database (either Staging or Production), you'll need a few things:
+
+1.  An AWS account with access to our stuff and the proper permissions. This is all manual so we'll probably copy from Truman's user. Also you'll need to be added to the policy that lets your computer forward a temporary ssh key to the SSM host. This is all terraform stuff so maybe there's a readme that will talk about that soon.
+2.  Also we use a tool called [aws-gate](https://aws-gate.readthedocs.io/en/latest/quickstart/#prerequisites) so you'll have to set that up.
+3.  Finally, you can run `bin/db-connect.sh` with the following environment variables:
+  - AWS_RDS_HOST: The (internal) hostname of the database instanace that you want to connect to. Terraform will output this value!
+  - AWS_SSM_TAG: The name that we've tagged the RDS database with. This is in terraform too, and might be like `SSM-Staging`.

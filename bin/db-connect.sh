@@ -4,7 +4,4 @@ INSTANCE_ID=$(aws ec2 describe-instances \
                --query "Reservations[].Instances[?State.Name == 'running'].InstanceId[]" \
                --output text)
 
-# create the port forwarding tunnel
-aws ssm start-session --target $INSTANCE_ID \
-                       --document-name AWS-StartPortForwardingSession \
-                       --parameters '{"portNumber":["22"],"localPortNumber":["55432"]}'
+ssh -L 5432:$AWS_RDS_HOST:5432 $INSTANCE_ID.us-east-1.default -N
