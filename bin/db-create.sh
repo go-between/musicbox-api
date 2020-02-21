@@ -1,1 +1,1 @@
-aws2 ecs run-task --cluster musicbox-cluster-staging --task-definition musicbox-app-task-staging-db-create --count 1 --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=[REPLACE_ME,WITH_PRIVATE_SUBNETS],securityGroups=[REPLACE_ME_WITH_ECS_SECURITY_GROUP]}"
+aws2 ecs run-task --cluster $AWS_ECS_CLUSTER --task-definition $AWS_TASK_DEFINITION --count 1 --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=[$AWS_PRIVATE_SUBNETS],securityGroups=[$AWS_SECURITY_GROUPS]}"

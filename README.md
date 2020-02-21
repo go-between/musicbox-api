@@ -54,3 +54,44 @@ Password:  **hunter2**
 
 Users belong to one or more teams, which have several rooms.  Users also have some sweet music already in their library.  Check out [`db/seeds.rb`](db/seeds.rb) for the specifics!
 
+## Deployment
+
+### Push Code Places
+
+We deploy as containerized services to ECS via Fargate.  At least I think I have all of those AWS words correct.  In order for YOU to deploy, you must:
+
+1.  Have access to our Elastic Container Repository.  This means you'll need a user in our AWS account with some permissions.  Check with Truman because it's still a manual process.
+2.  Have Docker running locally
+3.  Execute `bin/build-push.sh`.  This will build a docker image and push it to ECR with the **latest** tag.  We use the tag when new ECS tasks go fetch the code that they're going to run, so we'll need to figure out how to coordinate this tag with our [Terraform Project](https://github.com/go-between/musicbox-terraform).  For right now, tasks always pull the (literal) **latest** tag, so be careful!
+4.  Go over to the [Terraform Project](https://github.com/go-between/musicbox-terraform) and, like, make sure it's all set up.  Maybe there will be a README when you go there!  Follow whatever instructions we have for executing the deployment.
+
+### Migrations
+
+We run migrations as one-off ECS tasks.  They also currently pull their application from the **latest** docker tag in ECR, which means we technically have to deploy code before we can run migrations, which is not so great.  Maybe we'll fix that!  We have two database tasks that are parameterized by environment variables.
+
+#### Staging
+- Database Creation: `bin/db-create.sh` (probably we don't have to do this one too often)
+  - AWS_ECS_CLUSTER: `musicbox-cluster-staging`
+  - AWS_TASK_DEFINITION: `musicbox-app-task-staging-db-create`
+  - AWS_PRIVATE_SUBNETS: The IDs of the private subnets in the VPC that you're deploying into, e.g., `subnet-xxxxxxxxxxxxxxxxx,subnet-yyyyyyyyyyyyyyyyy`
+  - AWS_SECURITY_GROUPS: The IDs of the ECR and ECS Tasks security groups, e.g., `sg-xxxxxxxxxxxxxxxxx,sg-yyyyyyyyyyyyyyyyy`
+  - EX: `AWS_TASK_DEFINITION=musicbox-app-task-staging-db-create AWS_ECS_CLUSTER=musicbox-cluster-staging AWS_PRIVATE_SUBNETS=subnet-xxxxxxxxxxxxxxxxx,subnet-yyyyyyyyyyyyyyyyy AWS_SECURITY_GROUPS=sg-xxxxxxxxxxxxxxxxx,sg-yyyyyyyyyyyyyyyyy bin/db-create.sh`
+  - Yowza!
+
+- Database Migrations: `bin/db-migrate.sh` (remember that this task uses the **latest** tag by default so we'll have to figure out how to get around that!)
+  - AWS_ECS_CLUSTER: `musicbox-cluster-staging`
+  - AWS_TASK_DEFINITION: `musicbox-app-task-staging-db-migrate`
+  - AWS_PRIVATE_SUBNETS: The IDs of the private subnets in the VPC that you're deploying into, e.g., `subnet-xxxxxxxxxxxxxxxxx,subnet-yyyyyyyyyyyyyyyyy`
+  - AWS_SECURITY_GROUPS: The IDs of the ECR and ECS Tasks security groups, e.g., `sg-xxxxxxxxxxxxxxxxx,sg-yyyyyyyyyyyyyyyyy`
+  - EX: `AWS_TASK_DEFINITION=musicbox-app-task-staging-db-migrate AWS_ECS_CLUSTER=musicbox-cluster-staging AWS_PRIVATE_SUBNETS=subnet-xxxxxxxxxxxxxxxxx,subnet-yyyyyyyyyyyyyyyyy AWS_SECURITY_GROUPS=sg-xxxxxxxxxxxxxxxxx,sg-yyyyyyyyyyyyyyyyy bin/db-migrate.sh`
+  - Whazoo!
+
+## Operationaling
+
+Our RDS database runs inside of Amazon in a virtual private cloud.  It is not accessible publicly, so we use Amazon's Simple Systems Manager, which is only sort of simple. In order to connect to a deployed database (either Staging or Production), you'll need a few things:
+
+1.  An AWS account with access to our stuff and the proper permissions. This is all manual so we'll probably copy from Truman's user. Also you'll need to be added to the policy that lets your computer forward a temporary ssh key to the SSM host. This is all terraform stuff so maybe there's a readme that will talk about that soon.
+2.  Also we use a tool called [aws-gate](https://aws-gate.readthedocs.io/en/latest/quickstart/#prerequisites) so you'll have to set that up.
+3.  Finally, you can run `bin/db-connect.sh` with the following environment variables:
+  - AWS_RDS_HOST: The (internal) hostname of the database instanace that you want to connect to. Terraform will output this value!
+  - AWS_SSM_TAG: The name that we've tagged the RDS database with. This is in terraform too, and might be like `SSM-Staging`.
