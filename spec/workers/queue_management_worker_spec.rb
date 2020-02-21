@@ -36,18 +36,6 @@ RSpec.describe QueueManagementWorker, type: :worker do
         expect(BroadcastNowPlayingWorker).to have_enqueued_sidekiq_job(room.id)
       end
     end
-
-    context "when its previous run was empty" do
-      it "does not broadcast to now playing" do
-        worker.perform(room.id)
-        expect(BroadcastNowPlayingWorker).not_to have_enqueued_sidekiq_job(anything)
-      end
-
-      it "does not broadcasts to queue" do
-        worker.perform(room.id)
-        expect(BroadcastPlaylistWorker).not_to have_enqueued_sidekiq_job(anything)
-      end
-    end
   end
 
   context "when queue has songs to play" do
