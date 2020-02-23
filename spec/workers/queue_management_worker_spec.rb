@@ -6,7 +6,7 @@ RSpec.describe QueueManagementWorker, type: :worker do
 
   let(:started) { Time.zone.now }
   let(:song) { create(:song, duration_in_seconds: 10) }
-  let(:room) { create(:room) }
+  let(:room) { create(:room, queue_processing: true) }
   let(:user) { create(:user) }
   let(:worker) { described_class.new }
 
@@ -61,6 +61,19 @@ RSpec.describe QueueManagementWorker, type: :worker do
         room.reload
         expect(room.current_record).to eq(previous_record)
         expect(room.playing_until).to eq(playing_until)
+        expect(BroadcastNowPlayingWorker).not_to have_enqueued_sidekiq_job(room.id)
+        expect(BroadcastPlaylistWorker).not_to have_enqueued_sidekiq_job(room.id)
+      end
+    end
+
+    it "does nothing if not set to processing" do
+      travel_to(Time.utc(3000, 1, 1, 0, 0, 0)) do
+        previous_record = create(:room_playlist_record, user: user)
+        room.update!(queue_processing: false, current_record: previous_record)
+        worker.perform(room.id)
+
+        room.reload
+        expect(room.current_record).to eq(previous_record)
         expect(BroadcastNowPlayingWorker).not_to have_enqueued_sidekiq_job(room.id)
         expect(BroadcastPlaylistWorker).not_to have_enqueued_sidekiq_job(room.id)
       end

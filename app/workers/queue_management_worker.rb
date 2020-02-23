@@ -5,35 +5,34 @@ class QueueManagementWorker
   sidekiq_options queue: "queue_management"
 
   def perform(room_id)
-    room = Room.find(room_id)
+    return unless update_room!(room_id)
 
-    update_room!(room) do
-      BroadcastNowPlayingWorker.perform_async(room_id)
-      BroadcastPlaylistWorker.perform_async(room_id)
-    end
+    BroadcastNowPlayingWorker.perform_async(room_id)
+    BroadcastPlaylistWorker.perform_async(room_id)
   end
 
   private
 
-  def update_room!(room)
+  def update_room!(room_id)
+    room = Room.find(room_id)
     room.with_lock do
+      return unless room.queue_processing?
       return if room.playing_until&.future?
 
-      next_record = RoomPlaylist.new(room.id).generate_playlist.first
-      return idle!(room) && yield if next_record.blank?
+      next_record = next_record_in_playlist(room)
+      if next_record.blank?
+        room.idle!
+        return true
+      end
 
       next_record.update!(play_state: "played", played_at: Time.zone.now)
-      room.update!(current_record: next_record, playing_until: playing_until(next_record))
+      room.playing_record!(next_record)
 
-      yield
+      return true
     end
   end
 
-  def playing_until(record)
-    record.song.duration_in_seconds.seconds.from_now
-  end
-
-  def idle!(room)
-    room.update!(current_record: nil, playing_until: nil, waiting_songs: false)
+  def next_record_in_playlist(room)
+    RoomPlaylist.new(room).generate_playlist.first
   end
 end

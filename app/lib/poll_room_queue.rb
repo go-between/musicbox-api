@@ -6,7 +6,13 @@ class PollRoomQueue
   end
 
   def poll!
-    rooms_to_enqueue = recently_finished_playing.or(newly_enqueued)
+    rooms = recently_finished_playing.or(newly_enqueued)
+    # update_all will update directly in the database without instantiating
+    # models, which is cool except that it also clears the relation
+    # so we save it with #to_a first
+    rooms_to_enqueue = rooms.to_a
+    rooms.update_all(queue_processing: true)
+
     rooms_to_enqueue.each do |room|
       enqueue_for(room.id)
     end
@@ -15,11 +21,11 @@ class PollRoomQueue
   private
 
   def newly_enqueued
-    Room.where(playing_until: nil).where(waiting_songs: true)
+    Room.where(playing_until: nil, waiting_songs: true, queue_processing: false)
   end
 
   def recently_finished_playing
-    Room.where(@room_arel[:playing_until].lteq(Time.zone.now))
+    Room.where(queue_processing: false).where(@room_arel[:playing_until].lteq(Time.zone.now))
   end
 
   def enqueue_for(room_id)

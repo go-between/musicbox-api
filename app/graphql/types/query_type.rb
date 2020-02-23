@@ -74,7 +74,8 @@ module Types
 
     def room_playlist(room_id:)
       confirm_current_user!
-      RoomPlaylist.new(room_id).generate_playlist
+      room = Room.find(room_id)
+      RoomPlaylist.new(room).generate_playlist
     end
 
     field :room_playlist_for_user, [Types::RoomPlaylistRecordType], null: true do
