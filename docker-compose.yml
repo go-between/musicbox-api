@@ -12,6 +12,8 @@ services:
     environment: &app-environment
       DATABASE_URL: postgresql://postgres:postgrespassword@db
       REDIS_URL: redis://redis:6379
+      SIDEKIQ_REDIS_URL: redis://redis:6379
+      LOG_LEVEL: debug
     links:
     - db
     - redis

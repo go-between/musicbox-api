@@ -1,1 +1,1 @@
-aws2 ecs run-task --cluster $AWS_ECS_CLUSTER --task-definition $AWS_TASK_DEFINITION --count 1 --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=[$AWS_PRIVATE_SUBNETS],securityGroups=[$AWS_SECURITY_GROUPS]}"
+aws ecs run-task --cluster $AWS_ECS_CLUSTER --task-definition $AWS_TASK_DEFINITION --count 1 --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=[$AWS_PRIVATE_SUBNETS],securityGroups=[$AWS_SECURITY_GROUPS]}"

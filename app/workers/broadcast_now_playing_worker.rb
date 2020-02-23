@@ -11,6 +11,9 @@ class BroadcastNowPlayingWorker
       variables: { id: room_id }
     )
 
+    logger.debug("Preparing to broadcast to room #{room_id}")
+    logger.debug("With song #{now_playing.to_h}")
+
     NowPlayingChannel.broadcast_to(Room.find(room_id), now_playing.to_h)
   end
 
