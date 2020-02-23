@@ -11,11 +11,10 @@ class RoomPlaylist
     return [] if user_rotation.blank?
 
     ordered_waiting_songs = []
-    waiting_songs = RoomPlaylistRecord.where(room_id: room_id, play_state: "waiting")
+    waiting_songs = RoomPlaylistRecord.where(room_id: room_id, play_state: "waiting").to_a
 
     waiting_user_rotation.each_with_index do |user_id, idx|
-      user_waiting_songs = waiting_songs.where(user_id: user_id).order(:order)
-      user_waiting_songs.each_with_index do |song, song_idx|
+      waiting_songs_for_user(waiting_songs, user_id).each_with_index do |song, song_idx|
         ordered_waiting_songs[idx + (waiting_user_rotation.size * song_idx)] = song
       end
     end
@@ -24,6 +23,10 @@ class RoomPlaylist
   end
 
   private
+
+  def waiting_songs_for_user(waiting_songs, user_id)
+    waiting_songs.select { |song| song.user_id == user_id }.sort_by(&:order)
+  end
 
   def waiting_user_rotation
     next_user_index = user_rotation.find_index(next_user)
