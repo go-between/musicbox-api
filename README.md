@@ -9,6 +9,8 @@
   - `rbenv init`
 - [Docker](https://www.docker.com/get-started)
   - Go to the link and find the download thing.  Do the rest of the instructions.
+- [AWS CLI (v2)](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+  - This may install as the binary `aws2` to avoid conflicts with the original v2 command line interface. Both the [musicbox-terraform](https://github.com/go-between/musicbox-terraform) project as well as certain scripts here expect this to be renamed as just `aws`.  Note:  This tool is not required for normal operation of the development environment; it's only required if you wish to run migrations against or tunnel into a deployed environment.
 
 ## Second Things Next
 
