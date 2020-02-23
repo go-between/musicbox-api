@@ -1,20 +1,19 @@
 # frozen_string_literal: true
 
 class RoomPlaylist
-  attr_reader :room
+  attr_reader :room, :waiting_songs
 
   def initialize(room)
     @room = room
+    @waiting_songs = RoomPlaylistRecord.where(room_id: room.id, play_state: "waiting").to_a
   end
 
   def generate_playlist
     return [] if user_rotation.blank?
 
     ordered_waiting_songs = []
-    waiting_songs = RoomPlaylistRecord.where(room_id: room.id, play_state: "waiting").to_a
-
     waiting_user_rotation.each_with_index do |user_id, idx|
-      waiting_songs_for_user(waiting_songs, user_id).each_with_index do |song, song_idx|
+      waiting_songs_for_user(user_id).each_with_index do |song, song_idx|
         ordered_waiting_songs[idx + (waiting_user_rotation.size * song_idx)] = song
       end
     end
@@ -24,7 +23,7 @@ class RoomPlaylist
 
   private
 
-  def waiting_songs_for_user(waiting_songs, user_id)
+  def waiting_songs_for_user(user_id)
     waiting_songs.select { |song| song.user_id == user_id }.sort_by(&:order)
   end
 
