@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 class RoomPlaylist
-  attr_reader :room_id
+  attr_reader :room
 
-  def initialize(room_id)
-    @room_id = room_id
+  def initialize(room)
+    @room = room
   end
 
   def generate_playlist
     return [] if user_rotation.blank?
 
     ordered_waiting_songs = []
-    waiting_songs = RoomPlaylistRecord.where(room_id: room_id, play_state: "waiting").to_a
+    waiting_songs = RoomPlaylistRecord.where(room_id: room.id, play_state: "waiting").to_a
 
     waiting_user_rotation.each_with_index do |user_id, idx|
       waiting_songs_for_user(waiting_songs, user_id).each_with_index do |song, song_idx|
@@ -43,12 +43,6 @@ class RoomPlaylist
 
   def current_record_user_id
     room.current_record&.user_id
-  end
-
-  def room
-    return @room if defined? @room
-
-    @room ||= Room.find(room_id)
   end
 
   def user_rotation

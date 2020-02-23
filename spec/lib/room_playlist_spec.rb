@@ -19,14 +19,14 @@ RSpec.describe RoomPlaylist do
       record5 = create(:room_playlist_record, room: room, user: user_2, order: 2, play_state: "waiting")
       record6 = create(:room_playlist_record, room: room, user: user_3, order: 20, play_state: "waiting")
 
-      playlist = described_class.new(room.id)
+      playlist = described_class.new(room)
 
       expect(playlist.generate_playlist).to eq([record3, record4, record5, record6])
     end
 
     it "returns an empty queue when no users are in rotation" do
       room.update!(user_rotation: [])
-      playlist = described_class.new(room.id)
+      playlist = described_class.new(room)
 
       expect(playlist.generate_playlist).to be_empty
     end
