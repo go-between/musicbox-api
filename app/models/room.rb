@@ -11,6 +11,25 @@ class Room < ApplicationRecord
   belongs_to :team
 
   def idle!
-    update!(current_record: nil, playing_until: nil, waiting_songs: false)
+    update!(
+      current_record: nil,
+      playing_until: nil,
+      queue_processing: false,
+      waiting_songs: false
+    )
+  end
+
+  def playing_record!(record)
+    update!(
+      current_record: record,
+      playing_until: playing_until_datetime(record),
+      queue_processing: false
+    )
+  end
+
+  private
+
+  def playing_until_datetime(record)
+    record.song.duration_in_seconds.seconds.from_now
   end
 end
