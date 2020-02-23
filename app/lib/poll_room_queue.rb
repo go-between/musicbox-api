@@ -11,7 +11,7 @@ class PollRoomQueue
     # models, which is cool except that it also clears the relation
     # so we save it with #to_a first
     rooms_to_enqueue = rooms.to_a
-    rooms.update_all(queue_processing: true)
+    rooms.update_all(queue_processing: true) if rooms.any?
 
     rooms_to_enqueue.each do |room|
       enqueue_for(room.id)
