@@ -24,6 +24,9 @@ services:
     ports: ["6379:6379"]
   app-poll-room-queue:
     <<: *app-common
+    environment:
+      <<: *app-environment
+      LOG_LEVEL: info
     command: bin/wait-for-it.sh db:5432 -- bin/wait-for-it.sh redis:6379 -- rake room:poll_queue
     ports: []
   app-sidekiq-workers:
