@@ -11,8 +11,12 @@ module ApplicationCable
     protected
 
     def current_user
+      return @current_user if defined? @current_user
+
       user = User.find_by(id: access_token.try(:resource_owner_id))
-      user || reject_unauthorized_connection
+      return reject_unauthorized_connection if user.blank?
+
+      @current_user = user
     end
 
     def access_token
