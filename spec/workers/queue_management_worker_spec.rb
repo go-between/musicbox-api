@@ -44,11 +44,13 @@ RSpec.describe QueueManagementWorker, type: :worker do
     end
 
     let!(:record) do
-      create(:room_playlist_record,
-             room: room,
-             song: song,
-             user: user,
-             play_state: "waiting")
+      create(
+        :room_playlist_record,
+        room: room,
+        song: song,
+        user: user,
+        play_state: "waiting"
+      )
     end
 
     it "does nothing if already playing" do
@@ -113,6 +115,37 @@ RSpec.describe QueueManagementWorker, type: :worker do
     it "broadcasts to now playing" do
       worker.perform(room.id)
       expect(BroadcastNowPlayingWorker).to have_enqueued_sidekiq_job(room.id)
+    end
+
+    context "when user may no longer be active" do
+      it "does not remove the record's user when they are still active" do
+        user.update!(active_room: room)
+        worker.perform(room.id)
+
+        expect(user.reload.active_room).to eq(room)
+      end
+
+      it "does not remove the record's user if they have more songs to play" do
+        user.update!(active_room: room)
+        create(
+          :room_playlist_record,
+          room: room,
+          song: song,
+          user: user,
+          play_state: "waiting"
+        )
+
+        worker.perform(room.id)
+
+        expect(user.reload.active_room).to eq(room)
+      end
+
+      it "does remove the user if they have no further songs to play and are not active" do
+        user.update!(active_room: nil)
+        worker.perform(room.id)
+
+        expect(room.reload.user_rotation).not_to include(user.id)
+      end
     end
   end
 end
