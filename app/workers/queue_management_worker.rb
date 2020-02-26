@@ -19,9 +19,9 @@ class QueueManagementWorker
       return unless room.queue_processing?
       return if room.playing_until&.future?
 
+      next_record = next_record_in_playlist(room)
       remove_stale_user_from_room!(room)
 
-      next_record = next_record_in_playlist(room)
       if next_record.blank?
         room.idle!
         return true
