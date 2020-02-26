@@ -19,6 +19,8 @@ class QueueManagementWorker
       return unless room.queue_processing?
       return if room.playing_until&.future?
 
+      remove_stale_user_from_room!(room)
+
       next_record = next_record_in_playlist(room)
       if next_record.blank?
         room.idle!
@@ -27,7 +29,6 @@ class QueueManagementWorker
 
       next_record.update!(play_state: "played", played_at: Time.zone.now)
       room.playing_record!(next_record)
-      remove_stale_user_from_room!(room, next_record.user.id)
 
       return true
     end
@@ -37,11 +38,13 @@ class QueueManagementWorker
     RoomPlaylist.new(room).generate_playlist.first
   end
 
-  def remove_stale_user_from_room!(room, user_id)
-    user = User.find(user_id)
+  def remove_stale_user_from_room!(room)
+    return if room.current_record.blank?
+
+    user = room.current_record.user
     return if user.active_room_id == room.id
     return if RoomPlaylistRecord.waiting.where(user_id: user.id).exists?
 
-    room.update!(user_rotation: room.user_rotation.without(user_id))
+    room.update!(user_rotation: room.user_rotation.without(user.id))
   end
 end
