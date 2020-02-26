@@ -28,6 +28,7 @@ class BroadcastMessageWorker
             }
           }
           user {
+            email
             name
           }
         }
