@@ -26,6 +26,7 @@ RSpec.describe BroadcastMessageWorker, type: :worker do
         expect(data[:createdAt]).to eq(created_at.iso8601)
         expect(data.dig(:roomPlaylistRecord, :song, :name)).to eq(room_playlist_record.song.name)
         expect(data.dig(:user, :name)).to eq("Jorm")
+        expect(data.dig(:user, :name)).to eq("a@a.a")
       end)
     end
   end
