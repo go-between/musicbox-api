@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class UsersChannel < ApplicationCable::Channel
-  delegate :subscribed, to: :subscribe_for_current_user
-
   def unsubscribed
     return if current_user.blank?
 
