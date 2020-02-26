@@ -14,7 +14,7 @@ Rails.application.configure do
   # Show full error reports.
   config.consider_all_requests_local = true
 
-  config.log_level = ENV["LOG_LEVEL"] { "info" }.to_sym
+  config.log_level = ENV.fetch("LOG_LEVEL") { "info" }.to_sym
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
