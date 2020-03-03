@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_23_055015) do
+ActiveRecord::Schema.define(version: 2020_02_26_234654) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_trgm"
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
@@ -113,6 +114,7 @@ ActiveRecord::Schema.define(version: 2020_02_23_055015) do
     t.integer "duration_in_seconds"
     t.string "youtube_id"
     t.string "description"
+    t.index ["name"], name: "index_songs_on_name", opclass: :gin_trgm_ops, using: :gin
     t.index ["youtube_id"], name: "index_songs_on_youtube_id"
   end
 

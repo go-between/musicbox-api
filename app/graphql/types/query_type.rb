@@ -100,11 +100,16 @@ module Types
     end
 
     field :songs, [Types::SongType], null: true do
+      argument :query, String, required: false
     end
 
-    def songs
+    def songs(query: nil)
       confirm_current_user!
-      current_user.songs
+
+      library = current_user.songs
+      library = library.where(Song.arel_table[:name].matches("%#{query}%")) if query.present?
+
+      library
     end
 
     field :user, Types::UserType, null: false do
