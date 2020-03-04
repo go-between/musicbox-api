@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class QueryType < Types::BaseObject
+  class QueryType < Types::BaseObject # rubocop:disable Metrics/ClassLength
     graphql_name "Query"
 
     field :invitation, Types::InvitationType, null: true do
@@ -101,13 +101,20 @@ module Types
 
     field :songs, [Types::SongType], null: true do
       argument :query, String, required: false
+      argument :tag_ids, [ID], required: false
     end
 
-    def songs(query: nil)
+    def songs(query: nil, tag_ids: []) # rubocop:disable Metrics/AbcSize
       confirm_current_user!
 
       library = current_user.songs
       library = library.where(Song.arel_table[:name].matches("%#{query}%")) if query.present?
+
+      if tag_ids.present?
+        # TODO: make it fast
+        user_tag_ids = current_user.tags.where(id: tag_ids).pluck(:id)
+        library = library.select { |song| song.tags.exists?(id: user_tag_ids) }
+      end
 
       library
     end
