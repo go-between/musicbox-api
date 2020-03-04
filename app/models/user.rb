@@ -12,6 +12,7 @@ class User < ApplicationRecord
   has_many :room_playlist_records
   has_many :user_library_records
   has_many :songs, through: :user_library_records
+  has_many :tags
   has_many :team_users
   has_many :teams, through: :team_users
 end

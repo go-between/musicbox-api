@@ -25,6 +25,14 @@ RSpec.describe User, type: :model do
       expect(user.reload.songs).to match_array([song1, song2, song2])
     end
 
+    it "has many tags" do
+      t1 = create(:tag, user: user)
+      t2 = create(:tag, user: user)
+      t3 = create(:tag, user: user)
+
+      expect(user.tags).to match_array([t1, t2, t3])
+    end
+
     it "may belong to one active room" do
       room = create(:room)
       user.update!(active_room: room)
