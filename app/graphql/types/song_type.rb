@@ -9,5 +9,6 @@ module Types
     field :duration_in_seconds, Int, null: true
     field :name, String, null: true
     field :youtube_id, ID, null: false
+    field :tags, [Types::TagType], null: false
   end
 end
