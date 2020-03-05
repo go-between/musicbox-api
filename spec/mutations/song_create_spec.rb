@@ -6,11 +6,11 @@ RSpec.describe "Song Create", type: :request do
   include AuthHelper
   include JsonHelper
 
-  def query(youtube_id:)
+  def query
     %(
-      mutation {
-        songCreate(input:{
-          youtubeId: "#{youtube_id}"
+      mutation SongCreate($youtubeId: ID!) {
+        songCreate(input: {
+          youtubeId: $youtubeId
         }) {
           song {
             id
@@ -33,13 +33,12 @@ RSpec.describe "Song Create", type: :request do
         video = OpenStruct.new(duration: 1500, title: "a title", description: "a description")
         expect(Yt::Video).to receive(:new).with(id: "an-id").and_return(video)
 
-        authed_post(
-          url: "/api/v1/graphql",
-          body: {
-            query: query(youtube_id: "an-id")
-          },
+        graphql_request(
+          query: query,
+          variables: { youtubeId: "an-id" },
           user: current_user
         )
+
         data = json_body.dig(:data, :songCreate)
         id = data.dig(:song, :id)
 
@@ -59,11 +58,9 @@ RSpec.describe "Song Create", type: :request do
         expect(Yt::Video).not_to receive(:new)
 
         expect do
-          authed_post(
-            url: "/api/v1/graphql",
-            body: {
-              query: query(youtube_id: "the-youtube-id")
-            },
+          graphql_request(
+            query: query,
+            variables: { youtubeId: "the-youtube-id" },
             user: current_user
           )
         end.not_to change(Song, :count)
@@ -82,11 +79,9 @@ RSpec.describe "Song Create", type: :request do
         expect(Yt::Video).not_to receive(:new)
 
         expect do
-          authed_post(
-            url: "/api/v1/graphql",
-            body: {
-              query: query(youtube_id: "the-youtube-id")
-            },
+          graphql_request(
+            query: query,
+            variables: { youtubeId: "the-youtube-id" },
             user: current_user
           )
         end.to not_change(Song, :count).and(not_change(UserLibraryRecord, :count))
@@ -104,11 +99,9 @@ RSpec.describe "Song Create", type: :request do
     it "fails to persist when youtube_id is not specified" do
       expect(Yt::Video).not_to receive(:new)
       expect do
-        authed_post(
-          url: "/api/v1/graphql",
-          body: {
-            query: query(youtube_id: nil)
-          },
+        graphql_request(
+          query: query,
+          variables: { youtubeId: '' },
           user: current_user
         )
       end.not_to change(Song, :count)

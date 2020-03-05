@@ -3,7 +3,9 @@
 module AuthHelper
   def auth_headers(user)
     {
-      Authorization: "Bearer #{token(user).token}"
+      Authorization: "Bearer #{token(user).token}",
+      Accept: "application/json",
+      'Content-Type': "application/json"
     }
   end
 
@@ -15,10 +17,10 @@ module AuthHelper
   end
 
   def graphql_request(query:, variables: {}, headers: {}, user: create(:user))
-    post("/api/v1/graphql", params: { query: query, variables: variables }, headers: headers.merge(auth_headers(user)))
-  end
-
-  def authed_post(url:, body:, headers: {}, user:)
-    post(url, params: body, headers: headers.merge(auth_headers(user)))
+    post(
+      "/api/v1/graphql",
+      params: { query: query, variables: variables }.to_json,
+      headers: headers.merge(auth_headers(user))
+    )
   end
 end
