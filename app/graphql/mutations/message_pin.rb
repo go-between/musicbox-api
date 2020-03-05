@@ -18,7 +18,10 @@ module Mutations
         }
       end
 
+      previous_state = message.pinned
       message.update!(pinned: pin)
+
+      BroadcastMessagePinWorker.perform_async(message.room_id, message_id) if previous_state != pin
 
       {
         message: message,

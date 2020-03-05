@@ -30,27 +30,35 @@ RSpec.describe "Message Pin", type: :request do
     it "Allows a user to pin a message" do
       graphql_request(query: query, variables: { messageId: message.id, pin: true }, user: current_user)
 
+      expect(BroadcastMessagePinWorker).to have_enqueued_sidekiq_job(message.room_id, message.id)
       expect(message.reload.pinned).to eq(true)
+      expect(json_body.dig(:data, :messagePin, :message, :id)).to eq(message.id)
     end
 
     it "Noops if a message is already pinned" do
       message.update!(pinned: true)
-      graphql_request(query: query, variables: { message_id: message.id, pin: true }, user: current_user)
+      graphql_request(query: query, variables: { messageId: message.id, pin: true }, user: current_user)
 
+      expect(BroadcastMessagePinWorker).not_to have_enqueued_sidekiq_job
       expect(message.reload.pinned).to eq(true)
+      expect(json_body.dig(:data, :messagePin, :message, :id)).to eq(message.id)
     end
 
     it "Allows a user to unpin a message" do
-      message.update!(pinned: false)
-      graphql_request(query: query, variables: { message_id: message.id, pin: false }, user: current_user)
+      message.update!(pinned: true)
+      graphql_request(query: query, variables: { messageId: message.id, pin: false }, user: current_user)
 
+      expect(BroadcastMessagePinWorker).to have_enqueued_sidekiq_job(message.room_id, message.id)
       expect(message.reload.pinned).to eq(false)
+      expect(json_body.dig(:data, :messagePin, :message, :id)).to eq(message.id)
     end
 
     it "Noops if a message is already unpinned" do
-      graphql_request(query: query, variables: { message_id: message.id, pin: false }, user: current_user)
+      graphql_request(query: query, variables: { messageId: message.id, pin: false }, user: current_user)
 
+      expect(BroadcastMessagePinWorker).not_to have_enqueued_sidekiq_job
       expect(message.reload.pinned).to eq(false)
+      expect(json_body.dig(:data, :messagePin, :message, :id)).to eq(message.id)
     end
   end
 
