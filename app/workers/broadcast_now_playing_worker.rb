@@ -19,7 +19,7 @@ class BroadcastNowPlayingWorker
 
   private
 
-  def query
+  def query # rubocop:disable Metrics/MethodLength
     %(
       query($id: ID!) {
         room(id: $id) {
@@ -29,6 +29,10 @@ class BroadcastNowPlayingWorker
             song {
               name
               youtubeId
+            }
+            user {
+              name
+              email
             }
           }
         }
