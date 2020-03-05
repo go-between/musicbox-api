@@ -25,6 +25,7 @@ RSpec.describe BroadcastMessageWorker, type: :worker do
       end.to(have_broadcasted_to(room).from_channel(MessageChannel).with do |msg|
         data = msg.dig(:data, :message)
         expect(data[:message]).to eq("Howdy folks")
+        expect(data[:pinned]).to eq(false)
         expect(data[:createdAt]).to eq(created_at.iso8601)
         expect(data.dig(:song, :name)).to eq(song.name)
         expect(data.dig(:user, :name)).to eq("Jorm")

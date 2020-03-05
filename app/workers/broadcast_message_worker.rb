@@ -21,6 +21,7 @@ class BroadcastMessageWorker
         message(id: $id) {
           id
           message
+          pinned
           createdAt
           song {
             name
