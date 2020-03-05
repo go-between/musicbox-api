@@ -6,6 +6,7 @@ module Types
 
     field :id, ID, null: false
     field :message, String, null: false
+    field :pinned, Boolean, null: false
     field :created_at, Types::DateTimeType, null: false
 
     field :room_playlist_record, Types::RoomPlaylistRecordType, null: true

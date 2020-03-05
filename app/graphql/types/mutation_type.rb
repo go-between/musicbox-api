@@ -6,6 +6,7 @@ module Types
     field :invitation_create, mutation: Mutations::InvitationCreate
 
     field :message_create, mutation: Mutations::MessageCreate
+    field :message_pin, mutation: Mutations::MessagePin
 
     field :room_activate, mutation: Mutations::RoomActivate
     field :room_create, mutation: Mutations::RoomCreate

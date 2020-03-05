@@ -101,7 +101,7 @@ RSpec.describe "Song Create", type: :request do
       expect do
         graphql_request(
           query: query,
-          variables: { youtubeId: '' },
+          variables: { youtubeId: "" },
           user: current_user
         )
       end.not_to change(Song, :count)
