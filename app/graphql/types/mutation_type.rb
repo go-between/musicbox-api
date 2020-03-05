@@ -15,6 +15,9 @@ module Types
 
     field :song_create, mutation: Mutations::SongCreate
 
+    field :tag_associate, mutation: Mutations::TagAssociate
+    field :tag_create, mutation: Mutations::TagCreate
+
     field :team_activate, mutation: Mutations::TeamActivate
     field :team_create, mutation: Mutations::TeamCreate
 
