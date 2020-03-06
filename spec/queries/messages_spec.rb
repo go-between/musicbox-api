@@ -8,8 +8,8 @@ RSpec.describe "Messages Query", type: :request do
 
   def query
     %(
-      query Messages($from: DateTime, $to: DateTime) {
-        messages(from: $from, to: $to) {
+      query Messages($from: DateTime, $to: DateTime, $pinned: Boolean) {
+        messages(from: $from, to: $to, pinned: $pinned) {
           id
           message
           room {
@@ -35,10 +35,10 @@ RSpec.describe "Messages Query", type: :request do
   let(:room_playlist_record1) { create(:room_playlist_record, room: room, song: create(:song)) }
   let(:room_playlist_record2) { create(:room_playlist_record, room: room, song: create(:song)) }
 
-  # rubocop:disable RSpec/LetSetup
   let!(:message1) do
     create(
       :message,
+      pinned: false,
       room: room,
       user: user,
       created_at: 5.hours.ago,
@@ -56,7 +56,9 @@ RSpec.describe "Messages Query", type: :request do
       song: room_playlist_record2.song
     )
   end
+
   let!(:message3) { create(:message, room: room, user: user, created_at: 1.hour.ago) }
+  # rubocop:disable RSpec/LetSetup
   let!(:other_message) { create(:message, room: create(:room), user: user2, created_at: 3.hours.ago) }
   # rubocop:enable RSpec/LetSetup
 
