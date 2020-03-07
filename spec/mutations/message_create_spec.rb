@@ -21,7 +21,8 @@ RSpec.describe "Invitation Create", type: :request do
     )
   end
 
-  let(:room_playlist_record) { create(:room_playlist_record) }
+  let(:song) { create(:song) }
+  let(:room_playlist_record) { create(:room_playlist_record, song: song) }
   let(:room) { create(:room, current_record: room_playlist_record) }
   let(:current_user) { create(:user, active_room: room) }
 
@@ -33,6 +34,7 @@ RSpec.describe "Invitation Create", type: :request do
       message = Message.find(id)
       expect(message.room_playlist_record).to eq(room_playlist_record)
       expect(message.room).to eq(room)
+      expect(message.song).to eq(song)
       expect(message.user).to eq(current_user)
     end
 

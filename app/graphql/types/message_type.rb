@@ -10,6 +10,7 @@ module Types
 
     field :room_playlist_record, Types::RoomPlaylistRecordType, null: true
     field :room, Types::RoomType, null: false
+    field :song, Types::SongType, null: true
     field :user, Types::UserType, null: false
   end
 end
