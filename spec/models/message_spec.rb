@@ -6,14 +6,16 @@ RSpec.describe Message, type: :model do
   describe "relationships" do
     let(:room) { create(:room) }
     let(:user) { create(:user) }
-    let(:room_playlist_record) { create(:room_playlist_record, room: room, user: user) }
+    let(:song) { create(:song) }
+    let(:room_playlist_record) { create(:room_playlist_record, room: room, user: user, song: song) }
 
-    it "may belong to a room, user, and playlist record" do
+    it "may belong to a room, user, playlist record and song" do
       message = described_class.create!(
         message: "hi",
         room_playlist_record: room_playlist_record,
         room: room,
-        user: user
+        user: user,
+        song: song
       )
 
       expect(message.room_playlist_record).to eq(room_playlist_record)
