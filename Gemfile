@@ -39,6 +39,7 @@ group :development do
 end
 
 group :development, :test do
+  gem "bullet", "6.1.0"
   gem "pry-byebug", "3.7.0"
 end
 

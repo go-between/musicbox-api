@@ -59,6 +59,9 @@ GEM
     ast (2.4.0)
     bcrypt (3.1.13)
     builder (3.2.4)
+    bullet (6.1.0)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.11)
     byebug (11.0.1)
     coderay (1.1.2)
     concurrent-ruby (1.1.5)
@@ -221,6 +224,7 @@ GEM
     tzinfo (1.2.6)
       thread_safe (~> 0.1)
     unicode-display_width (1.6.0)
+    uniform_notifier (1.13.0)
     warden (1.2.8)
       rack (>= 2.0.6)
     websocket-driver (0.7.1)
@@ -234,6 +238,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bullet (= 6.1.0)
   database_cleaner (= 1.7.0)
   devise (= 4.7.1)
   doorkeeper (= 5.2.3)
