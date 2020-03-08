@@ -30,6 +30,8 @@ gem "doorkeeper", "5.2.3"
 gem "graphiql-rails", "1.7.0"
 gem "graphql", "1.9.16"
 
+gem "skylight", "4.2.2"
+
 group :development do
   gem "listen", "3.2.1"
   gem "rubocop", "0.78.0"
