@@ -14,6 +14,23 @@ RSpec.describe "Requests Integration", type: :request do
   let!(:dan) { create(:user, name: "dan", teams: [team]) }
   let!(:sean) { create(:user, name: "sean", teams: [team]) }
 
+  def room_playlist_records_reorder_mutation
+    %(
+      mutation RoomPlaylistRecordsReorder($orderedRecords: [OrderedPlaylistRecordInputObject!]!) {
+        roomPlaylistRecordsReorder(input: { orderedRecords: $orderedRecords }) {
+          roomPlaylistRecords {
+            id
+            song {
+              id
+              name
+            }
+          }
+          errors
+        }
+      }
+    )
+  end
+
   it "Allows three users to share a meaningful experience together" do
     Sidekiq::Testing.inline! do
       # Everybody joins the room
@@ -95,11 +112,12 @@ RSpec.describe "Requests Integration", type: :request do
       # Dan enqueues a song
       expect do
         records = [
-          { song_id: unicorn.id }
+          { songId: unicorn.id }
         ]
 
         graphql_request(
-          query: room_playlist_records_reorder_mutation(records: records),
+          query: room_playlist_records_reorder_mutation,
+          variables: { orderedRecords: records },
           user: dan
         )
       end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
@@ -118,12 +136,13 @@ RSpec.describe "Requests Integration", type: :request do
       # Dan enqueues another song
       expect do
         records = [
-          { song_id: unicorn.id, room_playlist_record_id: dan_unicorn_id },
-          { song_id: midnight_city.id }
+          { songId: unicorn.id, roomPlaylistRecordId: dan_unicorn_id },
+          { songId: midnight_city.id }
         ]
 
         graphql_request(
-          query: room_playlist_records_reorder_mutation(records: records),
+          query: room_playlist_records_reorder_mutation,
+          variables: { orderedRecords: records },
           user: dan
         )
       end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
@@ -141,11 +160,12 @@ RSpec.describe "Requests Integration", type: :request do
       # Truman enqueues a song
       expect do
         records = [
-          { song_id: star_fighter.id }
+          { songId: star_fighter.id }
         ]
 
         graphql_request(
-          query: room_playlist_records_reorder_mutation(records: records),
+          query: room_playlist_records_reorder_mutation,
+          variables: { orderedRecords: records },
           user: truman
         )
       end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
@@ -168,11 +188,12 @@ RSpec.describe "Requests Integration", type: :request do
       # Sean enqueues a song
       expect do
         records = [
-          { song_id: dont_move.id }
+          { songId: dont_move.id }
         ]
 
         graphql_request(
-          query: room_playlist_records_reorder_mutation(records: records),
+          query: room_playlist_records_reorder_mutation,
+          variables: { orderedRecords: records },
           user: sean
         )
       end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
@@ -197,12 +218,13 @@ RSpec.describe "Requests Integration", type: :request do
       # Sean enqueues another song
       expect do
         records = [
-          { song_id: dont_move.id, room_playlist_record_id: sean_dont_move_id },
-          { song_id: unicorn.id }
+          { songId: dont_move.id, roomPlaylistRecordId: sean_dont_move_id },
+          { songId: unicorn.id }
         ]
 
         graphql_request(
-          query: room_playlist_records_reorder_mutation(records: records),
+          query: room_playlist_records_reorder_mutation,
+          variables: { orderedRecords: records },
           user: sean
         )
       end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
@@ -226,12 +248,13 @@ RSpec.describe "Requests Integration", type: :request do
       # of the new song (hootsforce) and the previous (star fighter)
       expect do
         records = [
-          { song_id: hootsforce.id },
-          { song_id: star_fighter.id, room_playlist_record_id: truman_starfighter_id }
+          { songId: hootsforce.id },
+          { songId: star_fighter.id, roomPlaylistRecordId: truman_starfighter_id }
         ]
 
         graphql_request(
-          query: room_playlist_records_reorder_mutation(records: records),
+          query: room_playlist_records_reorder_mutation,
+          variables: { orderedRecords: records },
           user: truman
         )
       end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|

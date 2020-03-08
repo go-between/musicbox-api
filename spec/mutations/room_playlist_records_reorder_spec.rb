@@ -7,6 +7,23 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
   include GraphQLHelper
   include JsonHelper
 
+  def query
+    %(
+      mutation RoomPlaylistRecordsReorder($orderedRecords: [OrderedPlaylistRecordInputObject!]!) {
+        roomPlaylistRecordsReorder(input: { orderedRecords: $orderedRecords }) {
+          roomPlaylistRecords {
+            id
+            song {
+              id
+              name
+            }
+          }
+          errors
+        }
+      }
+    )
+  end
+
   let(:room) { create(:room) }
   let(:current_user) { create(:user, active_room_id: room.id) }
 
@@ -16,10 +33,11 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
       record1 = create(:room_playlist_record, room: room, order: 0, user: current_user)
 
       records = [
-        { song_id: record1.song_id, room_playlist_record_id: record1.id }
+        { songId: record1.song_id, roomPlaylistRecordId: record1.id }
       ]
       graphql_request(
-        query: room_playlist_records_reorder_mutation(records: records),
+        query: query,
+        variables: { orderedRecords: records },
         user: current_user
       )
 
@@ -33,11 +51,12 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
       record2 = create(:room_playlist_record, room: room, order: 1, user: current_user)
 
       records = [
-        { song_id: record2.song_id, room_playlist_record_id: record2.id },
-        { song_id: record1.song_id, room_playlist_record_id: record1.id }
+        { songId: record2.song_id, roomPlaylistRecordId: record2.id },
+        { songId: record1.song_id, roomPlaylistRecordId: record1.id }
       ]
       graphql_request(
-        query: room_playlist_records_reorder_mutation(records: records),
+        query: query,
+        variables: { orderedRecords: records },
         user: current_user
       )
 
@@ -56,11 +75,12 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
       record2_id = record2.id
 
       records = [
-        { song_id: record3.song_id, room_playlist_record_id: record3.id },
-        { song_id: record1.song_id, room_playlist_record_id: record1.id }
+        { songId: record3.song_id, roomPlaylistRecordId: record3.id },
+        { songId: record1.song_id, roomPlaylistRecordId: record1.id }
       ]
       graphql_request(
-        query: room_playlist_records_reorder_mutation(records: records),
+        query: query,
+        variables: { orderedRecords: records },
         user: current_user
       )
 
@@ -78,12 +98,13 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
       song2 = create(:song)
 
       records = [
-        { song_id: song1.id },
-        { song_id: record.song_id, room_playlist_record_id: record.id },
-        { song_id: song2.id }
+        { songId: song1.id },
+        { songId: record.song_id, roomPlaylistRecordId: record.id },
+        { songId: song2.id }
       ]
       graphql_request(
-        query: room_playlist_records_reorder_mutation(records: records),
+        query: query,
+        variables: { orderedRecords: records },
         user: current_user
       )
 
@@ -101,9 +122,10 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
     it "places the user in the song rotation when the rotation is empty" do
       room.update!(user_rotation: [])
 
-      records = [{ song_id: song.id }]
+      records = [{ songId: song.id }]
       graphql_request(
-        query: room_playlist_records_reorder_mutation(records: records),
+        query: query,
+        variables: { orderedRecords: records },
         user: current_user
       )
 
@@ -117,9 +139,10 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
       existing_user_id = SecureRandom.uuid
       room.update!(user_rotation: [existing_user_id])
 
-      records = [{ song_id: song.id }]
+      records = [{ songId: song.id }]
       graphql_request(
-        query: room_playlist_records_reorder_mutation(records: records),
+        query: query,
+        variables: { orderedRecords: records },
         user: current_user
       )
 
@@ -133,9 +156,10 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
       existing_user_id = SecureRandom.uuid
       room.update!(user_rotation: [current_user.id, existing_user_id])
 
-      records = [{ song_id: song.id }]
+      records = [{ songId: song.id }]
       graphql_request(
-        query: room_playlist_records_reorder_mutation(records: records),
+        query: query,
+        variables: { orderedRecords: records },
         user: current_user
       )
 
@@ -154,13 +178,14 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
       other_record = create(:room_playlist_record, room: room, order: 0, user: user)
       nonexistant_song_id = SecureRandom.uuid
       records = [
-        { song_id: nonexistant_song_id },
-        { song_id: own_record.song_id, room_playlist_record_id: own_record.id },
-        { song_id: other_record.song_id, room_playlist_record_id: other_record.id },
-        { song_id: song.id }
+        { songId: nonexistant_song_id },
+        { songId: own_record.song_id, roomPlaylistRecordId: own_record.id },
+        { songId: other_record.song_id, roomPlaylistRecordId: other_record.id },
+        { songId: song.id }
       ]
       graphql_request(
-        query: room_playlist_records_reorder_mutation(records: records),
+        query: query,
+        variables: { orderedRecords: records },
         user: current_user
       )
 
