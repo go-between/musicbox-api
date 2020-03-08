@@ -8,8 +8,8 @@ RSpec.describe "Messages Query", type: :request do
 
   def query
     %(
-      query Messages($from: DateTime, $to: DateTime, $pinned: Boolean) {
-        messages(from: $from, to: $to, pinned: $pinned) {
+      query Messages($from: DateTime, $to: DateTime) {
+        messages(from: $from, to: $to) {
           id
           message
           room {

@@ -35,7 +35,6 @@ module Types
     field :messages, [Types::MessageType], null: false, extras: [:lookahead] do
       argument :from, Types::DateTimeType, required: false
       argument :to, Types::DateTimeType, required: false
-      argument :pinned, Boolean, required: false
     end
 
     def messages(from: nil, to: nil, lookahead:)
