@@ -17,7 +17,7 @@ class BroadcastUsersWorker
 
   def query
     %(
-      query($id: ID!) {
+      query BroadcastUsersWorker($id: ID!) {
         room(id: $id) {
           users {
             id

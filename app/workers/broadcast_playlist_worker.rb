@@ -17,7 +17,7 @@ class BroadcastPlaylistWorker
 
   def query
     %(
-      query($roomId: ID!) {
+      query BroadcastPlaylistWorker($roomId: ID!) {
         roomPlaylist(roomId: $roomId) {
           id, order, song { id, name }, user { email, name }
         }

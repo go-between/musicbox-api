@@ -21,7 +21,7 @@ class BroadcastNowPlayingWorker
 
   def query # rubocop:disable Metrics/MethodLength
     %(
-      query($id: ID!) {
+      query BroadcastNowPlayingWorker($id: ID!) {
         room(id: $id) {
           currentRecord {
             id
