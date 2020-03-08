@@ -17,7 +17,7 @@ class BroadcastMessageWorker
 
   def query # rubocop:disable Metrics/MethodLength
     %(
-      query($id: ID!) {
+      query BroadcastMessageWorker($id: ID!) {
         message(id: $id) {
           id
           message
