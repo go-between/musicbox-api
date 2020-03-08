@@ -22,10 +22,8 @@ class BroadcastMessageWorker
           id
           message
           createdAt
-          roomPlaylistRecord {
-            song {
-              name
-            }
+          song {
+            name
           }
           user {
             email

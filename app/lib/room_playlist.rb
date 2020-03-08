@@ -27,7 +27,7 @@ class RoomPlaylist
   def waiting_songs
     return @waiting_songs if defined? @waiting_songs
 
-    @waiting_songs = RoomPlaylistRecord.where(room_id: room.id, play_state: "waiting").to_a
+    @waiting_songs = RoomPlaylistRecord.includes(:song, :user).where(room_id: room.id, play_state: "waiting").to_a
   end
 
   def waiting_songs_for_user(user_id)

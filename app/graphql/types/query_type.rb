@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class QueryType < Types::BaseObject # rubocop:disable Metrics/ClassLength
+  class QueryType < Types::BaseObject
     graphql_name "Query"
 
     field :invitation, Types::InvitationType, null: true do
@@ -32,21 +32,17 @@ module Types
       Message.find(id)
     end
 
-    field :messages, [Types::MessageType], null: false do
+    field :messages, [Types::MessageType], null: false, extras: [:lookahead] do
       argument :from, Types::DateTimeType, required: false
       argument :to, Types::DateTimeType, required: false
     end
 
-    def messages(from: nil, to: nil) # rubocop:disable Metrics/AbcSize
+    def messages(from: nil, to: nil, lookahead:)
       confirm_current_user!
       return [] if current_user.active_room.blank?
 
-      t = Message.arel_table
-      messages = Message.where(room_id: current_user.active_room_id)
-      messages = messages.where(t[:created_at].gteq(from)) if from.present?
-      messages = messages.where(t[:created_at].lteq(to)) if to.present?
-
-      messages.order(created_at: :asc)
+      selector = MessageSelector.new(current_user: current_user, lookahead: lookahead)
+      selector.select(to: to, from: from)
     end
 
     field :room, Types::RoomType, null: true do

@@ -6,6 +6,7 @@ FactoryBot.define do
     created_at { Time.zone.now }
     room_playlist_record { nil }
     room
+    song { nil }
     user
   end
 end

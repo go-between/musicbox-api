@@ -66,7 +66,7 @@ module Mutations
     end
 
     def existing_records_by_id(existing_record_ids)
-      RoomPlaylistRecord.where(
+      RoomPlaylistRecord.includes(:room, :song, :user).where(
         id: existing_record_ids,
         user: current_user,
         play_state: :waiting

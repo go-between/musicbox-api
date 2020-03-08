@@ -31,6 +31,7 @@ module Mutations
         message: message,
         room_playlist_record: current_user.active_room.current_record,
         room_id: current_user.active_room_id,
+        song_id: current_user.active_room.current_record&.song_id,
         user_id: current_user.id
       )
     end
