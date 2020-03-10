@@ -27,6 +27,7 @@ class BroadcastMessageWorker
             name
           }
           user {
+            id
             email
             name
           }
