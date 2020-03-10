@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 2020_03_07_232816) do
     t.uuid "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "pinned", default: false
     t.uuid "song_id"
     t.index ["created_at"], name: "index_messages_on_created_at"
     t.index ["room_id"], name: "index_messages_on_room_id"

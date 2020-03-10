@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class QueryType < Types::BaseObject
+  class QueryType < Types::BaseObject # rubocop:disable Metrics/ClassLength
     graphql_name "Query"
 
     field :invitation, Types::InvitationType, null: true do
@@ -43,6 +43,18 @@ module Types
 
       selector = MessageSelector.new(current_user: current_user, lookahead: lookahead)
       selector.select(to: to, from: from)
+    end
+
+    field :pinned_messages, [Types::MessageType], null: false, extras: [:lookahead] do
+      argument :song_id, ID, required: true
+    end
+
+    def pinned_messages(song_id:, lookahead:)
+      confirm_current_user!
+      return [] if current_user.active_room.blank?
+
+      selector = MessageSelector.new(current_user: current_user, lookahead: lookahead)
+      selector.select(room_id: current_user.active_room_id, song_id: song_id)
     end
 
     field :room, Types::RoomType, null: true do

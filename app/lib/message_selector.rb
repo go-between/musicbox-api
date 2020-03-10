@@ -9,10 +9,11 @@ class MessageSelector
     @arel = Message.arel_table
   end
 
-  def select(to:, from:)
+  def select(to: nil, from: nil, room_id: nil, song_id: nil)
     messages = record_context.where(room_id: current_user.active_room_id)
 
     messages = with_date_filtering(messages, to, from)
+    messages = when_pinned_to(messages, room_id, song_id)
     messages.order(created_at: :asc)
   end
 
@@ -34,5 +35,11 @@ class MessageSelector
     messages = messages.where(arel[:created_at].gteq(from)) if from.present?
 
     messages
+  end
+
+  def when_pinned_to(messages, room_id, song_id)
+    return messages unless room_id.present? && song_id.present?
+
+    messages.where(song_id: song_id, room_id: room_id, pinned: true)
   end
 end
