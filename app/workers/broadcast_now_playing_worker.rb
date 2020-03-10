@@ -27,6 +27,7 @@ class BroadcastNowPlayingWorker
             id
             playedAt
             song {
+              id
               name
               youtubeId
             }
