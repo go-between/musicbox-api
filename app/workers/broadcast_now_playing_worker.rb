@@ -32,6 +32,7 @@ class BroadcastNowPlayingWorker
               youtubeId
             }
             user {
+              id
               name
               email
             }
