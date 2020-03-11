@@ -16,6 +16,7 @@ ENV BUNDLE_GEMFILE=$APP_HOME/Gemfile BUNDLE_JOBS=4 BUNDLE_WITHOUT=production:sta
 RUN bundle install
 
 RUN passenger-config install-standalone-runtime --auto
+RUN passenger-config build-native-support
 
 COPY . $APP_HOME
 

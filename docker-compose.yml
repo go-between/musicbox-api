@@ -8,7 +8,7 @@ services:
     ports: ["5432:5432"]
   app: &app-common
     build: "."
-    command: bin/wait-for-it.sh db:5432 -- passenger start -p 3000
+    command: bin/wait-for-it.sh db:5432 -- passenger start -p 3000 --nginx-config-template nginx.conf.erb
     environment: &app-environment
       DATABASE_URL: postgresql://postgres:postgrespassword@db
       REDIS_URL: redis://redis:6379
