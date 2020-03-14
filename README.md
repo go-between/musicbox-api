@@ -97,3 +97,21 @@ Our RDS database runs inside of Amazon in a virtual private cloud.  It is not ac
 3.  Finally, you can run `bin/db-connect.sh` with the following environment variables:
   - AWS_RDS_HOST: The (internal) hostname of the database instanace that you want to connect to. Terraform will output this value!
   - AWS_SSM_TAG: The name that we've tagged the RDS database with. This is in terraform too, and might be like `SSM-Staging`.
+
+## Contributing
+
+Thank you for considering to spend some of your life energy in order to make the Musicbox a better thing.  Please see [CONTRIBUTING.md](CONTRIBUTING.MD) for details and guidelines.
+
+## License
+
+Can you run your own copy of Musicbox on your own servers for your friends?  Yes!
+
+Can you sell your rebranded Musicbox to other folks?  Please do not!
+
+See [LICENSE.txt](LICENSE.txt) for details.
+
+## Operational Costs
+
+How much money does it cost to make a thing exist on the internet?
+
+See [COSTS.md](COSTS.md) for details.
