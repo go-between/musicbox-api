@@ -1,6 +1,6 @@
 # Ever wondered how much it costs to run a software product that's probably vastly different than your own?
 
-Well wonder no longer.  Here we'll keep track of our current operating costs.  Note that AWS charges are made for usage in the preceeding month.
+Well wonder no longer.  Here we'll keep track of our current operating costs.  Note that AWS charges are made for usage in the preceding month.
 
 # 2020
 
