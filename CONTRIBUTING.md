@@ -18,6 +18,6 @@ For taking an interest in Musicbox and thank you in advance for any contribution
 
 # Source Available
 
-The Musicbox is run as a source-available software product in order to promote the open sharing of knowledge and the ability to find companionship through music while allowing its development team to feel secure in their existence within the our shared framework of capitalism and so provide for their dependent cats, children, and personal needs.
+The Musicbox is run as a source-available software product in order to promote the open sharing of knowledge and the ability to find companionship through music while allowing its development team to feel secure in their existence within our shared framework of capitalism and so provide for their dependent cats, children, and personal needs.
 
-By contributing to this product, you agree to grant the Musicbox the right to use such contributions as part of its paid services and agree to waive any interest of copyright enforcement and waive any expectation of fee or financial compensation for those contributions.
+By contributing to this product, you agree to grant the Musicbox the right to use such contributions as part of its paid services and agree to waive any interest of copyright enforcement and waive any expectation of financial compensation for those contributions.
