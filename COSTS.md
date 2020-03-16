@@ -6,9 +6,9 @@ Well wonder no longer.  Here we'll keep track of our current operating costs.
 
 | Service       |  Jan  |  Feb  |  Mar  |  Apr  |  May  |  Jun  |  Jul  |  Aug  |  Sep  |  Oct  |  Nov  |  Dec  |
 | ------------- |------:|------:|------:|------:|------:|------:|------:|------:|------:|------:|------:|------:|
-| AWS           |  54.36| 228.48|       |       |       |       |       |       |       |       |       |       |
+| AWS           |       |  54.36| 228.48|       |       |       |       |       |       |       |       |       |
 | Namecheap     |  78.88|       |       |       |       |       |       |       |       |       |       |       |
 | Fastmail      |       |       |     50|       |       |       |       |       |       |       |       |       |
 | Mailgun       |       |       |       |       |       |       |       |       |       |       |       |       |
 | Skylight      |       |       |       |       |       |       |       |       |       |       |       |       |
-| Total         | 133.24| 228.48|     50|       |       |       |       |       |       |       |       |       |
+| Total         |  77.88|  54.36| 278.48|       |       |       |       |       |       |       |       |       |
