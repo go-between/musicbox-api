@@ -100,7 +100,7 @@ Our RDS database runs inside of Amazon in a virtual private cloud.  It is not ac
 
 ## Contributing
 
-Thank you for considering to spend some of your life energy in order to make the Musicbox a better thing.  Please see [CONTRIBUTING.md](CONTRIBUTING.MD) for details and guidelines.
+Thank you for considering to spend some of your life energy in order to make the Musicbox a better thing.  Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details and guidelines.
 
 ## License
 
