@@ -20,6 +20,7 @@ module Mutations
       listen = ensure_record_listen!(record_id)
       listen.update!(approval: approval) if listen.approval != approval
 
+      BroadcastRecordListensWorker.perform_async(record_id)
       { record_listen: listen, errors: [] }
     end
 
@@ -33,7 +34,11 @@ module Mutations
 
     def ensure_record_listen!(record_id)
       record = RoomPlaylistRecord.find(record_id)
-      RecordListen.find_or_create_by!(room_playlist_record_id: record_id, song_id: record.song_id, user_id: current_user.id)
+      RecordListen.find_or_create_by!(
+        room_playlist_record_id: record_id,
+        song_id: record.song_id,
+        user_id: current_user.id
+      )
     end
 
     def record_playing?(record_id)

@@ -43,6 +43,7 @@ RSpec.describe "Record Listen Create", type: :request do
       expect(listen.song).to eq(record.song)
       expect(listen.user).to eq(current_user)
       expect(listen.approval).to eq(1)
+      expect(BroadcastRecordListensWorker).to have_enqueued_sidekiq_job(record.id)
     end
 
     it "updates an existing record listen" do
@@ -59,6 +60,7 @@ RSpec.describe "Record Listen Create", type: :request do
       listen_id = json_body.dig(:data, :recordListenCreate, :recordListen, :id)
       expect(listen_id).to eq(listen.id)
       expect(listen.reload.approval).to eq(3)
+      expect(BroadcastRecordListensWorker).to have_enqueued_sidekiq_job(record.id)
     end
   end
 end
