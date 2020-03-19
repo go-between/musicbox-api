@@ -57,6 +57,22 @@ module Types
       selector.select(room_id: current_user.active_room_id, song_id: song_id)
     end
 
+    field :record_listens, [Types::RecordListenType], null: true, extras: [:lookahead] do
+      argument :record_id, ID, required: true
+    end
+
+    def record_listens(record_id:, lookahead:)
+      includes = []
+      includes << :room_playlist_record if lookahead.selects?(:room_playlist_record)
+      includes << :song if lookahead.selects?(:song)
+      includes << :user if lookahead.selects?(:user)
+
+      listens = RecordListen
+      listens = listens.includes(includes) if includes.any?
+
+      listens.where(room_playlist_record_id: record_id)
+    end
+
     field :room, Types::RoomType, null: true do
       argument :id, ID, required: true
     end

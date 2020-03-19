@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_07_232816) do
+ActiveRecord::Schema.define(version: 2020_03_18_014102) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -79,6 +79,17 @@ ActiveRecord::Schema.define(version: 2020_03_07_232816) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
+  end
+
+  create_table "record_listens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "room_playlist_record_id"
+    t.uuid "song_id"
+    t.uuid "user_id"
+    t.integer "approval", default: 0, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["room_playlist_record_id"], name: "index_record_listens_on_room_playlist_record_id"
+    t.index ["song_id"], name: "index_record_listens_on_song_id"
   end
 
   create_table "room_playlist_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

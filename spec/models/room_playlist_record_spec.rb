@@ -3,26 +3,32 @@
 require "rails_helper"
 
 RSpec.describe RoomPlaylistRecord, type: :model do
+  let(:song) { create(:song) }
+  let(:room) { create(:room) }
+  let(:user) { create(:user) }
+
   describe "relationships" do
     it "can belong to a room, song and user" do
-      song = create(:song)
-      room = create(:room)
-      user = create(:user)
-
       record = described_class.create!(song: song, room: room, user: user)
 
       expect(record.reload.song).to eq(song)
       expect(record.reload.room).to eq(room)
       expect(record.reload.user).to eq(user)
     end
+
+    it "has many record listens" do
+      record = described_class.create!(song: song, room: room, user: user)
+
+      l1 = RecordListen.create!(room_playlist_record: record, song: song, user: user)
+      l2 = RecordListen.create!(room_playlist_record: record, song: song, user: user)
+      l3 = RecordListen.create!(room_playlist_record: record, song: song, user: user)
+
+      expect(record.reload.record_listens).to match_array([l1, l2, l3])
+    end
   end
 
   describe "methods" do
     let(:record) do
-      song = create(:song)
-      room = create(:room)
-      user = create(:user)
-
       described_class.create!(song: song, room: room, user: user)
     end
 

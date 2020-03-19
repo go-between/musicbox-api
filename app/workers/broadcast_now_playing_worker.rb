@@ -28,6 +28,7 @@ class BroadcastNowPlayingWorker
             playedAt
             song {
               id
+              durationInSeconds
               name
               youtubeId
             }
