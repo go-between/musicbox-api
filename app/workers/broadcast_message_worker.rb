@@ -23,6 +23,10 @@ class BroadcastMessageWorker
           message
           pinned
           createdAt
+          roomPlaylistRecord {
+            id
+            playedAt
+          }
           song {
             name
           }
