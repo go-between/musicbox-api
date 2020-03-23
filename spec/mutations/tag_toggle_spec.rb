@@ -2,14 +2,14 @@
 
 require "rails_helper"
 
-RSpec.describe "Tag Create", type: :request do
+RSpec.describe "Tag Toggle", type: :request do
   include AuthHelper
   include JsonHelper
 
   def query
     %(
-      mutation TagAssociate($tagId: ID!, $songId: ID!) {
-        tagAssociate(input:{
+      mutation TagToggle($tagId: ID!, $songId: ID!) {
+        tagToggle(input:{
           tagId: $tagId,
           songId: $songId
         }) {
@@ -43,13 +43,13 @@ RSpec.describe "Tag Create", type: :request do
         )
       end.to change(TagSong, :count).by(1)
 
-      data = json_body.dig(:data, :tagAssociate, :tag, :songs)
+      data = json_body.dig(:data, :tagToggle, :tag, :songs)
       song_ids = data.map { |song| song[:id] }
 
       expect(song_ids).to match_array(song_ids)
     end
 
-    it "noops when a song is already associated to a tag" do
+    it "disassociates the song fro the tag when already present" do
       TagSong.create!(tag: tag, song: song)
 
       expect do
@@ -58,12 +58,12 @@ RSpec.describe "Tag Create", type: :request do
           variables: { tagId: tag.id, songId: song.id },
           user: current_user
         )
-      end.not_to change(TagSong, :count)
+      end.to change(TagSong, :count).by(-1)
 
-      data = json_body.dig(:data, :tagAssociate, :tag, :songs)
+      data = json_body.dig(:data, :tagToggle, :tag, :songs)
       song_ids = data.map { |song| song[:id] }
 
-      expect(song_ids).to match_array(song_ids)
+      expect(song_ids).not_to include(song.id)
     end
   end
 
@@ -77,8 +77,8 @@ RSpec.describe "Tag Create", type: :request do
         )
       end.not_to change(TagSong, :count)
 
-      expect(json_body.dig(:data, :tagAssociate, :tag)).to be_nil
-      expect(json_body.dig(:data, :tagAssociate, :errors)).to include("Tag and Song must be present")
+      expect(json_body.dig(:data, :tagToggle, :tag)).to be_nil
+      expect(json_body.dig(:data, :tagToggle, :errors)).to include("Tag and Song must be present")
     end
 
     it "returns an error when tag is not associated with the user" do
@@ -91,8 +91,8 @@ RSpec.describe "Tag Create", type: :request do
         )
       end.not_to change(TagSong, :count)
 
-      expect(json_body.dig(:data, :tagAssociate, :tag)).to be_nil
-      expect(json_body.dig(:data, :tagAssociate, :errors)).to include("Tag and Song must be present")
+      expect(json_body.dig(:data, :tagToggle, :tag)).to be_nil
+      expect(json_body.dig(:data, :tagToggle, :errors)).to include("Tag and Song must be present")
     end
   end
 
@@ -106,8 +106,8 @@ RSpec.describe "Tag Create", type: :request do
         )
       end.not_to change(TagSong, :count)
 
-      expect(json_body.dig(:data, :tagAssociate, :tag)).to be_nil
-      expect(json_body.dig(:data, :tagAssociate, :errors)).to include("Tag and Song must be present")
+      expect(json_body.dig(:data, :tagToggle, :tag)).to be_nil
+      expect(json_body.dig(:data, :tagToggle, :errors)).to include("Tag and Song must be present")
     end
 
     it "returns an error when song is not associated with the user" do
@@ -120,8 +120,8 @@ RSpec.describe "Tag Create", type: :request do
         )
       end.not_to change(TagSong, :count)
 
-      expect(json_body.dig(:data, :tagAssociate, :tag)).to be_nil
-      expect(json_body.dig(:data, :tagAssociate, :errors)).to include("Tag and Song must be present")
+      expect(json_body.dig(:data, :tagToggle, :tag)).to be_nil
+      expect(json_body.dig(:data, :tagToggle, :errors)).to include("Tag and Song must be present")
     end
   end
 end
