@@ -143,6 +143,13 @@ module Types
       library
     end
 
+    field :tags, [Types::TagType], null: false do
+    end
+
+    def tags
+      current_user.tags
+    end
+
     field :user, Types::UserType, null: false do
     end
 
