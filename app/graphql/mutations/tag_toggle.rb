@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Mutations
-  class TagAssociate < Mutations::BaseMutation
+  class TagToggle < Mutations::BaseMutation
     argument :tag_id, ID, required: true
     argument :song_id, ID, required: true
 
@@ -19,12 +19,23 @@ module Mutations
         }
       end
 
-      tag.songs << song unless tag.songs.exists?(song.id)
+      toggle!(tag: tag, song: song)
 
       {
         tag: tag,
         errors: []
       }
+    end
+
+    private
+
+    def toggle!(tag:, song:)
+      tag_song = TagSong.find_by(tag_id: tag.id, song_id: song.id)
+      if tag_song.present?
+        tag_song.destroy!
+      else
+        tag.songs << song unless tag.songs.exists?(song.id)
+      end
     end
   end
 end
