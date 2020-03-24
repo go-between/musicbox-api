@@ -8,7 +8,7 @@ RSpec.describe "Invitation Create", type: :request do
 
   def query
     %(
-      mutation InvitationAccept($email: Email!, $password: String!, $token: ID!, $name: String!){
+      mutation InvitationAccept($email: Email!, $password: String!, $token: ID!, $name: String){
         invitationAccept(input:{
           invitation: {
             email: $email,

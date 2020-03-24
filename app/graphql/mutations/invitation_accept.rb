@@ -3,7 +3,7 @@
 module Mutations
   class InvitationAccept < Mutations::BaseMutation
     class InvitationAcceptInputObject < Types::BaseInputObject
-      argument :name, String, required: true
+      argument :name, String, required: false
       argument :email, Types::EmailType, required: true
       argument :password, String, required: true
       argument :token, ID, required: true
@@ -34,7 +34,7 @@ module Mutations
 
     private
 
-    def ensure_invited_user!(email:, password:, name:, **_kwargs)
+    def ensure_invited_user!(email:, password:, name: nil, **_kwargs)
       user = User.find_for_database_authentication(email: email)
       return create_user!(email: email, password: password, name: name) if user.blank?
       return user if user.valid_for_authentication? { user.valid_password?(password) }
