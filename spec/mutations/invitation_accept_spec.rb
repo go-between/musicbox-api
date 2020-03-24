@@ -8,7 +8,7 @@ RSpec.describe "Invitation Create", type: :request do
 
   def query
     %(
-      mutation InvitationAccept($email: String!, $password: String!, $token: ID!, $name: String!){
+      mutation InvitationAccept($email: Email!, $password: String!, $token: ID!, $name: String!){
         invitationAccept(input:{
           invitation: {
             email: $email,
@@ -39,7 +39,7 @@ RSpec.describe "Invitation Create", type: :request do
   describe "success" do
     it "accepts an invitation" do
       variables = {
-        email: "an-invited-user@atdot.com",
+        email: "an-INVITED-user@atdot.com",
         password: "foobar",
         token: "fbb586a9-b798-4a31-a634-66d28a661375",
         name: "Blorg Blargaborg"
@@ -65,7 +65,7 @@ RSpec.describe "Invitation Create", type: :request do
       user = User.create!(email: "an-invited-user@atdot.com", password: "foobar", teams: [other_team])
 
       variables = {
-        email: "an-invited-user@atdot.com",
+        email: "an-invited-USER@atdot.com",
         password: "foobar",
         token: "fbb586a9-b798-4a31-a634-66d28a661375",
         name: "Blorg Blargaborg"

@@ -3,7 +3,7 @@
 module Mutations
   class TeamCreate < Mutations::BaseMutation
     class TeamOwnerInputObject < Types::BaseInputObject
-      argument :email, String, required: true
+      argument :email, Types::EmailType, required: true
       argument :name, String, required: true
       argument :password, String, required: true
     end

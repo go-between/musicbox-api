@@ -4,7 +4,7 @@ module Mutations
   class InvitationAccept < Mutations::BaseMutation
     class InvitationAcceptInputObject < Types::BaseInputObject
       argument :name, String, required: true
-      argument :email, String, required: true
+      argument :email, Types::EmailType, required: true
       argument :password, String, required: true
       argument :token, ID, required: true
     end
@@ -18,7 +18,7 @@ module Mutations
     end
 
     def resolve(invitation:)
-      invite = Invitation.find_by(email: invitation[:email].downcase, token: invitation[:token])
+      invite = Invitation.find_by(email: invitation[:email], token: invitation[:token])
       return { errors: ["Invalid invitation"] } if invite.blank?
 
       invited_user = ensure_invited_user!(invitation)
