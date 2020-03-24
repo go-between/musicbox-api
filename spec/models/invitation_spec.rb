@@ -12,6 +12,16 @@ RSpec.describe Invitation, type: :model do
       expect(invitation.inviting_user).to eq(user)
       expect(invitation.team).to eq(team)
     end
+
+    it "may belong to an existing invited user" do
+      invited_user = create(:user, email: "a@a.a")
+
+      inviting_user = create(:user)
+      team = create(:team)
+      invitation = described_class.create!(inviting_user: inviting_user, team: team, email: "a@a.a")
+
+      expect(invitation.invited_user).to eq(invited_user)
+    end
   end
 
   describe "#self.token" do
