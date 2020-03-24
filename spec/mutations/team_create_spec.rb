@@ -24,7 +24,7 @@ RSpec.describe "Invitation Create", type: :request do
     it "creates a team for a new user" do
       variables = {
         teamOwner: {
-          email: "team-owner@atdot.com",
+          email: "TEAM-owner@ATDOT.com",
           password: "foobar",
           name: "Trickster"
         },
@@ -39,6 +39,7 @@ RSpec.describe "Invitation Create", type: :request do
       end.to change(User, :count).by(1).and(change(Team, :count).by(1))
 
       team = Team.find_by(name: "FrogTown")
+      # Ensure email is downcased
       user = User.find_by(email: "team-owner@atdot.com")
       expect(team.owner).to eq(user)
       expect(user.valid_password?("foobar")).to eq(true)
@@ -52,7 +53,7 @@ RSpec.describe "Invitation Create", type: :request do
       User.create!(email: "team-owner@atdot.com", password: "foobar", teams: [])
       variables = {
         teamOwner: {
-          email: "team-owner@atdot.com",
+          email: "team-OWNER@atdot.COM",
           password: "foobar",
           name: "Trickster"
         },

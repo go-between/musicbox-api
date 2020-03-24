@@ -19,6 +19,9 @@ RSpec.describe "Invitation Query", type: :request do
           invitingUser {
             name
           }
+          invitedUser {
+            name
+          }
         }
       }
     )
@@ -26,13 +29,28 @@ RSpec.describe "Invitation Query", type: :request do
 
   describe "query" do
     it "returns an invitation if queried" do
+      inviting_user = create(:user, name: "friend of jimbo")
+      team = create(:team)
+      create(:user, email: "jimbo@derp.com", name: "jimbo derpio")
+      invitation = Invitation.create!(
+        name: "jimbo derp",
+        email: "jimbo@derp.com",
+        inviting_user: inviting_user,
+        team: team,
+        token: Invitation.token,
+        invitation_state: "pending"
+      )
+
       variables = {
         email: "jimbo@derp.com",
-        token: SecureRandom.uuid
+        token: invitation.token
       }
       post("/api/v1/graphql", params: { query: query, variables: variables })
 
-      expect(response).to be_successful
+      expect(json_body.dig(:data, :invitation, :email)).to eq("jimbo@derp.com")
+      expect(json_body.dig(:data, :invitation, :name)).to eq("jimbo derp")
+      expect(json_body.dig(:data, :invitation, :invitingUser, :name)).to eq("friend of jimbo")
+      expect(json_body.dig(:data, :invitation, :invitedUser, :name)).to eq("jimbo derpio")
     end
   end
 end

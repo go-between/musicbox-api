@@ -24,7 +24,7 @@ class EmailInvitationWorker
       inviter_name: invitation.inviting_user.name,
       team_name: invitation.team.name,
       token: invitation.token,
-      email: invitation.email
+      email: URI.encode_www_form_component(invitation.email)
     }
 
     req = Net::HTTP::Post.new(uri)
