@@ -3,7 +3,7 @@
 module Mutations
   class InvitationAccept < Mutations::BaseMutation
     class InvitationAcceptInputObject < Types::BaseInputObject
-      argument :name, String, required: true
+      argument :name, String, required: false
       argument :email, Types::EmailType, required: true
       argument :password, String, required: true
       argument :token, ID, required: true
