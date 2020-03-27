@@ -128,17 +128,12 @@ module Types
       argument :tag_ids, [ID], required: false
     end
 
-    def songs(query: nil, tag_ids: []) # rubocop:disable Metrics/AbcSize
+    def songs(query: nil, tag_ids: [])
       confirm_current_user!
 
       library = current_user.songs
       library = library.where(Song.arel_table[:name].matches("%#{query}%")) if query.present?
-
-      if tag_ids.present?
-        # TODO: make it fast
-        user_tag_ids = current_user.tags.where(id: tag_ids).pluck(:id)
-        library = library.select { |song| song.tags.exists?(id: user_tag_ids) }
-      end
+      library = library.joins(:tag_songs).where(tags_songs: { tag_id: tag_ids }).distinct if tag_ids.present?
 
       library
     end
