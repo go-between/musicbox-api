@@ -9,11 +9,10 @@ RSpec.describe "Room Activate", type: :request do
 
   let(:team) { create(:team) }
   let(:current_user) { create(:user, teams: [team]) }
+  let(:room) { create(:room, team: team) }
 
   describe "success" do
     it "adds the user to the room" do
-      room = create(:room, team: team)
-
       graphql_request(
         query: room_activate_mutation(room_id: room.id),
         user: current_user
@@ -26,14 +25,22 @@ RSpec.describe "Room Activate", type: :request do
       expect(current_user.reload.active_room).to eq(room)
     end
 
-    it "enqueues a broadcast room worker" do
-      room = create(:room, team: team)
-
-      expect(BroadcastUsersWorker).to receive(:perform_async).with(room.id)
+    it "activates that room's team for the user" do
+      current_user.update!(active_team: nil)
       graphql_request(
         query: room_activate_mutation(room_id: room.id),
         user: current_user
       )
+
+      expect(current_user.reload.active_team).to eq(team)
+    end
+
+    it "enqueues a broadcast room worker" do
+      graphql_request(
+        query: room_activate_mutation(room_id: room.id),
+        user: current_user
+      )
+      expect(BroadcastUsersWorker).to have_enqueued_sidekiq_job(room.id)
     end
   end
 
@@ -50,7 +57,7 @@ RSpec.describe "Room Activate", type: :request do
       expect(current_user.reload.active_room).to be_nil
     end
 
-    it "does not allow a user to join a room from another team" do
+    it "does not allow a user to join a room from a team they are not on" do
       other_team = create(:team)
       room = create(:room, team: other_team)
 

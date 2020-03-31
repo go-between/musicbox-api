@@ -8,6 +8,7 @@ class QueueManagementWorker
     room = Room.find(room_id)
     return unless update_room!(room)
 
+    BroadcastTeamWorker.perform_async(room.team_id)
     BroadcastNowPlayingWorker.perform_async(room_id)
     BroadcastPlaylistWorker.perform_async(room_id)
   end
