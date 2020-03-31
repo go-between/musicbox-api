@@ -6,5 +6,6 @@ module Types
 
     field :id, ID, null: false
     field :name, String, null: true
+    field :rooms, [Types::RoomType], null: false
   end
 end

@@ -142,7 +142,19 @@ module Types
     end
 
     def tags
+      confirm_current_user!
       current_user.tags
+    end
+
+    field :team, Types::TeamType, null: true do
+      argument :id, ID, required: true
+    end
+
+    def team(id:)
+      confirm_current_user!
+      teams = Team.where(id: id)
+      teams = teams.where(id: current_user.teams) if current_user.present?
+      teams.first
     end
 
     field :user, Types::UserType, null: false do
