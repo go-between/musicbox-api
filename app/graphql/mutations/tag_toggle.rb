@@ -26,6 +26,8 @@ module Mutations
     private
 
     def add_tag_to_songs!(tag_id, song_ids)
+      return if song_ids.blank?
+
       tags_songs = song_ids.map do |song_id|
         {
           tag_id: tag_id,
@@ -38,6 +40,8 @@ module Mutations
     end
 
     def remove_tag_from_songs!(tag_id, song_ids)
+      return if song_ids.blank?
+
       TagSong.where(tag_id: tag_id, song_id: song_ids).delete_all
     end
   end
