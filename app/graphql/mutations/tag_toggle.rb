@@ -3,23 +3,19 @@
 module Mutations
   class TagToggle < Mutations::BaseMutation
     argument :tag_id, ID, required: true
-    argument :song_id, ID, required: true
+    argument :add_song_ids, [ID], required: true
+    argument :remove_song_ids, [ID], required: true
 
     field :tag, Types::TagType, null: true
     field :errors, [String], null: true
 
-    def resolve(tag_id:, song_id:)
+    def resolve(tag_id:, add_song_ids:, remove_song_ids:)
       tag = current_user.tags.find_by(id: tag_id)
-      song = current_user.songs.find_by(id: song_id)
 
-      unless tag.present? && song.present?
-        return {
-          tag: nil,
-          errors: ["Tag and Song must be present"]
-        }
-      end
+      return { errors: ["Tag must be present"] } if tag.blank?
 
-      toggle!(tag: tag, song: song)
+      add_tag_to_songs!(tag_id, add_song_ids)
+      remove_tag_from_songs!(tag_id, remove_song_ids)
 
       {
         tag: tag,
@@ -29,13 +25,24 @@ module Mutations
 
     private
 
-    def toggle!(tag:, song:)
-      tag_song = TagSong.find_by(tag_id: tag.id, song_id: song.id)
-      if tag_song.present?
-        tag_song.destroy!
-      else
-        tag.songs << song unless tag.songs.exists?(song.id)
+    def add_tag_to_songs!(tag_id, song_ids)
+      return if song_ids.blank?
+
+      tags_songs = song_ids.map do |song_id|
+        {
+          tag_id: tag_id,
+          song_id: song_id,
+          created_at: Time.zone.now,
+          updated_at: Time.zone.now
+        }
       end
+      TagSong.insert_all(tags_songs)
+    end
+
+    def remove_tag_from_songs!(tag_id, song_ids)
+      return if song_ids.blank?
+
+      TagSong.where(tag_id: tag_id, song_id: song_ids).delete_all
     end
   end
 end

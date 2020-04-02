@@ -123,15 +123,20 @@ module Types
       Song.find(id)
     end
 
-    field :songs, [Types::SongType], null: true do
+    field :songs, [Types::SongType], null: true, extras: [:lookahead] do
       argument :query, String, required: false
       argument :tag_ids, [ID], required: false
     end
 
-    def songs(query: nil, tag_ids: [])
+    def songs(query: nil, tag_ids: [], lookahead:) # rubocop:disable Metrics/AbcSize
       confirm_current_user!
-
       library = current_user.songs
+
+      includes = []
+      includes << :tags if lookahead.selects?(:tags)
+      includes << :tag_songs if lookahead.selects?(:tags)
+      library = library.includes(includes) if includes.any?
+
       library = library.where(Song.arel_table[:name].matches("%#{query}%")) if query.present?
       library = library.joins(:tag_songs).where(tags_songs: { tag_id: tag_ids }).distinct if tag_ids.present?
 
