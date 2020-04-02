@@ -8,10 +8,11 @@ RSpec.describe "Tag Add", type: :request do
 
   def query
     %(
-      mutation TagAdd($tagId: ID!, $songIds: [ID!]!) {
-        tagAdd(input:{
+      mutation TagToggle($tagId: ID!, $addSongIds: [ID!]!, $removeSongIds: [ID!]!) {
+        tagToggle(input:{
           tagId: $tagId,
-          songIds: $songIds
+          addSongIds: $addSongIds,
+          removeSongIds: $removeSongIds
         }) {
           errors
         }
@@ -24,22 +25,23 @@ RSpec.describe "Tag Add", type: :request do
   let(:song1) { create(:song, users: [current_user]) }
   let(:song2) { create(:song, users: [current_user]) }
   let(:song3) { create(:song, users: [current_user]) }
+  let(:song4) { create(:song, users: [current_user]) }
 
   describe "adding an association" do
-    it "associates new songs to the tag, noops on songs that already have the tag" do
+    it "adds tag and removes tag from songs" do
       TagSong.create(tag_id: tag.id, song_id: song1.id)
+      TagSong.create(tag_id: tag.id, song_id: song2.id)
 
-      expect do
-        graphql_request(
-          query: query,
-          variables: { tagId: tag.id, songIds: [song1.id, song2.id, song3.id] },
-          user: current_user
-        )
-      end.to change(TagSong, :count).by(2)
+      graphql_request(
+        query: query,
+        variables: { tagId: tag.id, addSongIds: [song1.id, song3.id], removeSongIds: [song2.id, song4.id] },
+        user: current_user
+      )
 
       expect(song1.tags).to include(tag)
-      expect(song2.tags).to include(tag)
+      expect(song2.tags).not_to include(tag)
       expect(song3.tags).to include(tag)
+      expect(song4.tags).not_to include(tag)
     end
   end
 
@@ -48,13 +50,13 @@ RSpec.describe "Tag Add", type: :request do
       expect do
         graphql_request(
           query: query,
-          variables: { tagId: SecureRandom.uuid, songIds: [song1.id] },
+          variables: { tagId: SecureRandom.uuid, addSongIds: [song1.id], removeSongIds: [song2.id] },
           user: current_user
         )
       end.not_to change(TagSong, :count)
 
-      expect(json_body.dig(:data, :tagAdd, :tag)).to be_nil
-      expect(json_body.dig(:data, :tagAdd, :errors)).to include("Tag must be present")
+      expect(json_body.dig(:data, :tagToggle, :tag)).to be_nil
+      expect(json_body.dig(:data, :tagToggle, :errors)).to include("Tag must be present")
     end
 
     it "returns an error when tag is not associated with the user" do
@@ -62,13 +64,13 @@ RSpec.describe "Tag Add", type: :request do
       expect do
         graphql_request(
           query: query,
-          variables: { tagId: other_tag.id, songIds: [song1.id] },
+          variables: { tagId: other_tag.id, addSongIds: [song1.id], removeSongIds: [song2.id] },
           user: current_user
         )
       end.not_to change(TagSong, :count)
 
-      expect(json_body.dig(:data, :tagAdd, :tag)).to be_nil
-      expect(json_body.dig(:data, :tagAdd, :errors)).to include("Tag must be present")
+      expect(json_body.dig(:data, :tagToggle, :tag)).to be_nil
+      expect(json_body.dig(:data, :tagToggle, :errors)).to include("Tag must be present")
     end
   end
 end
