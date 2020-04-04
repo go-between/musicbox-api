@@ -40,7 +40,7 @@ RSpec.describe "Room Activate", type: :request do
         query: room_activate_mutation(room_id: room.id),
         user: current_user
       )
-      expect(BroadcastUsersWorker).to have_enqueued_sidekiq_job(room.id)
+      expect(BroadcastTeamWorker).to have_enqueued_sidekiq_job(room.team_id)
     end
   end
 

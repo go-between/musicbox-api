@@ -15,7 +15,7 @@ class BroadcastTeamWorker
 
   private
 
-  def query
+  def query # rubocop:disable Metrics/MethodLength
     %(
       query BroadcastTeamWorker($id: ID!) {
         team(id: $id) {
@@ -23,6 +23,11 @@ class BroadcastTeamWorker
             id
             name
             currentSong {
+              name
+            }
+            users {
+              id
+              email
               name
             }
           }
