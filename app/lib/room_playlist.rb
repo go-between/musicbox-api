@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class RoomPlaylist
-  attr_reader :room
+  attr_reader :room, :playlist_records
 
-  def initialize(room)
+  def initialize(room, playlist_records)
     @room = room
+    @playlist_records = playlist_records
   end
 
   def generate_playlist
@@ -27,7 +28,7 @@ class RoomPlaylist
   def waiting_songs
     return @waiting_songs if defined? @waiting_songs
 
-    @waiting_songs = RoomPlaylistRecord.includes(:song, :user).where(room_id: room.id, play_state: "waiting").to_a
+    @waiting_songs = playlist_records.where(room_id: room.id, play_state: "waiting").to_a
   end
 
   def waiting_songs_for_user(user_id)

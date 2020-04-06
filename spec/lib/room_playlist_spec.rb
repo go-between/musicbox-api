@@ -7,6 +7,7 @@ RSpec.describe RoomPlaylist do
   let(:user_2) { create(:user) }
   let(:user_3) { create(:user) }
   let(:room) { create(:room, user_rotation: [user_1.id, user_2.id, user_3.id]) }
+  let(:relation) { RoomPlaylistRecord.includes(:song, :user) }
 
   describe "#waiting" do
     it "thes whole room queue" do
@@ -19,14 +20,14 @@ RSpec.describe RoomPlaylist do
       record5 = create(:room_playlist_record, room: room, user: user_2, order: 2, play_state: "waiting")
       record6 = create(:room_playlist_record, room: room, user: user_3, order: 20, play_state: "waiting")
 
-      playlist = described_class.new(room)
+      playlist = described_class.new(room, relation)
 
       expect(playlist.generate_playlist).to eq([record3, record4, record5, record6])
     end
 
     it "returns an empty queue when no users are in rotation" do
       room.update!(user_rotation: [])
-      playlist = described_class.new(room)
+      playlist = described_class.new(room, relation)
 
       expect(playlist.generate_playlist).to be_empty
     end

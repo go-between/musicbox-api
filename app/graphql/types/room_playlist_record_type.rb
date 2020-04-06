@@ -7,6 +7,7 @@ module Types
     field :id, ID, null: false
     field :order, Int, null: false
     field :played_at, Types::DateTimeType, null: true
+    field :record_listens, [Types::RecordListenType], null: false
     field :room, Types::RoomType, null: false
     field :song, Types::SongType, null: false
     field :user, Types::UserType, null: false
