@@ -12,8 +12,7 @@ class UsersChannel < ApplicationCable::Channel
   def remove_from_room!
     return if current_user.active_room_id.blank?
 
-    previous_room = current_user.active_room_id
     current_user.update!(active_room: nil)
-    BroadcastUsersWorker.perform_async(previous_room)
+    BroadcastTeamWorker.perform_async(current_user.active_team_id)
   end
 end

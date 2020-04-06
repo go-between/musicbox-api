@@ -39,14 +39,16 @@ RSpec.describe "Requests Integration", type: :request do
           query: room_activate_mutation(room_id: room.id),
           user: truman
         )
-      end.to(broadcast_to(UsersChannel.broadcasting_for(room)).with do |data|
-        has_truman = data.dig("data", "room", "users").any? { |d| d["id"] == truman.id }
+      end.to(broadcast_to(TeamChannel.broadcasting_for(team)).with do |data|
+        room_message = data.dig(:data, :team, :rooms).find { |r| r[:id] == room.id }
+
+        has_truman = room_message[:users].any? { |d| d["id"] == truman.id }
         expect(has_truman).to eq(true)
 
-        has_dan = data.dig("data", "room", "users").any? { |d| d["id"] == dan.id }
+        has_dan = room_message[:users].any? { |d| d["id"] == dan.id }
         expect(has_dan).to eq(false)
 
-        has_sean = data.dig("data", "room", "users").any? { |d| d["id"] == sean.id }
+        has_sean = room_message[:users].any? { |d| d["id"] == sean.id }
         expect(has_sean).to eq(false)
       end)
 
@@ -55,14 +57,16 @@ RSpec.describe "Requests Integration", type: :request do
           query: room_activate_mutation(room_id: room.id),
           user: dan
         )
-      end.to(broadcast_to(UsersChannel.broadcasting_for(room)).with do |data|
-        has_truman = data.dig("data", "room", "users").any? { |d| d["id"] == truman.id }
+      end.to(broadcast_to(TeamChannel.broadcasting_for(team)).with do |data|
+        room_message = data.dig(:data, :team, :rooms).find { |r| r[:id] == room.id }
+
+        has_truman = room_message[:users].any? { |d| d["id"] == truman.id }
         expect(has_truman).to eq(true)
 
-        has_dan = data.dig("data", "room", "users").any? { |d| d["id"] == dan.id }
+        has_dan = room_message[:users].any? { |d| d["id"] == dan.id }
         expect(has_dan).to eq(true)
 
-        has_sean = data.dig("data", "room", "users").any? { |d| d["id"] == sean.id }
+        has_sean = room_message[:users].any? { |d| d["id"] == sean.id }
         expect(has_sean).to eq(false)
       end)
 
@@ -71,14 +75,16 @@ RSpec.describe "Requests Integration", type: :request do
           query: room_activate_mutation(room_id: room.id),
           user: sean
         )
-      end.to(broadcast_to(UsersChannel.broadcasting_for(room)).with do |data|
-        has_truman = data.dig("data", "room", "users").any? { |d| d["id"] == truman.id }
+      end.to(broadcast_to(TeamChannel.broadcasting_for(team)).with do |data|
+        room_message = data.dig(:data, :team, :rooms).find { |r| r[:id] == room.id }
+
+        has_truman = room_message[:users].any? { |d| d["id"] == truman.id }
         expect(has_truman).to eq(true)
 
-        has_dan = data.dig("data", "room", "users").any? { |d| d["id"] == dan.id }
+        has_dan = room_message[:users].any? { |d| d["id"] == dan.id }
         expect(has_dan).to eq(true)
 
-        has_sean = data.dig("data", "room", "users").any? { |d| d["id"] == sean.id }
+        has_sean = room_message[:users].any? { |d| d["id"] == sean.id }
         expect(has_sean).to eq(true)
       end)
 
