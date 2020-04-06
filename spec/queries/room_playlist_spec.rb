@@ -24,11 +24,47 @@ RSpec.describe "Messages Query", type: :request do
   let!(:play_future4) do
     create(:room_playlist_record, song: hootsforce, user: dan, room: room, play_state: "waiting", order: 2)
   end
+  let!(:play_past1) do
+    create(:room_playlist_record,
+           song: star_fighter,
+           user: truman,
+           room: room,
+           play_state: "played",
+           played_at: 4.minute.ago,
+           order: 1)
+  end
+  let!(:play_past2) do
+    create(:room_playlist_record,
+           song: hootsforce,
+           user: truman,
+           room: room,
+           play_state: "played",
+           played_at: 2.minutes.ago,
+           order: 2)
+  end
+  let!(:play_past3) do
+    create(:room_playlist_record,
+           song: star_fighter,
+           user: dan,
+           room: room,
+           play_state: "played",
+           played_at: 3.minutes.ago,
+           order: 1)
+  end
+  let!(:play_past4) do
+    create(:room_playlist_record,
+           song: hootsforce,
+           user: dan,
+           room: room,
+           play_state: "played",
+           played_at: 1.minute.ago,
+           order: 2)
+  end
 
   def query
     %(
-      query RoomPlaylist($roomId: ID!) {
-        roomPlaylist(roomId: $roomId) {
+      query RoomPlaylist($roomId: ID!, $historical: Boolean) {
+        roomPlaylist(roomId: $roomId, historical: $historical) {
           id
           song {
             id
@@ -50,6 +86,14 @@ RSpec.describe "Messages Query", type: :request do
       graphql_request(query: query, variables: { roomId: room.id }, user: truman)
       playlist = json_body.dig(:data, :roomPlaylist).map { |r| r[:id] }
       expect(playlist).to eq([play_future1.id, play_future3.id, play_future2.id, play_future4.id])
+    end
+  end
+
+  context "when requesting previously played records" do
+    it "returns all previously played records" do
+      graphql_request(query: query, variables: { roomId: room.id, historical: true }, user: truman)
+      playlist = json_body.dig(:data, :roomPlaylist).map { |r| r[:id] }
+      expect(playlist).to eq([play_past4.id, play_past2.id, play_past3.id, play_past1.id])
     end
   end
 end

@@ -94,9 +94,12 @@ module Types
 
     field :room_playlist, [Types::RoomPlaylistRecordType], null: true, extras: [:lookahead] do
       argument :room_id, ID, required: true
+      argument :historical, Boolean, required: false
     end
 
-    def room_playlist(room_id:, lookahead:)
+    def room_playlist(room_id:, historical: false, lookahead:) # rubocop:disable Metrics/AbcSize
+      confirm_current_user!
+
       includes = []
       relation = RoomPlaylistRecord
       includes << :record_listens if lookahead.selects?(:record_listens)
@@ -104,9 +107,12 @@ module Types
       includes << :user if lookahead.selects?(:user)
       relation = relation.includes(includes) if includes.any?
 
-      confirm_current_user!
-      room = Room.find(room_id)
-      RoomPlaylist.new(room, relation).generate_playlist
+      if historical
+        relation.where(room_id: room_id).played.order(played_at: :desc)
+      else
+        room = Room.find(room_id)
+        RoomPlaylist.new(room, relation).generate_playlist
+      end
     end
 
     field :room_playlist_for_user, [Types::RoomPlaylistRecordType], null: true do
