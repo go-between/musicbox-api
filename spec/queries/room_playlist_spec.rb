@@ -63,8 +63,8 @@ RSpec.describe "Messages Query", type: :request do
 
   def query
     %(
-      query RoomPlaylist($roomId: ID!, $historical: Boolean) {
-        roomPlaylist(roomId: $roomId, historical: $historical) {
+      query RoomPlaylist($roomId: ID!, $historical: Boolean, $from: DateTime) {
+        roomPlaylist(roomId: $roomId, historical: $historical, from: $from) {
           id
           song {
             id
@@ -94,6 +94,16 @@ RSpec.describe "Messages Query", type: :request do
       graphql_request(query: query, variables: { roomId: room.id, historical: true }, user: truman)
       playlist = json_body.dig(:data, :roomPlaylist).map { |r| r[:id] }
       expect(playlist).to eq([play_past4.id, play_past2.id, play_past3.id, play_past1.id])
+    end
+
+    it "may filter on records by from date" do
+      graphql_request(
+        query: query,
+        variables: { roomId: room.id, historical: true, from: 160.seconds.ago },
+        user: truman
+      )
+      playlist = json_body.dig(:data, :roomPlaylist).map { |r| r[:id] }
+      expect(playlist).to eq([play_past4.id, play_past2.id])
     end
   end
 end
