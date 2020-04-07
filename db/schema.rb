@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_01_223702) do
+ActiveRecord::Schema.define(version: 2020_04_07_040051) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -102,6 +102,7 @@ ActiveRecord::Schema.define(version: 2020_04_01_223702) do
     t.string "play_state"
     t.datetime "played_at"
     t.index ["play_state"], name: "index_room_playlist_records_on_play_state"
+    t.index ["played_at"], name: "index_room_playlist_records_on_played_at"
     t.index ["room_id"], name: "index_room_playlist_records_on_room_id"
     t.index ["song_id"], name: "index_room_playlist_records_on_song_id"
     t.index ["user_id"], name: "index_room_playlist_records_on_user_id"
