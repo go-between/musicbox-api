@@ -19,7 +19,7 @@ class BroadcastPlaylistWorker
     %(
       query BroadcastPlaylistWorker($roomId: ID!) {
         roomPlaylist(roomId: $roomId) {
-          id, order, song { id, name }, user { email, name }
+          id, order, song { id, name, thumbnailUrl }, user { email, name }
         }
       }
     )

@@ -16,8 +16,12 @@ RSpec.describe "Song Create", type: :request do
             id
             description
             durationInSeconds
+            license
+            licensed
             name
+            thumbnailUrl
             youtubeId
+            youtubeTags
           }
           errors
         }
@@ -30,7 +34,15 @@ RSpec.describe "Song Create", type: :request do
   describe "#create" do
     context "when song does not exist" do
       it "creates song and associates with current user" do
-        video = OpenStruct.new(duration: 1500, title: "a title", description: "a description")
+        video = OpenStruct.new(
+          duration: 1500,
+          description: "a description",
+          license: "youtube",
+          licensed?: false,
+          thumbnail_url: "https://i.ytimg.com/vi/bnVUHWCynig/default.jpg",
+          title: "a title",
+          tags: %w[dope chill beatz]
+        )
         expect(Yt::Video).to receive(:new).with(id: "an-id").and_return(video)
 
         graphql_request(
@@ -46,6 +58,10 @@ RSpec.describe "Song Create", type: :request do
         expect(song.name).to eq("a title")
         expect(song.description).to eq("a description")
         expect(song.duration_in_seconds).to eq(1500)
+        expect(song.license).to eq("youtube")
+        expect(song.licensed).to eq(false)
+        expect(song.thumbnail_url).to eq("https://i.ytimg.com/vi/bnVUHWCynig/default.jpg")
+        expect(song.youtube_tags).to match_array(%w[dope chill beatz])
         expect(data[:errors]).to be_blank
 
         expect(song.users).to include(current_user)
