@@ -35,4 +35,10 @@ RSpec.describe Song, type: :model do
       expect(song.tags).to match_array([tag1, tag2])
     end
   end
+
+  it "has youtube tags" do
+    song.update!(youtube_tags: %w[chill dope beatz])
+
+    expect(song.youtube_tags).to match_array(%w[chill dope beatz])
+  end
 end

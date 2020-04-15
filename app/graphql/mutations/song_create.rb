@@ -37,8 +37,12 @@ module Mutations
       video = Yt::Video.new(id: song.youtube_id)
       song.update!(
         description: video.description,
+        duration_in_seconds: video.duration,
         name: video.title,
-        duration_in_seconds: video.duration
+        license: video.license,
+        licensed: video.licensed?,
+        thumbnail_url: video.thumbnail_url,
+        youtube_tags: video.tags
       )
     end
   end
