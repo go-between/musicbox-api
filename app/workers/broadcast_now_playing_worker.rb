@@ -30,6 +30,7 @@ class BroadcastNowPlayingWorker
               id
               durationInSeconds
               name
+              thumbnailUrl
               youtubeId
             }
             user {
