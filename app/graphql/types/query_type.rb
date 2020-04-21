@@ -50,15 +50,25 @@ module Types
 
     field :pinned_messages, [Types::MessageType], null: false, extras: [:lookahead] do
       argument :song_id, ID, required: true
+      argument :room_id, ID, required: false
     end
 
-    def pinned_messages(song_id:, lookahead:)
+    def pinned_messages(song_id:, room_id: nil, lookahead:)
       confirm_current_user!
-      return [] if current_user.active_room.blank? && room_id.blank?
+      return [] if current_user&.active_room&.blank? && room_id.blank?
+
+      # Okay sort of gross and it's got some holes in it, but mostly
+      # we're calling this with a current_user and no room_id.  Except
+      # the broadcast worker which is calling with the opposite.
+      select_for_room_id = if current_user&.active_room_id&.present?
+                             current_user.active_room_id
+                           else
+                             room_id
+                           end
 
       MessageSelector
         .new(lookahead: lookahead)
-        .for_room_id(room_id: current_user.active_room_id)
+        .for_room_id(room_id: select_for_room_id)
         .when_pinned_to(song_id: song_id)
         .messages
     end

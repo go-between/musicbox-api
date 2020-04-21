@@ -19,6 +19,7 @@ module Mutations
       end
 
       message.update!(pinned: pin)
+      BroadcastPinnedMessagesWorker.perform_async(message.room_id, message.song_id)
 
       {
         message: message,
