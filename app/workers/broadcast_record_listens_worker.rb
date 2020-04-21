@@ -26,6 +26,8 @@ class BroadcastRecordListensWorker
           approval
           user {
             id
+            email
+            name
           }
         }
       }
