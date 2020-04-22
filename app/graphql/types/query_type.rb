@@ -41,20 +41,36 @@ module Types
       confirm_current_user!
       return [] if current_user.active_room.blank?
 
-      selector = MessageSelector.new(current_user: current_user, lookahead: lookahead)
-      selector.select(to: to, from: from)
+      MessageSelector
+        .new(lookahead: lookahead)
+        .for_room_id(room_id: current_user.active_room_id)
+        .in_date_range(to: to, from: from)
+        .messages
     end
 
     field :pinned_messages, [Types::MessageType], null: false, extras: [:lookahead] do
       argument :song_id, ID, required: true
+      argument :room_id, ID, required: false
     end
 
-    def pinned_messages(song_id:, lookahead:)
+    def pinned_messages(song_id:, room_id: nil, lookahead:)
       confirm_current_user!
-      return [] if current_user.active_room.blank?
+      return [] if current_user&.active_room&.blank? && room_id.blank?
 
-      selector = MessageSelector.new(current_user: current_user, lookahead: lookahead)
-      selector.select(room_id: current_user.active_room_id, song_id: song_id)
+      # Okay sort of gross and it's got some holes in it, but mostly
+      # we're calling this with a current_user and no room_id.  Except
+      # the broadcast worker which is calling with the opposite.
+      select_for_room_id = if current_user&.active_room_id&.present?
+                             current_user.active_room_id
+                           else
+                             room_id
+                           end
+
+      MessageSelector
+        .new(lookahead: lookahead)
+        .for_room_id(room_id: select_for_room_id)
+        .when_pinned_to(song_id: song_id)
+        .messages
     end
 
     field :record_listens, [Types::RecordListenType], null: true, extras: [:lookahead] do

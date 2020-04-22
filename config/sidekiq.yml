@@ -5,6 +5,7 @@
   - [queue_management, 1]
   - [broadcast_message, 1]
   - [broadcast_now_playing, 1]
+  - [broadcast_pinned_messages, 1]
   - [broadcast_playlist, 1]
   - [broadcast_record_listens, 1]
   - [broadcast_team, 1]

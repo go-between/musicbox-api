@@ -24,7 +24,8 @@ RSpec.describe "Message Pin", type: :request do
   end
 
   let(:current_user) { create(:user) }
-  let(:message) { create(:message, pinned: false, user: current_user) }
+  let(:song) { create(:song) }
+  let(:message) { create(:message, pinned: false, user: current_user, song: song) }
 
   describe "success" do
     it "Allows a user to pin a message" do
@@ -32,6 +33,7 @@ RSpec.describe "Message Pin", type: :request do
 
       expect(message.reload.pinned).to eq(true)
       expect(json_body.dig(:data, :messagePin, :message, :id)).to eq(message.id)
+      expect(BroadcastPinnedMessagesWorker).to have_enqueued_sidekiq_job(message.room_id, message.song_id)
     end
 
     it "Noops if a message is already pinned" do
@@ -40,6 +42,7 @@ RSpec.describe "Message Pin", type: :request do
 
       expect(message.reload.pinned).to eq(true)
       expect(json_body.dig(:data, :messagePin, :message, :id)).to eq(message.id)
+      expect(BroadcastPinnedMessagesWorker).to have_enqueued_sidekiq_job(message.room_id, message.song_id)
     end
 
     it "Allows a user to unpin a message" do
@@ -48,6 +51,7 @@ RSpec.describe "Message Pin", type: :request do
 
       expect(message.reload.pinned).to eq(false)
       expect(json_body.dig(:data, :messagePin, :message, :id)).to eq(message.id)
+      expect(BroadcastPinnedMessagesWorker).to have_enqueued_sidekiq_job(message.room_id, message.song_id)
     end
 
     it "Noops if a message is already unpinned" do
@@ -55,6 +59,7 @@ RSpec.describe "Message Pin", type: :request do
 
       expect(message.reload.pinned).to eq(false)
       expect(json_body.dig(:data, :messagePin, :message, :id)).to eq(message.id)
+      expect(BroadcastPinnedMessagesWorker).to have_enqueued_sidekiq_job(message.room_id, message.song_id)
     end
   end
 
@@ -65,6 +70,7 @@ RSpec.describe "Message Pin", type: :request do
 
       expect(json_body.dig(:data, :messagePin, :errors)).to include("Message must belong to the current user")
       expect(message.reload.pinned).to eq(false)
+      expect(BroadcastPinnedMessagesWorker).not_to have_enqueued_sidekiq_job
     end
   end
 end
