@@ -43,6 +43,7 @@ end
 group :development, :test do
   gem "bullet", "6.1.0"
   gem "pry-byebug", "3.7.0"
+  gem "webmock", "3.8.3"
 end
 
 group :test do
