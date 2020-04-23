@@ -8,6 +8,8 @@ module Types
     field :message_create, mutation: Mutations::MessageCreate
     field :message_pin, mutation: Mutations::MessagePin
 
+    field :password_reset_initiate, mutation: Mutations::PasswordResetInitiate
+
     field :record_listen_create, mutation: Mutations::RecordListenCreate
 
     field :room_activate, mutation: Mutations::RoomActivate
