@@ -29,5 +29,7 @@ module Types
     field :team_create, mutation: Mutations::TeamCreate
 
     field :user_library_record_delete, mutation: Mutations::UserLibraryRecordDelete
+    field :user_password_update, mutation: Mutations::UserPasswordUpdate
+    field :user_update, mutation: Mutations::UserUpdate
   end
 end
