@@ -8,6 +8,9 @@ module Types
     field :message_create, mutation: Mutations::MessageCreate
     field :message_pin, mutation: Mutations::MessagePin
 
+    field :password_reset_complete, mutation: Mutations::PasswordResetComplete
+    field :password_reset_initiate, mutation: Mutations::PasswordResetInitiate
+
     field :record_listen_create, mutation: Mutations::RecordListenCreate
 
     field :room_activate, mutation: Mutations::RoomActivate
@@ -26,5 +29,7 @@ module Types
     field :team_create, mutation: Mutations::TeamCreate
 
     field :user_library_record_delete, mutation: Mutations::UserLibraryRecordDelete
+    field :user_password_update, mutation: Mutations::UserPasswordUpdate
+    field :user_update, mutation: Mutations::UserUpdate
   end
 end

@@ -11,3 +11,4 @@
   - [broadcast_team, 1]
   - [broadcast_users, 1]
   - [email_invitations, 1]
+  - [email_password_resets, 1]

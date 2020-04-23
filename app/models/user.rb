@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  # :registerable,:recoverable,
-  devise :database_authenticatable, :rememberable, :validatable
+  devise :database_authenticatable, :recoverable, :validatable
 
   belongs_to :active_room, optional: true, foreign_key: :active_room_id, class_name: "Room"
   belongs_to :active_team, optional: true, foreign_key: :active_team_id, class_name: "Team"
@@ -15,4 +12,9 @@ class User < ApplicationRecord
   has_many :tags
   has_many :team_users
   has_many :teams, through: :team_users
+
+  def start_password_reset!
+    # This is a protected method in Devise::Recoverable
+    set_reset_password_token
+  end
 end
