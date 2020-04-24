@@ -73,6 +73,21 @@ module Types
         .messages
     end
 
+    field :recommendations, [Types::LibraryRecordType], null: false, extras: [:lookahead] do
+    end
+
+    def recommendations(lookahead:)
+      includes = []
+      includes << :song if lookahead.selects?(:song)
+      includes << :user if lookahead.selects?(:user)
+      includes << :from_user if lookahead.selects?(:from_user)
+
+      records = UserLibraryRecord
+      records = records.includes(includes) if includes.any?
+
+      records.pending_recommendation.where(user: current_user)
+    end
+
     field :record_listens, [Types::RecordListenType], null: true, extras: [:lookahead] do
       argument :record_id, ID, required: true
     end
