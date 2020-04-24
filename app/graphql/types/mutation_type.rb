@@ -11,6 +11,7 @@ module Types
     field :password_reset_complete, mutation: Mutations::PasswordResetComplete
     field :password_reset_initiate, mutation: Mutations::PasswordResetInitiate
 
+    field :recommendation_accept, mutation: Mutations::RecommendationAccept
     field :recommendation_create, mutation: Mutations::RecommendationCreate
 
     field :record_listen_create, mutation: Mutations::RecordListenCreate
