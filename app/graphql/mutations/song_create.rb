@@ -3,11 +3,12 @@
 module Mutations
   class SongCreate < Mutations::BaseMutation
     argument :youtube_id, ID, required: true
+    argument :from_user_id, ID, required: false
 
     field :song, Types::SongType, null: true
     field :errors, [String], null: true
 
-    def resolve(youtube_id:)
+    def resolve(youtube_id:, from_user_id: nil)
       song = Song.find_or_initialize_by(youtube_id: youtube_id)
 
       unless song.valid?
@@ -19,7 +20,7 @@ module Mutations
 
       attrs_from_youtube!(song) unless song.persisted?
 
-      associate_song_to_user!(song)
+      associate_song_to_user!(song, from_user_id)
 
       {
         song: song,
@@ -29,8 +30,12 @@ module Mutations
 
     private
 
-    def associate_song_to_user!(song)
-      UserLibraryRecord.find_or_create_by!(song: song, user: context[:current_user])
+    def associate_song_to_user!(song, from_user_id)
+      record = UserLibraryRecord.find_or_initialize_by(song: song, user: context[:current_user])
+      return if record.persisted?
+      return record.save! if from_user_id.blank?
+
+      record.update!(from_user_id: from_user_id, source: "saved_from_history")
     end
 
     def attrs_from_youtube!(song)
