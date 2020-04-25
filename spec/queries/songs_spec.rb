@@ -34,6 +34,17 @@ RSpec.describe "Songs Query", type: :request do
     expect(song_ids).to match_array([s1.id, s2.id])
   end
 
+  it "excludes songs that are pending recommendations" do
+    s1 = create(:song)
+    s2 = create(:song)
+    UserLibraryRecord.create!(user: user, song: s1, source: "pending_recommendation")
+    UserLibraryRecord.create!(user: user, song: s2)
+
+    graphql_request(query: query, user: user)
+    song_ids = json_body.dig(:data, :songs).map { |s| s[:id] }
+    expect(song_ids).to match_array([s2.id])
+  end
+
   it "retrieves all of a user's songs when search is empty" do
     s1 = create(:song)
     s2 = create(:song)
