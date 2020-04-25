@@ -8,9 +8,10 @@ RSpec.describe "Song Create", type: :request do
 
   def query
     %(
-      mutation SongCreate($youtubeId: ID!) {
+      mutation SongCreate($youtubeId: ID!, $fromUserId: ID) {
         songCreate(input: {
-          youtubeId: $youtubeId
+          youtubeId: $youtubeId,
+          fromUserId: $fromUserId
         }) {
           song {
             id
@@ -107,6 +108,41 @@ RSpec.describe "Song Create", type: :request do
 
         expect(song.id).to eq(id)
         expect(data[:errors]).to be_blank
+      end
+    end
+
+    context "when adding a song from another user" do
+      let!(:song) { create(:song, youtube_id: "the-youtube-id") }
+
+      it "sets the source of the song to that other user" do
+        other_user = create(:user)
+        graphql_request(
+          query: query,
+          variables: { youtubeId: "the-youtube-id", fromUserId: other_user.id },
+          user: current_user
+        )
+
+        expect(current_user.songs).to include(song)
+        record = current_user.user_library_records.find_by(song_id: song.id)
+        expect(record.source).to eq("saved_from_history")
+        expect(record.from_user_id).to eq(other_user.id)
+      end
+
+      it "does not reset the source of the song" do
+        # current_user has already added the song to their library
+        UserLibraryRecord.create!(user: current_user, song: song)
+
+        other_user = create(:user)
+        graphql_request(
+          query: query,
+          variables: { youtubeId: "the-youtube-id", fromUserId: other_user.id },
+          user: current_user
+        )
+
+        expect(current_user.songs).to include(song)
+        record = current_user.user_library_records.find_by(song_id: song.id)
+        expect(record.source).to be_blank
+        expect(record.from_user_id).to be_blank
       end
     end
   end
