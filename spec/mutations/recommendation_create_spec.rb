@@ -32,8 +32,9 @@ RSpec.describe "Recommendation Create", type: :request do
         user: current_user
       )
 
-      expect(other_user.songs).to include(song)
-      record = other_user.user_library_records.find_by(song_id: song.id)
+      # Pending recommendations are not returned in a user's songs
+      expect(other_user.songs).not_to include(song)
+      record = UserLibraryRecord.find_by(song_id: song.id, user: other_user)
       expect(record.from_user_id).to eq(current_user.id)
       expect(record.source).to eq("pending_recommendation")
     end
