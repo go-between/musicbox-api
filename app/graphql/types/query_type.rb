@@ -74,9 +74,10 @@ module Types
     end
 
     field :recommendations, [Types::LibraryRecordType], null: false, extras: [:lookahead] do
+      argument :song_id, ID, required: false
     end
 
-    def recommendations(lookahead:)
+    def recommendations(song_id: nil, lookahead:)
       includes = []
       includes << :song if lookahead.selects?(:song)
       includes << :user if lookahead.selects?(:user)
@@ -85,7 +86,13 @@ module Types
       records = UserLibraryRecord
       records = records.includes(includes) if includes.any?
 
-      records.pending_recommendation.where(user: current_user)
+      conditions = if song_id
+                     { from_user: current_user, song_id: song_id }
+                   else
+                     { user: current_user }
+                   end
+
+      records.pending_recommendation.where(conditions)
     end
 
     field :record_listens, [Types::RecordListenType], null: true, extras: [:lookahead] do
