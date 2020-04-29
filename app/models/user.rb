@@ -13,7 +13,7 @@ class User < ApplicationRecord
     # exclude records where source is null with a not-equals comparison.
     where(
       arel_table[:source].not_eq("pending_recommendation")
-      .or(arel_table[:source].eq(nil))
+        .or(arel_table[:source].eq(nil))
     )
   }, inverse_of: :user
   has_many :songs, through: :user_library_records
