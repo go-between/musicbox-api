@@ -8,14 +8,18 @@ RSpec.describe "Recommendations Query", type: :request do
 
   def query
     %(
-      query Recommendations {
-        recommendations {
+      query Recommendations($songId: ID) {
+        recommendations(songId: $songId) {
           id
           source
           song {
             name
           }
           fromUser {
+            name
+          }
+          user {
+            id
             name
           }
         }
@@ -74,5 +78,41 @@ RSpec.describe "Recommendations Query", type: :request do
     summmer_recommendation = recommendations.find { |r| r[:id] == recommendation2.id }
     expect(summmer_recommendation.dig(:song, :name)).to eq("Indian Summer")
     expect(summmer_recommendation.dig(:fromUser, :name)).to eq("Flawn")
+  end
+
+  it "retrieves all recommendations for a specific song that current user has recommended" do
+    recommended_user1 = create(:user, name: "Jorm")
+    recommended_user2 = create(:user, name: "Flarb")
+
+    song = create(:song, name: "Gloryhammer - Siege of Dunkeld")
+    UserLibraryRecord.create!(
+      user: recommended_user1,
+      from_user: current_user,
+      song: song,
+      source: "pending_recommendation"
+    )
+    UserLibraryRecord.create!(
+      user: recommended_user2,
+      from_user: current_user,
+      song: song,
+      source: "pending_recommendation"
+    )
+    UserLibraryRecord.create!(
+      user: recommended_user2,
+      from_user: recommended_user1,
+      song: song,
+      source: "pending_recommendation"
+    )
+
+    graphql_request(
+      query: query,
+      variables: { songId: song.id },
+      user: current_user
+    )
+
+    recommended_user_ids = json_body.dig(:data, :recommendations).map do |r|
+      r.dig(:user, :id)
+    end.compact
+    expect(recommended_user_ids).to match_array([recommended_user1.id, recommended_user2.id])
   end
 end

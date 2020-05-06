@@ -13,7 +13,7 @@ module Mutations
 
       to_user = User.find(recommend_to_user)
       return { errors: ["User must exist"] } if to_user.blank?
-      return { errors: ["User already has song"] } if to_user.songs.include?(song)
+      return { errors: ["User already has song"] } if UserLibraryRecord.exists?(song: song, user: to_user)
 
       UserLibraryRecord.create!(
         user: to_user,
