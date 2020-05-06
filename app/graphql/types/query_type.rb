@@ -89,10 +89,10 @@ module Types
       conditions = if song_id
                      { from_user: current_user, song_id: song_id }
                    else
-                     { user: current_user }
+                     { source: "pending_recommendation", user: current_user }
                    end
 
-      records.pending_recommendation.where(conditions)
+      records.where(conditions)
     end
 
     field :record_listens, [Types::RecordListenType], null: true, extras: [:lookahead] do
