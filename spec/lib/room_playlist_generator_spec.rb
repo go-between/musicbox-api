@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe RoomPlaylist do
+RSpec.describe RoomPlaylistGenerator do
   let(:user_1) { create(:user) }
   let(:user_2) { create(:user) }
   let(:user_3) { create(:user) }
@@ -22,14 +22,14 @@ RSpec.describe RoomPlaylist do
 
       playlist = described_class.new(room, relation)
 
-      expect(playlist.generate_playlist).to eq([record3, record4, record5, record6])
+      expect(playlist.playlist).to eq([record3, record4, record5, record6])
     end
 
     it "returns an empty queue when no users are in rotation" do
       room.update!(user_rotation: [])
       playlist = described_class.new(room, relation)
 
-      expect(playlist.generate_playlist).to be_empty
+      expect(playlist.playlist).to be_empty
     end
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RoomPlaylist
+class RoomPlaylistGenerator
   attr_reader :room, :playlist_records
 
   def initialize(room, playlist_records)
@@ -8,7 +8,7 @@ class RoomPlaylist
     @playlist_records = playlist_records
   end
 
-  def generate_playlist
+  def playlist
     room.with_lock do
       return [] if user_rotation.blank?
 

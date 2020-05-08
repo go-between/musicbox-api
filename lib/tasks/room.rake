@@ -3,7 +3,7 @@
 namespace :room do
   desc "Starts loop to poll all rooms for new songs to play"
   task poll_queue: :environment do
-    poller = PollRoomQueue.new
+    poller = RoomQueuePoller.new
 
     loop do
       poller.poll!

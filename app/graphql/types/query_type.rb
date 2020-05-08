@@ -41,7 +41,7 @@ module Types
       confirm_current_user!
       return [] if current_user.active_room.blank?
 
-      MessageSelector
+      Selectors::Messages
         .new(lookahead: lookahead)
         .for_room_id(room_id: current_user.active_room_id)
         .in_date_range(to: to, from: from)
@@ -66,7 +66,7 @@ module Types
                              room_id
                            end
 
-      MessageSelector
+      Selectors::Messages
         .new(lookahead: lookahead)
         .for_room_id(room_id: select_for_room_id)
         .when_pinned_to(song_id: song_id)
@@ -139,7 +139,7 @@ module Types
     def room_playlist(room_id:, historical: false, from: nil, lookahead:)
       confirm_current_user!
 
-      RoomPlaylistSelector
+      Selectors::RoomPlaylistRecords
         .new(lookahead: lookahead)
         .select(room_id: room_id, historical: historical, from: from)
     end

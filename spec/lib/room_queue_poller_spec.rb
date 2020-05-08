@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe PollRoomQueue do
+RSpec.describe RoomQueuePoller do
   describe "#poll!" do
     it "enqueues queue updates for pertinent rooms" do
       # Not done playing yet

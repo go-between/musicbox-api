@@ -11,6 +11,9 @@ RSpec.describe "Songs Query", type: :request do
       query Songs($query: String, $tagIds: [ID!]) {
         songs(query: $query, tagIds: $tagIds) {
           id
+          tags {
+            id
+          }
         }
       }
     )
@@ -115,5 +118,19 @@ RSpec.describe "Songs Query", type: :request do
     graphql_request(query: query, user: user, variables: { query: "ing", tagIds: [tag2.id] })
     song_ids = json_body.dig(:data, :songs).map { |s| s[:id] }
     expect(song_ids).to match_array([s2.id])
+  end
+
+  describe "when retrieving associated tags" do
+    it "only retrieves the user's tags" do
+      other_user = create(:user)
+      tag1 = create(:tag, user: user)
+      tag2 = create(:tag, user: other_user)
+
+      s1 = create(:song, name: "blingblong", tags: [tag1, tag2])
+      user.update!(songs: [s1])
+      graphql_request(query: query, user: user)
+
+      byebug
+    end
   end
 end
