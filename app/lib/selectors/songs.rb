@@ -2,8 +2,10 @@
 
 module Selectors
   class Songs
-    attr_reader :arel, :lookahead
-    def initialize(lookahead:)
+    attr_reader :arel, :lookahead, :user
+    def initialize(lookahead:, user:)
+      @user = user
+
       @arel = Song.arel_table
       @songs = record_context(lookahead)
     end
@@ -12,7 +14,7 @@ module Selectors
       @songs.order(created_at: :asc)
     end
 
-    def for_user(user)
+    def for_user
       @songs = @songs.joins(:user_library_records).where(user_library_records: { user: user })
 
       self
@@ -35,22 +37,26 @@ module Selectors
       self
     end
 
-    def with_user_tags(_user, tag_ids)
+    def with_tags(tag_ids)
       return self if tag_ids.blank?
 
-      @songs = @songs.joins(:tag_songs).where(tags_songs: { tag_id: tag_ids }).distinct if tag_ids.present?
+      @songs = @songs.joins(:tag_songs).where(tags_songs: { tag_id: tag_ids }).distinct
       self
     end
 
     private
 
     def record_context(lookahead)
-      includes = []
-      includes << :tags if lookahead.selects?(:tags)
-      includes << :tag_songs if lookahead.selects?(:tags)
-      return Song if includes.blank?
+      ctx = Song
+      if lookahead.selects?(:tags)
+        tags_arel = Tag.arel_table
+        ctx = ctx.includes(%i[tags tag_songs])
+                 .where(
+                   tags_arel[:user_id].eq(user.id).or(tags_arel[:user_id].eq(nil))
+                 ).references(:tags)
+      end
 
-      Song.includes(includes)
+      ctx
     end
   end
 end

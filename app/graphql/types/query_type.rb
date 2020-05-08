@@ -174,10 +174,10 @@ module Types
       confirm_current_user!
 
       Selectors::Songs
-        .new(lookahead: lookahead)
-        .for_user(current_user)
+        .new(lookahead: lookahead, user: current_user)
+        .for_user
         .with_query(query)
-        .with_user_tags(current_user, tag_ids)
+        .with_tags(tag_ids)
         .without_pending_records
         .songs
     end

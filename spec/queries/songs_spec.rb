@@ -130,7 +130,9 @@ RSpec.describe "Songs Query", type: :request do
       user.update!(songs: [s1])
       graphql_request(query: query, user: user)
 
-      byebug
+      expect(json_body.dig(:data, :songs).size).to eq(1)
+      tag_ids = json_body.dig(:data, :songs, 0, :tags).map { |t| t[:id] }
+      expect(tag_ids).to match_array([tag1.id])
     end
   end
 end
