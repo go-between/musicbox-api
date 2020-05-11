@@ -26,7 +26,7 @@ gem "redis", "4.1.3"
 gem "sidekiq", "6.0.4"
 
 gem "devise", "4.7.1"
-gem "doorkeeper", "5.2.3"
+gem "doorkeeper", "5.2.5"
 gem "graphiql-rails", "1.7.0"
 gem "graphql", "1.9.16"
 
