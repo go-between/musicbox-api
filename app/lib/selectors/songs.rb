@@ -10,8 +10,11 @@ module Selectors
       @songs = record_context(lookahead)
     end
 
-    def songs
-      @songs.order(created_at: :asc)
+    def songs(order:)
+      return @songs.order(created_at: :asc) if order.blank?
+      return [] unless Song.column_names.include?(order[:field])
+
+      @songs.order(order[:field] => order[:direction])
     end
 
     def for_user

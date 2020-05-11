@@ -168,9 +168,10 @@ module Types
     field :songs, [Types::SongType], null: true, extras: [:lookahead] do
       argument :query, String, required: false
       argument :tag_ids, [ID], required: false
+      argument :order, Types::OrderType, required: false
     end
 
-    def songs(query: nil, tag_ids: [], lookahead:)
+    def songs(query: nil, tag_ids: [], order: nil, lookahead:)
       confirm_current_user!
 
       Selectors::Songs
@@ -179,7 +180,7 @@ module Types
         .with_query(query)
         .with_tags(tag_ids)
         .without_pending_records
-        .songs
+        .songs(order: order)
     end
 
     field :tags, [Types::TagType], null: false do
