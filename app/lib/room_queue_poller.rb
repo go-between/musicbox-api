@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PollRoomQueue
+class RoomQueuePoller
   def initialize
     @room_arel = Room.arel_table
   end

@@ -37,7 +37,7 @@ class QueueManagementWorker
 
   def next_record_in_playlist(room)
     relation = RoomPlaylistRecord.includes(:song, :user)
-    RoomPlaylist.new(room, relation).generate_playlist.first
+    RoomPlaylistGenerator.new(room, relation).playlist.first
   end
 
   def remove_stale_user_from_room!(room)

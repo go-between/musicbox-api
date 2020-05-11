@@ -41,7 +41,7 @@ module Types
       confirm_current_user!
       return [] if current_user.active_room.blank?
 
-      MessageSelector
+      Selectors::Messages
         .new(lookahead: lookahead)
         .for_room_id(room_id: current_user.active_room_id)
         .in_date_range(to: to, from: from)
@@ -66,7 +66,7 @@ module Types
                              room_id
                            end
 
-      MessageSelector
+      Selectors::Messages
         .new(lookahead: lookahead)
         .for_room_id(room_id: select_for_room_id)
         .when_pinned_to(song_id: song_id)
@@ -139,7 +139,7 @@ module Types
     def room_playlist(room_id:, historical: false, from: nil, lookahead:)
       confirm_current_user!
 
-      RoomPlaylistSelector
+      Selectors::RoomPlaylistRecords
         .new(lookahead: lookahead)
         .select(room_id: room_id, historical: historical, from: from)
     end
@@ -170,19 +170,16 @@ module Types
       argument :tag_ids, [ID], required: false
     end
 
-    def songs(query: nil, tag_ids: [], lookahead:) # rubocop:disable Metrics/AbcSize
+    def songs(query: nil, tag_ids: [], lookahead:)
       confirm_current_user!
-      library = current_user.songs
 
-      includes = []
-      includes << :tags if lookahead.selects?(:tags)
-      includes << :tag_songs if lookahead.selects?(:tags)
-      library = library.includes(includes) if includes.any?
-
-      library = library.where(Song.arel_table[:name].matches("%#{query}%")) if query.present?
-      library = library.joins(:tag_songs).where(tags_songs: { tag_id: tag_ids }).distinct if tag_ids.present?
-
-      library
+      Selectors::Songs
+        .new(lookahead: lookahead, user: current_user)
+        .for_user
+        .with_query(query)
+        .with_tags(tag_ids)
+        .without_pending_records
+        .songs
     end
 
     field :tags, [Types::TagType], null: false do
