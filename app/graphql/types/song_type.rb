@@ -5,6 +5,7 @@ module Types
     graphql_name "Song"
 
     field :id, ID, null: false
+    field :created_at, Types::DateTimeType, null: false
     field :description, String, null: true
     field :duration_in_seconds, Int, null: true
     field :license, String, null: true
@@ -14,5 +15,7 @@ module Types
     field :thumbnail_url, String, null: true
     field :youtube_id, ID, null: false
     field :youtube_tags, [String], null: false
+
+    field :user_library_records, [Types::LibraryRecordType], null: false
   end
 end

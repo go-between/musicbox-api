@@ -10,8 +10,11 @@ module Selectors
       @songs = record_context(lookahead)
     end
 
-    def songs
-      @songs.order(created_at: :asc)
+    def songs(order:)
+      return @songs.order(created_at: :asc) if order.blank?
+      return [] unless Song.column_names.include?(order[:field])
+
+      @songs.order(order[:field] => order[:direction])
     end
 
     def for_user
@@ -48,12 +51,27 @@ module Selectors
 
     def record_context(lookahead)
       ctx = Song
-      if lookahead.selects?(:tags)
-        tags_arel = Tag.arel_table
-        ctx = ctx.includes(%i[tags tag_songs])
-                 .where(
-                   tags_arel[:user_id].eq(user.id).or(tags_arel[:user_id].eq(nil))
-                 ).references(:tags)
+      ctx = tag_context!(ctx, lookahead)
+      ctx = user_library_record_context!(ctx, lookahead)
+      ctx
+    end
+
+    def tag_context!(ctx, lookahead)
+      return ctx unless lookahead.selects?(:tags)
+
+      tags_arel = Tag.arel_table
+      ctx.includes(%i[tags tag_songs]).where(
+        tags_arel[:user_id].eq(user.id).or(tags_arel[:user_id].eq(nil))
+      ).references(:tags)
+    end
+
+    def user_library_record_context!(ctx, lookahead)
+      return ctx unless lookahead.selects?(:user_library_records)
+
+      ctx = ctx.includes(:user_library_records)
+
+      if lookahead.selection(:user_library_records).selects?(:from_user)
+        ctx = ctx.includes(user_library_records: :from_user)
       end
 
       ctx
