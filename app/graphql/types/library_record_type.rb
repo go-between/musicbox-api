@@ -5,7 +5,7 @@ module Types
     graphql_name "LibraryRecord"
 
     field :id, ID, null: false
-    field :source, String, null: false
+    field :source, String, null: true
 
     field :from_user, Types::UserType, null: true
     field :song, Types::SongType, null: true
