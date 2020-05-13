@@ -34,7 +34,11 @@ RSpec.describe "Tag Add", type: :request do
 
       graphql_request(
         query: query,
-        variables: { tagId: tag.id, addIds: [library_record1.id, library_record3.id], removeIds: [library_record2.id, library_record4.id] },
+        variables: {
+          tagId: tag.id,
+          addIds: [library_record1.id, library_record3.id],
+          removeIds: [library_record2.id, library_record4.id]
+        },
         user: current_user
       )
 

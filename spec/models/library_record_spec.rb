@@ -5,6 +5,7 @@ require "rails_helper"
 RSpec.describe LibraryRecord, type: :model do
   let(:song) { create(:song) }
   let(:user) { create(:user) }
+
   describe "relationships" do
     it "can belong to a song and user" do
       record = described_class.create!(song: song, user: user)
