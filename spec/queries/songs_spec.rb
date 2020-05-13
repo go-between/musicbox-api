@@ -14,7 +14,7 @@ RSpec.describe "Songs Query", type: :request do
           tags {
             id
           }
-          userLibraryRecords {
+          libraryRecords {
             id
             source
             fromUser {
@@ -47,8 +47,8 @@ RSpec.describe "Songs Query", type: :request do
   it "excludes songs that are pending recommendations" do
     s1 = create(:song)
     s2 = create(:song)
-    UserLibraryRecord.create!(user: user, song: s1, source: "pending_recommendation")
-    UserLibraryRecord.create!(user: user, song: s2)
+    LibraryRecord.create!(user: user, song: s1, source: "pending_recommendation")
+    LibraryRecord.create!(user: user, song: s2)
 
     graphql_request(query: query, user: user)
     song_ids = json_body.dig(:data, :songs).map { |s| s[:id] }
@@ -149,24 +149,24 @@ RSpec.describe "Songs Query", type: :request do
     let(:other_user) { create(:user, name: "the other user") }
 
     it "only retrieves the user's own library records" do
-      record1 = UserLibraryRecord.create!(user: user, song: song1, from_user: other_user, source: "saved_from_history")
-      record2 = UserLibraryRecord.create!(user: user, song: song2)
-      UserLibraryRecord.create!(user: other_user, song: song1)
-      UserLibraryRecord.create!(user: other_user, song: song2)
+      record1 = LibraryRecord.create!(user: user, song: song1, from_user: other_user, source: "saved_from_history")
+      record2 = LibraryRecord.create!(user: user, song: song2)
+      LibraryRecord.create!(user: other_user, song: song1)
+      LibraryRecord.create!(user: other_user, song: song2)
 
       graphql_request(query: query, user: user)
 
       song1_resp = json_body.dig(:data, :songs).find { |s| s[:id] == song1.id }
       song2_resp = json_body.dig(:data, :songs).find { |s| s[:id] == song2.id }
 
-      expect(song1_resp.dig(:userLibraryRecords).size).to eq(1)
-      record1_resp = song1_resp.dig(:userLibraryRecords).first
+      expect(song1_resp.dig(:libraryRecords).size).to eq(1)
+      record1_resp = song1_resp.dig(:libraryRecords).first
       expect(record1_resp[:id]).to eq(record1.id)
       expect(record1_resp[:source]).to eq("saved_from_history")
       expect(record1_resp.dig(:fromUser, :id)).to eq(other_user.id)
 
-      expect(song2_resp.dig(:userLibraryRecords).size).to eq(1)
-      record2_resp = song2_resp.dig(:userLibraryRecords).first
+      expect(song2_resp.dig(:libraryRecords).size).to eq(1)
+      record2_resp = song2_resp.dig(:libraryRecords).first
       expect(record2_resp[:id]).to eq(record2.id)
       expect(record2_resp[:source]).to be_nil
       expect(record2_resp[:fromUser]).to be_nil

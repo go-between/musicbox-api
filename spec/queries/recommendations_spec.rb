@@ -36,27 +36,27 @@ RSpec.describe "Recommendations Query", type: :request do
     song2 = create(:song, name: "Indian Summer")
     song3 = create(:song, name: "Gloryhammer - Siege of Dunkeld")
 
-    recommendation1 = UserLibraryRecord.create!(
+    recommendation1 = LibraryRecord.create!(
       user: current_user,
       from_user: recommending_user1,
       song: song1,
       source: "pending_recommendation"
     )
-    recommendation2 = UserLibraryRecord.create!(
+    recommendation2 = LibraryRecord.create!(
       user: current_user,
       from_user: recommending_user2,
       song: song2,
       source: "pending_recommendation"
     )
     # already accepted
-    UserLibraryRecord.create!(
+    LibraryRecord.create!(
       user: current_user,
       from_user: recommending_user1,
       song: song3,
       source: "accepted_recommendation"
     )
     # From me to someone else
-    UserLibraryRecord.create!(
+    LibraryRecord.create!(
       user: recommending_user1,
       from_user: current_user,
       song: song3,
@@ -85,19 +85,19 @@ RSpec.describe "Recommendations Query", type: :request do
     recommended_user2 = create(:user, name: "Flarb")
 
     song = create(:song, name: "Gloryhammer - Siege of Dunkeld")
-    UserLibraryRecord.create!(
+    LibraryRecord.create!(
       user: recommended_user1,
       from_user: current_user,
       song: song,
       source: "pending_recommendation"
     )
-    UserLibraryRecord.create!(
+    LibraryRecord.create!(
       user: recommended_user2,
       from_user: current_user,
       song: song,
       source: "pending_recommendation"
     )
-    UserLibraryRecord.create!(
+    LibraryRecord.create!(
       user: recommended_user2,
       from_user: recommended_user1,
       song: song,

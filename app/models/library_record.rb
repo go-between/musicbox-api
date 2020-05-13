@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UserLibraryRecord < ApplicationRecord
+class LibraryRecord < ApplicationRecord
   belongs_to :song
   belongs_to :user
   belongs_to :from_user, foreign_key: :from_user_id, class_name: "User", optional: true

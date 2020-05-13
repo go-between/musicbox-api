@@ -31,7 +31,7 @@ module Mutations
     private
 
     def associate_song_to_user!(song, from_user_id)
-      record = UserLibraryRecord.find_or_initialize_by(song: song, user: context[:current_user])
+      record = LibraryRecord.find_or_initialize_by(song: song, user: context[:current_user])
       return if record.persisted?
       return record.save! if from_user_id.blank?
 

@@ -16,6 +16,6 @@ module Types
     field :youtube_id, ID, null: false
     field :youtube_tags, [String], null: false
 
-    field :user_library_records, [Types::LibraryRecordType], null: false
+    field :library_records, [Types::LibraryRecordType], null: false
   end
 end

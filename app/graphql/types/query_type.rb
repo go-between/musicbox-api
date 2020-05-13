@@ -23,6 +23,33 @@ module Types
       Invitation.where(inviting_user: current_user, team: current_user.active_team)
     end
 
+    field :library_record, Types::LibraryRecordType, null: true do
+      argument :id, ID, required: true
+    end
+
+    def library_record(id:)
+      confirm_current_user!
+      LibraryRecord.find_by(id: id)
+    end
+
+    field :library_records, [Types::LibraryRecordType], null: true, extras: [:lookahead] do
+      argument :query, String, required: false
+      argument :tag_ids, [ID], required: false
+      argument :order, Types::OrderType, required: false
+    end
+
+    def library_records(query: nil, tag_ids: [], order: nil, lookahead:)
+      confirm_current_user!
+
+      Selectors::LibraryRecords
+        .new(lookahead: lookahead, user: current_user)
+        .for_user
+        .with_query(query)
+        .with_tags(tag_ids)
+        .without_pending_records
+        .library_records(order: order)
+    end
+
     field :message, Types::MessageType, null: false do
       argument :id, ID, required: true
     end
@@ -83,7 +110,7 @@ module Types
       includes << :user if lookahead.selects?(:user)
       includes << :from_user if lookahead.selects?(:from_user)
 
-      records = UserLibraryRecord
+      records = LibraryRecord
       records = records.includes(includes) if includes.any?
 
       conditions = if song_id
@@ -154,33 +181,6 @@ module Types
       return records.played.order(played_at: :desc) if historical
 
       records.waiting.order(:order)
-    end
-
-    field :song, Types::SongType, null: true do
-      argument :id, ID, required: true
-    end
-
-    def song(id:)
-      confirm_current_user!
-      Song.find(id)
-    end
-
-    field :songs, [Types::SongType], null: true, extras: [:lookahead] do
-      argument :query, String, required: false
-      argument :tag_ids, [ID], required: false
-      argument :order, Types::OrderType, required: false
-    end
-
-    def songs(query: nil, tag_ids: [], order: nil, lookahead:)
-      confirm_current_user!
-
-      Selectors::Songs
-        .new(lookahead: lookahead, user: current_user)
-        .for_user
-        .with_query(query)
-        .with_tags(tag_ids)
-        .without_pending_records
-        .songs(order: order)
     end
 
     field :tags, [Types::TagType], null: false do

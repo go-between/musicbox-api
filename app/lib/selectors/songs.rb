@@ -18,15 +18,15 @@ module Selectors
     end
 
     def for_user
-      @songs = @songs.joins(:user_library_records).where(user_library_records: { user: user })
+      @songs = @songs.joins(:library_records).where(library_records: { user: user })
 
       self
     end
 
     def without_pending_records
-      library_arel = UserLibraryRecord.arel_table
+      library_arel = LibraryRecord.arel_table
 
-      @songs = @songs.joins(:user_library_records)
+      @songs = @songs.joins(:library_records)
                      .where(library_arel[:source].not_eq("pending_recommendation")
                        .or(library_arel[:source].eq(nil)))
 
@@ -52,7 +52,7 @@ module Selectors
     def record_context(lookahead)
       ctx = Song
       ctx = tag_context!(ctx, lookahead)
-      ctx = user_library_record_context!(ctx, lookahead)
+      ctx = library_record_context!(ctx, lookahead)
       ctx
     end
 
@@ -65,14 +65,11 @@ module Selectors
       ).references(:tags)
     end
 
-    def user_library_record_context!(ctx, lookahead)
-      return ctx unless lookahead.selects?(:user_library_records)
+    def library_record_context!(ctx, lookahead)
+      return ctx unless lookahead.selects?(:library_records)
 
-      ctx = ctx.includes(:user_library_records)
-
-      if lookahead.selection(:user_library_records).selects?(:from_user)
-        ctx = ctx.includes(user_library_records: :from_user)
-      end
+      ctx = ctx.includes(:library_records)
+      ctx = ctx.includes(library_records: :from_user) if lookahead.selection(:library_records).selects?(:from_user)
 
       ctx
     end

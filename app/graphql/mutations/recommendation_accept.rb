@@ -7,7 +7,7 @@ module Mutations
     field :errors, [String], null: true
 
     def resolve(library_record_id:)
-      record = UserLibraryRecord.find_by(id: library_record_id, user: current_user, source: "pending_recommendation")
+      record = LibraryRecord.find_by(id: library_record_id, user: current_user, source: "pending_recommendation")
       return { errors: ["No recommendation"] } if record.blank?
 
       record.update!(source: "accepted_recommendation")

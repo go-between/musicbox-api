@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe UserLibraryRecord, type: :model do
+RSpec.describe LibraryRecord, type: :model do
   describe "relationships" do
     it "can belong to a song and user" do
       song = create(:song)
