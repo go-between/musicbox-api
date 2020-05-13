@@ -7,6 +7,6 @@ module Types
     field :id, ID, null: false
     field :name, String, null: false
     field :user, Types::UserType, null: false
-    field :songs, [Types::SongType], null: false
+    field :library_records, [Types::LibraryRecordType], null: false
   end
 end

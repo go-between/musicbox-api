@@ -12,16 +12,16 @@ RSpec.describe Tag, type: :model do
       expect(tag.user).to eq(user)
     end
 
-    it "has many songs" do
+    it "has many library records" do
       tag = described_class.create!(name: "the-tag", user: user)
 
-      song1 = create(:song)
-      song2 = create(:song)
+      library_record1 = create(:library_record)
+      library_record2 = create(:library_record)
 
-      tag.songs << song1
-      tag.songs << song2
+      tag.library_records << library_record1
+      tag.library_records << library_record2
 
-      expect(tag.songs).to match_array([song1, song2])
+      expect(tag.library_records).to match_array([library_record1, library_record2])
     end
   end
 end

@@ -11,7 +11,6 @@ module Types
     field :license, String, null: true
     field :licensed, Boolean, null: false
     field :name, String, null: true
-    field :tags, [Types::TagType], null: false
     field :thumbnail_url, String, null: true
     field :youtube_id, ID, null: false
     field :youtube_tags, [String], null: false

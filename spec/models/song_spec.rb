@@ -23,17 +23,6 @@ RSpec.describe Song, type: :model do
 
       expect(song.reload.users).to match_array([user1, user2, user2])
     end
-
-    it "has many tags" do
-      user = create(:user)
-      tag1 = create(:tag, user: user)
-      tag2 = create(:tag, user: user)
-
-      song.tags << tag1
-      song.tags << tag2
-
-      expect(song.tags).to match_array([tag1, tag2])
-    end
   end
 
   it "has youtube tags" do
