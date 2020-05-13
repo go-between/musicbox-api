@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_13_033849) do
+ActiveRecord::Schema.define(version: 2020_05_13_040509) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -155,14 +155,14 @@ ActiveRecord::Schema.define(version: 2020_05_13_033849) do
     t.index ["user_id"], name: "index_tags_on_user_id"
   end
 
-  create_table "tags_songs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "tags_library_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "tag_id"
-    t.uuid "song_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["song_id"], name: "index_tags_songs_on_song_id"
-    t.index ["tag_id", "song_id"], name: "index_tags_songs_on_tag_id_and_song_id", unique: true
-    t.index ["tag_id"], name: "index_tags_songs_on_tag_id"
+    t.uuid "library_record_id"
+    t.index ["library_record_id"], name: "index_tags_library_records_on_library_record_id"
+    t.index ["tag_id", "library_record_id"], name: "index_tags_library_records_on_tag_id_and_library_record_id", unique: true
+    t.index ["tag_id"], name: "index_tags_library_records_on_tag_id"
   end
 
   create_table "teams", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
