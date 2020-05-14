@@ -25,7 +25,7 @@ RSpec.describe "Library Record Delete", type: :request do
       record = create(:library_record, user: current_user)
 
       graphql_request(
-        query: query(id: record.song.id),
+        query: query(id: record.id),
         user: current_user
       )
       data = json_body.dig(:data, :libraryRecordDelete)
@@ -40,7 +40,7 @@ RSpec.describe "Library Record Delete", type: :request do
       record = create(:library_record, user: create(:user))
 
       graphql_request(
-        query: query(id: record.song.id),
+        query: query(id: record.id),
         user: current_user
       )
       data = json_body.dig(:data, :libraryRecordDelete)
