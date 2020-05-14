@@ -2,7 +2,7 @@ class AllowLibraryRecordToAssociateToTags < ActiveRecord::Migration[6.0]
   def up
     # This is probably very bad practice, but uh...
     add_column :tags_songs, :library_record_id, :uuid
-    TagLibraryRecord.all.each do |tag_song|
+    TagSong.all.each do |tag_song|
       tag = Tag.find(tag_song.tag_id)
       record = LibraryRecord.find_by!(user_id: tag.user_id, song_id: tag_song.song_id)
       tag_song.update!(library_record_id: record.id)
