@@ -18,7 +18,7 @@ RSpec.describe "Tag Create", type: :request do
             user {
               id
             }
-            songs {
+            libraryRecords {
               id
             }
           }
@@ -42,7 +42,7 @@ RSpec.describe "Tag Create", type: :request do
       expect(Tag.exists?(id: data[:id])).to eq(true)
       expect(data[:name]).to eq("Jam City")
       expect(data.dig(:user, :id)).to eq(current_user.id)
-      expect(data[:songs]).to be_empty
+      expect(data[:libraryRecords]).to be_empty
     end
   end
 

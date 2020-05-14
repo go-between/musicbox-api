@@ -34,7 +34,7 @@ RSpec.describe "Recommendation Create", type: :request do
 
       # Pending recommendations are not returned in a user's songs
       expect(other_user.songs).not_to include(song)
-      record = UserLibraryRecord.find_by(song_id: song.id, user: other_user)
+      record = LibraryRecord.find_by(song_id: song.id, user: other_user)
       expect(record.from_user_id).to eq(current_user.id)
       expect(record.source).to eq("pending_recommendation")
     end
@@ -44,7 +44,7 @@ RSpec.describe "Recommendation Create", type: :request do
     it "does not create a recommendation if the user already has the song in their library" do
       song = create(:song, youtube_id: "the-youtube-id")
       other_user = create(:user)
-      UserLibraryRecord.create!(user: other_user, song: song, source: "")
+      LibraryRecord.create!(user: other_user, song: song, source: "")
 
       expect do
         graphql_request(
@@ -52,13 +52,13 @@ RSpec.describe "Recommendation Create", type: :request do
           variables: { youtubeId: "the-youtube-id", recommendToUser: other_user.id },
           user: current_user
         )
-      end.to not_change(UserLibraryRecord, :count)
+      end.to not_change(LibraryRecord, :count)
     end
 
     it "does not create a recommendation if the user has already been recommended the song" do
       song = create(:song, youtube_id: "the-youtube-id")
       other_user = create(:user)
-      UserLibraryRecord.create!(user: other_user, song: song, source: "pending_recommendation")
+      LibraryRecord.create!(user: other_user, song: song, source: "pending_recommendation")
 
       expect do
         graphql_request(
@@ -66,7 +66,7 @@ RSpec.describe "Recommendation Create", type: :request do
           variables: { youtubeId: "the-youtube-id", recommendToUser: other_user.id },
           user: current_user
         )
-      end.to not_change(UserLibraryRecord, :count)
+      end.to not_change(LibraryRecord, :count)
     end
   end
 end

@@ -7,20 +7,20 @@ RSpec.describe User, type: :model do
 
   describe "relationships" do
     it "has many library records" do
-      record1 = create(:user_library_record, user: user)
-      record2 = create(:user_library_record, user: user)
-      record3 = create(:user_library_record, user: user)
+      record1 = create(:library_record, user: user)
+      record2 = create(:library_record, user: user)
+      record3 = create(:library_record, user: user)
 
-      expect(user.reload.user_library_records).to match_array([record1, record2, record3])
+      expect(user.reload.library_records).to match_array([record1, record2, record3])
     end
 
     it "has many songs" do
       song1 = create(:song)
       song2 = create(:song)
 
-      create(:user_library_record, user: user, song: song1)
-      create(:user_library_record, user: user, song: song2)
-      create(:user_library_record, user: user, song: song2)
+      create(:library_record, user: user, song: song1)
+      create(:library_record, user: user, song: song2)
+      create(:library_record, user: user, song: song2)
 
       expect(user.reload.songs).to match_array([song1, song2, song2])
     end

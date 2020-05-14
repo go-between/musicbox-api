@@ -4,6 +4,6 @@ class Tag < ApplicationRecord
   validates :name, presence: true
 
   belongs_to :user
-  has_many :tag_songs
-  has_many :songs, through: :tag_songs
+  has_many :tag_library_records
+  has_many :library_records, through: :tag_library_records
 end

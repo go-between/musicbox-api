@@ -92,7 +92,7 @@ RSpec.describe "Song Create", type: :request do
 
       it "does not modify song or association with user when already in library" do
         song = create(:song, youtube_id: "the-youtube-id")
-        UserLibraryRecord.create!(song: song, user: current_user)
+        LibraryRecord.create!(song: song, user: current_user)
         expect(Yt::Video).not_to receive(:new)
 
         expect do
@@ -101,7 +101,7 @@ RSpec.describe "Song Create", type: :request do
             variables: { youtubeId: "the-youtube-id" },
             user: current_user
           )
-        end.to not_change(Song, :count).and(not_change(UserLibraryRecord, :count))
+        end.to not_change(Song, :count).and(not_change(LibraryRecord, :count))
 
         data = json_body.dig(:data, :songCreate)
         id = data.dig(:song, :id)
@@ -123,14 +123,14 @@ RSpec.describe "Song Create", type: :request do
         )
 
         expect(current_user.songs).to include(song)
-        record = current_user.user_library_records.find_by(song_id: song.id)
+        record = current_user.library_records.find_by(song_id: song.id)
         expect(record.source).to eq("saved_from_history")
         expect(record.from_user_id).to eq(other_user.id)
       end
 
       it "does not reset the source of the song" do
         # current_user has already added the song to their library
-        UserLibraryRecord.create!(user: current_user, song: song)
+        LibraryRecord.create!(user: current_user, song: song)
 
         other_user = create(:user)
         graphql_request(
@@ -140,7 +140,7 @@ RSpec.describe "Song Create", type: :request do
         )
 
         expect(current_user.songs).to include(song)
-        record = current_user.user_library_records.find_by(song_id: song.id)
+        record = current_user.library_records.find_by(song_id: song.id)
         expect(record.source).to be_blank
         expect(record.from_user_id).to be_blank
       end

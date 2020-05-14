@@ -24,7 +24,7 @@ RSpec.describe "Recommendation Accept", type: :request do
     it "allows user to acccept a recommendation" do
       song = create(:song, youtube_id: "the-youtube-id")
       other_user = create(:user)
-      record = UserLibraryRecord.create!(
+      record = LibraryRecord.create!(
         song: song,
         user: current_user,
         from_user_id: other_user.id,
