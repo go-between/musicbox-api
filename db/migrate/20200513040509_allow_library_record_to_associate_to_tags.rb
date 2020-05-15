@@ -1,3 +1,7 @@
+class TagSong < ApplicationRecord
+  self.table_name = "tags_songs"
+end
+
 class AllowLibraryRecordToAssociateToTags < ActiveRecord::Migration[6.0]
   def up
     # This is probably very bad practice, but uh...
