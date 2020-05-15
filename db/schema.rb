@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_13_040509) do
+ActiveRecord::Schema.define(version: 2020_05_15_034314) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -36,7 +36,9 @@ ActiveRecord::Schema.define(version: 2020_05_13_040509) do
     t.datetime "updated_at", null: false
     t.uuid "from_user_id"
     t.string "source"
+    t.index ["created_at"], name: "index_library_records_on_created_at"
     t.index ["song_id"], name: "index_library_records_on_song_id"
+    t.index ["source"], name: "index_library_records_on_source"
     t.index ["user_id"], name: "index_library_records_on_user_id"
   end
 
@@ -143,7 +145,9 @@ ActiveRecord::Schema.define(version: 2020_05_13_040509) do
     t.string "license"
     t.boolean "licensed", default: false
     t.string "youtube_tags", default: [], array: true
+    t.index ["duration_in_seconds"], name: "index_songs_on_duration_in_seconds"
     t.index ["name"], name: "index_songs_on_name", opclass: :gin_trgm_ops, using: :gin
+    t.index ["name"], name: "song_name_order_index"
     t.index ["youtube_id"], name: "index_songs_on_youtube_id"
   end
 
