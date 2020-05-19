@@ -183,6 +183,13 @@ module Types
       records.waiting.order(:order)
     end
 
+    field :search, [Types::SearchResultType], null: false, extras: [:lookahead] do
+    end
+
+    def search(lookahead:)
+      Selectors::SearchResults.new(lookahead: lookahead).search
+    end
+
     field :tags, [Types::TagType], null: false do
     end
 
