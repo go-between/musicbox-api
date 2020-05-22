@@ -20,6 +20,7 @@ module Types
     field :room_create, mutation: Mutations::RoomCreate
 
     field :room_playlist_record_abandon, mutation: Mutations::RoomPlaylistRecordAbandon
+    field :room_playlist_record_add, mutation: Mutations::RoomPlaylistRecordAdd
     field :room_playlist_record_delete, mutation: Mutations::RoomPlaylistRecordDelete
     field :room_playlist_records_reorder, mutation: Mutations::RoomPlaylistRecordsReorder
 
