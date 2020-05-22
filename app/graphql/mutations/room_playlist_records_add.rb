@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module Mutations
-  class RoomPlaylistRecordAdd < Mutations::BaseMutation
-    argument :id, ID, required: true
+  class RoomPlaylistRecordsAdd < Mutations::BaseMutation
+    argument :ids, [ID], required: true
 
     field :errors, [String], null: true
 
-    def resolve(id:)
+    def resolve(ids:)
       room = Room.find(current_user.active_room_id)
       return { errors: ["Not in active room"] } if room.blank?
 
@@ -16,14 +16,7 @@ module Mutations
         #        in this call, but we'll allow the queue management
         #        worker to clean that up.
         room.update!(waiting_songs: true) unless room.waiting_songs
-
-        RoomPlaylistRecord.create!(
-          room_id: room.id,
-          song_id: id,
-          user: current_user,
-          play_state: :waiting,
-          order: order_for_new_record_in(room)
-        )
+        add_records!(ids, room)
       end
 
       BroadcastPlaylistWorker.perform_async(room.id)
@@ -32,6 +25,19 @@ module Mutations
 
     private
 
+    def add_records!(song_ids, room)
+      starting_order = starting_order_for_new_records_in(room)
+      song_ids.each.with_index do |song_id, idx|
+        RoomPlaylistRecord.create!(
+          room_id: room.id,
+          song_id: song_id,
+          user: current_user,
+          play_state: :waiting,
+          order: starting_order + idx
+        )
+      end
+    end
+
     def ensure_user_in_rotation!(room)
       return if room.user_rotation.include?(current_user.id)
 
@@ -39,7 +45,7 @@ module Mutations
       room.update!(user_rotation: rotation)
     end
 
-    def order_for_new_record_in(room)
+    def starting_order_for_new_records_in(room)
       record = latest_record(room)
       return record.order + 1 if record.present?
 
