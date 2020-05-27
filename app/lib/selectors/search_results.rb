@@ -15,8 +15,8 @@ module Selectors
       songs = from_all_songs(query)
       return songs if songs.present?
 
-      youtube_results = from_youtube(query)
-      return youtube_results if youtube_results.present?
+      # youtube_results = from_youtube(query)
+      # return youtube_results if youtube_results.present?
 
       []
     end
@@ -37,7 +37,12 @@ module Selectors
     end
 
     def from_youtube(query)
-      Yt::Collections::Videos.new.where(q: query, type: "video", max_results: 4)
+      Yt::Collections::Videos.new.where(
+        q: query,
+        type: "video",
+        max_results: 4,
+        order: "relevance"
+      )
     end
   end
 end

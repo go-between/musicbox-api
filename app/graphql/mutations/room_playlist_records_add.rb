@@ -28,6 +28,7 @@ module Mutations
     def add_records!(song_ids, room)
       starting_order = starting_order_for_new_records_in(room)
       song_ids.each.with_index do |song_id, idx|
+        LibraryRecord.find_or_create_by!(song_id: song_id, user: current_user)
         RoomPlaylistRecord.create!(
           room_id: room.id,
           song_id: song_id,
