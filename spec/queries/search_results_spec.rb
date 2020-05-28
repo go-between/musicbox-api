@@ -46,7 +46,7 @@ RSpec.describe "Songs Query", type: :request do
     expect(json_body.dig(:data, :search, 0, :id)).to eq(other_song.id)
   end
 
-  it "returns youtube results if no library records or other songs exist" do
+  xit "returns youtube results if no library records or other songs exist" do
     # This won't result in a network request as long as we only retrieve the 'id'
     # and no other properties in our graphql call
     result = Yt::Models::Video.new(id: "youtube-id")
