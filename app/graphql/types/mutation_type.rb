@@ -21,6 +21,7 @@ module Types
 
     field :room_playlist_record_abandon, mutation: Mutations::RoomPlaylistRecordAbandon
     field :room_playlist_record_delete, mutation: Mutations::RoomPlaylistRecordDelete
+    field :room_playlist_records_add, mutation: Mutations::RoomPlaylistRecordsAdd
     field :room_playlist_records_reorder, mutation: Mutations::RoomPlaylistRecordsReorder
 
     field :song_create, mutation: Mutations::SongCreate

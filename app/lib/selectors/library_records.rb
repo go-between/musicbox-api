@@ -10,7 +10,7 @@ module Selectors
       @library_records = record_context(lookahead)
     end
 
-    def library_records(order:)
+    def library_records(order: nil)
       return @library_records.order(created_at: :asc) if order.blank?
       return [] unless %w[asc desc].include?(order[:direction])
 

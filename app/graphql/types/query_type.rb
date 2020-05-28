@@ -183,6 +183,16 @@ module Types
       records.waiting.order(:order)
     end
 
+    field :search, [Types::SearchResultType], null: false, extras: [:lookahead] do
+      argument :query, String, required: true
+    end
+
+    def search(query:, lookahead:)
+      Selectors::SearchResults
+        .new(user: current_user, lookahead: lookahead)
+        .search(query: query)
+    end
+
     field :tags, [Types::TagType], null: false do
     end
 
