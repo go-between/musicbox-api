@@ -19,9 +19,9 @@ RSpec.describe RoomPlaylistRecord, type: :model do
     it "has many record listens" do
       record = described_class.create!(song: song, room: room, user: user)
 
-      l1 = RecordListen.create!(room_playlist_record: record, song: song, user: user)
-      l2 = RecordListen.create!(room_playlist_record: record, song: song, user: user)
-      l3 = RecordListen.create!(room_playlist_record: record, song: song, user: user)
+      l1 = RecordListen.create!(room_playlist_record: record, song: song, user: create(:user))
+      l2 = RecordListen.create!(room_playlist_record: record, song: song, user: create(:user))
+      l3 = RecordListen.create!(room_playlist_record: record, song: song, user: create(:user))
 
       expect(record.reload.record_listens).to match_array([l1, l2, l3])
     end

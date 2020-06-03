@@ -62,5 +62,23 @@ RSpec.describe "Record Listen Create", type: :request do
       expect(listen.reload.approval).to eq(3)
       expect(BroadcastRecordListensWorker).to have_enqueued_sidekiq_job(record.id)
     end
+
+    it "updates an existing record when record not unique is raised" do
+      listen = RecordListen.create!(room_playlist_record: record, song: record.song, user: current_user, approval: 0)
+      expect(RecordListen).to receive(:find_or_create_by!).and_raise(ActiveRecord::RecordNotUnique)
+
+      expect do
+        graphql_request(
+          query: query,
+          user: current_user,
+          variables: { recordId: record.id, approval: 3 }
+        )
+      end.not_to change(RecordListen, :count)
+
+      listen_id = json_body.dig(:data, :recordListenCreate, :recordListen, :id)
+      expect(listen_id).to eq(listen.id)
+      expect(listen.reload.approval).to eq(3)
+      expect(BroadcastRecordListensWorker).to have_enqueued_sidekiq_job(record.id)
+    end
   end
 end
