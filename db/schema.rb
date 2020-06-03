@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_15_034314) do
+ActiveRecord::Schema.define(version: 2020_06_03_024043) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -101,6 +101,7 @@ ActiveRecord::Schema.define(version: 2020_05_15_034314) do
     t.integer "approval", default: 0, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["room_playlist_record_id", "song_id", "user_id"], name: "unique_record_listens", unique: true
     t.index ["room_playlist_record_id"], name: "index_record_listens_on_room_playlist_record_id"
     t.index ["song_id"], name: "index_record_listens_on_song_id"
   end

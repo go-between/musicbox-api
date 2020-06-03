@@ -16,8 +16,10 @@ module Mutations
         }
       end
 
+      record = RoomPlaylistRecord.find(record_id)
+      listen = ensure_record_listen!(record)
+
       approval = ensure_approval_range(approval)
-      listen = ensure_record_listen!(record_id)
       listen.update!(approval: approval) if listen.approval != approval
 
       BroadcastRecordListensWorker.perform_async(record_id)
@@ -32,10 +34,15 @@ module Mutations
       [approval, 3].min
     end
 
-    def ensure_record_listen!(record_id)
-      record = RoomPlaylistRecord.find(record_id)
+    def ensure_record_listen!(record)
       RecordListen.find_or_create_by!(
-        room_playlist_record_id: record_id,
+        room_playlist_record_id: record.id,
+        song_id: record.song_id,
+        user_id: current_user.id
+      )
+    rescue ActiveRecord::RecordNotUnique
+      RecordListen.find_by!(
+        room_playlist_record_id: record.id,
         song_id: record.song_id,
         user_id: current_user.id
       )
