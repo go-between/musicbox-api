@@ -188,6 +188,8 @@ module Types
     end
 
     def search(query:, lookahead:)
+      return [] if query.blank?
+
       Selectors::SearchResults
         .new(user: current_user, lookahead: lookahead)
         .search(query: query)
