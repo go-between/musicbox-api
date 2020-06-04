@@ -188,6 +188,7 @@ module Types
     end
 
     def search(query:, lookahead:)
+      confirm_current_user!
       return [] if query.blank?
 
       Selectors::SearchResults
