@@ -27,12 +27,7 @@ module Selectors
     end
 
     def from_youtube(query)
-      Yt::Collections::Videos.new.where(
-        q: query,
-        type: "video",
-        max_results: 4,
-        order: "relevance"
-      )
+      YoutubeClient.new(user).search(query)
     end
   end
 end

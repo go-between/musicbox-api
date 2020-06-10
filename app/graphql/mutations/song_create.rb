@@ -39,13 +39,11 @@ module Mutations
     end
 
     def attrs_from_youtube!(song)
-      video = Yt::Video.new(id: song.youtube_id)
+      video = YoutubeClient.new(current_user).find(song.youtube_id)
       song.update!(
         description: video.description,
         duration_in_seconds: video.duration,
         name: video.title,
-        license: video.license,
-        licensed: video.licensed?,
         thumbnail_url: video.thumbnail_url,
         youtube_tags: video.tags
       )

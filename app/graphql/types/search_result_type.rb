@@ -8,7 +8,7 @@ module Types
       case object
       when Song
         Types::SongType
-      when Yt::Models::Video
+      when OpenStruct
         Types::YoutubeResultType
       end
     end

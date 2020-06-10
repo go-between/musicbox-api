@@ -37,11 +37,15 @@ RSpec.describe "Search Query", type: :request do
   end
 
   it "returns youtube results if no library records or other songs exist" do
-    # This won't result in a network request as long as we only retrieve the 'id'
-    # and no other properties in our graphql call
-    result = Yt::Models::Video.new(id: "youtube-id")
-    video_double = instance_double(Yt::Collections::Videos, where: [result])
-    expect(Yt::Collections::Videos).to receive(:new).and_return(video_double)
+    video = OpenStruct.new(
+      id: "youtube-id",
+      description: "a description",
+      thumbnail_url: "https://i.ytimg.com/vi/bnVUHWCynig/default.jpg",
+      tags: %w[dope chill beatz]
+    )
+    client_double = instance_double(YoutubeClient)
+    expect(client_double).to receive(:search).with("entirely-outside-song").and_return([video])
+    expect(YoutubeClient).to receive(:new).and_return(client_double)
 
     graphql_request(query: query, user: user, variables: { query: "entirely-outside-song" })
 

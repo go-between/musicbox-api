@@ -38,13 +38,13 @@ RSpec.describe "Song Create", type: :request do
         video = OpenStruct.new(
           duration: 1500,
           description: "a description",
-          license: "youtube",
-          licensed?: false,
           thumbnail_url: "https://i.ytimg.com/vi/bnVUHWCynig/default.jpg",
           title: "a title",
           tags: %w[dope chill beatz]
         )
-        expect(Yt::Video).to receive(:new).with(id: "an-id").and_return(video)
+        client_double = instance_double(YoutubeClient)
+        expect(client_double).to receive(:find).with("an-id").and_return(video)
+        expect(YoutubeClient).to receive(:new).and_return(client_double)
 
         graphql_request(
           query: query,
@@ -59,8 +59,6 @@ RSpec.describe "Song Create", type: :request do
         expect(song.name).to eq("a title")
         expect(song.description).to eq("a description")
         expect(song.duration_in_seconds).to eq(1500)
-        expect(song.license).to eq("youtube")
-        expect(song.licensed).to eq(false)
         expect(song.thumbnail_url).to eq("https://i.ytimg.com/vi/bnVUHWCynig/default.jpg")
         expect(song.youtube_tags).to match_array(%w[dope chill beatz])
         expect(data[:errors]).to be_blank
@@ -72,7 +70,7 @@ RSpec.describe "Song Create", type: :request do
     context "when song already exists" do
       it "does not modify song but does associate to user" do
         song = create(:song, youtube_id: "the-youtube-id")
-        expect(Yt::Video).not_to receive(:new)
+        expect(YoutubeClient).not_to receive(:new)
 
         expect do
           graphql_request(
@@ -93,7 +91,7 @@ RSpec.describe "Song Create", type: :request do
       it "does not modify song or association with user when already in library" do
         song = create(:song, youtube_id: "the-youtube-id")
         LibraryRecord.create!(song: song, user: current_user)
-        expect(Yt::Video).not_to receive(:new)
+        expect(YoutubeClient).not_to receive(:new)
 
         expect do
           graphql_request(
@@ -149,7 +147,7 @@ RSpec.describe "Song Create", type: :request do
 
   context "when missing required attributes" do
     it "fails to persist when youtube_id is not specified" do
-      expect(Yt::Video).not_to receive(:new)
+      expect(YoutubeClient).not_to receive(:new)
       expect do
         graphql_request(
           query: query,
