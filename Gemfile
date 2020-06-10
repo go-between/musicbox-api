@@ -16,7 +16,6 @@ gem "rails", "6.0.3.1"
 
 # Use postgresql as the database for Active Record
 gem "pg", "1.2.1"
-gem "yt", "0.32.5"
 
 gem "dotenv-rails", "2.7.5"
 gem "health_check", "3.0.0"
