@@ -9,40 +9,25 @@ module Selectors
     end
 
     def search(query:)
-      library_records = from_library(query)
-      return library_records if library_records.present?
-
       songs = from_all_songs(query)
       return songs if songs.present?
 
-      # youtube_results = from_youtube(query)
-      # return youtube_results if youtube_results.present?
+      youtube_results = from_youtube(query)
+      return youtube_results if youtube_results.present?
 
       []
     end
 
     private
 
-    def from_library(query)
-      Selectors::LibraryRecords
-        .new(lookahead: lookahead, user: user)
-        .for_user
-        .with_query(query)
-        .without_pending_records
-        .library_records
-    end
-
     def from_all_songs(query)
-      Song.where(Song.arel_table[:name].matches("%#{query}%"))
+      Song
+        .where(Song.arel_table[:name].matches("%#{query}%"))
+        .where.not(id: LibraryRecord.select(:song_id).where(user: user))
     end
 
     def from_youtube(query)
-      Yt::Collections::Videos.new.where(
-        q: query,
-        type: "video",
-        max_results: 4,
-        order: "relevance"
-      )
+      YoutubeClient.new(user).search(query)
     end
   end
 end
