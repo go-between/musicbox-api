@@ -29,6 +29,7 @@ gem "doorkeeper", "5.2.5"
 gem "graphiql-rails", "1.7.0"
 gem "graphql", "1.10.10"
 
+gem "airbrake", "10.0.5"
 gem "skylight", "4.2.2"
 
 group :development do
