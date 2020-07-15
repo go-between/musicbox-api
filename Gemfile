@@ -8,7 +8,7 @@ git_source(:github) do |repo_name|
 end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "6.0.3.1"
+gem "rails", "6.0.3.2"
 # Use sqlite3 as the database for Active Record
 # gem 'sqlite3'
 # Use Puma as the app server
@@ -29,6 +29,7 @@ gem "doorkeeper", "5.2.5"
 gem "graphiql-rails", "1.7.0"
 gem "graphql", "1.10.10"
 
+gem "airbrake", "10.0.5"
 gem "skylight", "4.2.2"
 
 group :development do
