@@ -58,8 +58,8 @@ GEM
       zeitwerk (~> 2.2, >= 2.2.2)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    airbrake (10.0.5)
-      airbrake-ruby (~> 4.13)
+    airbrake (9.5.5)
+      airbrake-ruby (~> 4.8)
     airbrake-ruby (4.15.0)
       rbtree3 (~> 0.5)
     ast (2.4.1)
@@ -256,7 +256,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  airbrake (= 10.0.5)
+  airbrake (= 9.5.5)
   bullet (= 6.1.0)
   database_cleaner (= 1.7.0)
   devise (= 4.7.1)
