@@ -8,7 +8,7 @@ git_source(:github) do |repo_name|
 end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "6.0.3.2"
+gem "rails", "6.1.4"
 # Use sqlite3 as the database for Active Record
 # gem 'sqlite3'
 # Use Puma as the app server
@@ -17,14 +17,14 @@ gem "rails", "6.0.3.2"
 # Use postgresql as the database for Active Record
 gem "pg", "1.2.1"
 
-gem "dotenv-rails", "2.7.5"
+gem "dotenv-rails", "2.7.6"
 gem "health_check", "3.0.0"
 gem "passenger", "6.0.4"
 gem "rack-cors", "1.1.1"
 gem "redis", "4.1.3"
 gem "sidekiq", "6.0.4"
 
-gem "devise", "4.7.1"
+gem "devise", "4.8.0"
 gem "doorkeeper", "5.2.5"
 gem "graphiql-rails", "1.7.0"
 gem "graphql", "1.10.10"
@@ -41,7 +41,7 @@ group :development do
 end
 
 group :development, :test do
-  gem "bullet", "6.1.0"
+  gem "bullet", "6.1.4"
   gem "pry-byebug", "3.9.0"
   gem "webmock", "3.8.3"
 end
