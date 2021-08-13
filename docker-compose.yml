@@ -1,6 +1,28 @@
 ---
 version: '3.4'
 services:
+  proxy:
+    image: nginxproxy/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./certs:/etc/nginx/certs
+      - ./vhost:/etc/nginx/vhost.d
+      - ./html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+  acme:
+    image: nginxproxy/acme-companion
+    depends_on:
+      - proxy
+    volumes:
+      - ./certs:/etc/nginx/certs
+      - ./vhost:/etc/nginx/vhost.d
+      - ./html:/usr/share/nginx/html
+      - ./acme:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro \
+    environment:
+      DEFAULT_EMAIL: truman@gobetweenlab.com
   db:
     image: postgres:11.5
     environment:
@@ -15,6 +37,9 @@ services:
       SIDEKIQ_REDIS_URL: redis://redis:6379
       LOG_LEVEL: debug
       SKYLIGHT_ENABLED: "false"
+      LETSENCRYPT_HOST: localhost
+      VIRTUAL_HOST: localhost
+      VIRTUAL_PORT: 3000
     links:
     - db
     - redis
