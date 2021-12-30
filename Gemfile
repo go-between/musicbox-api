@@ -33,6 +33,9 @@ gem "airbrake", "9.5.5"
 gem "skylight", "4.2.2"
 gem "foreman", "0.87.2"
 
+# Cron-like task scheduler
+gem 'clockwork', '3.0.0'
+
 group :development do
   gem "listen", "3.2.1"
   gem "rubocop", "0.78.0"
