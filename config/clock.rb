@@ -4,7 +4,7 @@ require './config/boot'
 require './config/environment'
 
 module Clockwork
-  every(2.seconds, 'room-poll') do
+  every(1.second, 'room-poll') do
     RoomQueuePoller.new.poll!
   end
 end
