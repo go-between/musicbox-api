@@ -1,3 +1,3 @@
 web:     bin/passenger start -p 80 --nginx-config-template nginx.conf.erb
 worker:   bin/sidekiq
-room_poll:  bin/rake room:poll_queue
+clockwork:  bin/clockwork config/clock.rb
