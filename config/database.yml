@@ -81,7 +81,7 @@ test:
 #
 production:
   <<: *default
-  database: musicbox-api_production
+  database: musicbox-api_staging
 
 staging:
   <<: *default

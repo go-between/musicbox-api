@@ -31,6 +31,7 @@ gem "graphql", "1.10.10"
 
 gem "airbrake", "9.5.5"
 gem "skylight", "4.2.2"
+gem "foreman", "0.87.2"
 
 group :development do
   gem "listen", "3.2.1"
