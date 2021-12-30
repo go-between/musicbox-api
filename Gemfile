@@ -32,7 +32,6 @@ gem "graphiql-rails", "1.7.0"
 gem "graphql", "1.10.10"
 
 gem "airbrake", "9.5.5"
-gem "skylight", "4.2.2"
 gem "foreman", "0.87.2"
 
 # Cron-like task scheduler
