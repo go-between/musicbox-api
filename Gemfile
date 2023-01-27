@@ -24,7 +24,7 @@ gem "health_check", "3.0.0"
 gem "passenger", "6.0.4"
 gem "rack-cors", "1.1.1"
 gem "redis", "4.1.3"
-gem "sidekiq", "6.0.4"
+gem "sidekiq", "7.0.3"
 
 gem "devise", "4.8.0"
 gem "doorkeeper", "5.2.5"
