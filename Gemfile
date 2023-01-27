@@ -34,6 +34,8 @@ gem "graphql", "1.10.10"
 gem "airbrake", "9.5.5"
 gem "foreman", "0.87.2"
 
+gem 'terminal-table'
+
 # Cron-like task scheduler
 gem 'clockwork', '3.0.0'
 
