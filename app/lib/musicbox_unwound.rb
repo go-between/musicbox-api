@@ -21,6 +21,7 @@ class MusicboxUnwound
     top_5_historic
     # New this year, all time & per-person
     # Total play duration, all time & per-person
+    # Total distinct plays per person
 
     nil
   end
