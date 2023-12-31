@@ -2,7 +2,6 @@
 
 class MusicboxUnwound
   attr_reader :ref_time, :team, :users, :invalid_songs
-
   def initialize(ref_time: Time.zone.now)
     @ref_time = ref_time
     @start = ref_time.beginning_of_year
@@ -35,7 +34,7 @@ class MusicboxUnwound
       [top_25_songs[song_id].first.name, count]
     end
 
-    puts Terminal::Table.new(title: "Most Played", headings: ['Song', 'Plays'], rows: rows)
+    puts Terminal::Table.new(title: "Most Played", headings: %w[Song Plays], rows: rows)
   end
 
   def top_10_for(user)
@@ -47,7 +46,7 @@ class MusicboxUnwound
       [top_25_songs[song_id].first.name, count]
     end
 
-    puts Terminal::Table.new(title: "#{user.name} Most Played", headings: ['Song', 'Plays'], rows: rows)
+    puts Terminal::Table.new(title: "#{user.name} Most Played", headings: %w[Song Plays], rows: rows)
   end
 
   def total_plays_by
@@ -58,13 +57,13 @@ class MusicboxUnwound
       [user_group[user_id].first.name, count]
     end
 
-    puts Terminal::Table.new(title: "Plays by User", headings: ['User', 'Plays'], rows: rows)
+    puts Terminal::Table.new(title: "Plays by User", headings: %w[User Plays], rows: rows)
   end
 
   def top_5_historic
     current_period = ref_time
 
-    while true
+    loop do
       top_5 = plays_in_period(current_period.beginning_of_year, current_period.end_of_year).group(:song_id).order(count: :desc).count(:id).take(5).to_h
       break if top_5.blank?
 
@@ -73,7 +72,7 @@ class MusicboxUnwound
         [top_5_songs[song_id].first.name, count]
       end
 
-      puts Terminal::Table.new(title: "Most Played - #{current_period.year}", headings: ['Song', 'Plays'], rows: rows)
+      puts Terminal::Table.new(title: "Most Played - #{current_period.year}", headings: %w[Song Plays], rows: rows)
       current_period -= 1.year
     end
   end
@@ -85,7 +84,7 @@ class MusicboxUnwound
       [top_25_songs[song_id].first.name, count]
     end
 
-    puts Terminal::Table.new(title: "Most Approved", headings: ['Song', 'Approval'], rows: rows)
+    puts Terminal::Table.new(title: "Most Approved", headings: %w[Song Approval], rows: rows)
   end
 
   def record_listens_this_year
