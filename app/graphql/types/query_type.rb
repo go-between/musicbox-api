@@ -215,6 +215,25 @@ module Types
       teams.first
     end
 
+    field :unwound, Types::UnwoundType, null: false do
+      argument :year, Int, required: true
+      argument :team_id, ID, required: true
+      argument :user_id, ID, required: false
+      argument :week, Int, required: false
+      argument :song_name, String, required: false
+    end
+    def unwound(year:, team_id:, user_id: nil, week: nil, song_name: nil)
+      Unwound
+        .new(
+          year: year,
+          team_id: team_id,
+          user_id: user_id,
+          week: week,
+          song_name: song_name
+        )
+        .call
+    end
+
     field :user, Types::UserType, null: false do
     end
 
