@@ -55,7 +55,6 @@ class Unwound
       .select('room_playlist_records.user_id, SUM(approval) as approval_received')
 
     users
-      .order(name: :asc)
       .map do |user|
         user_given = given.find { |g| g[:user_id] == user.id }&.approval_given || 0
         user_recieved = received.find { |r| r[:user_id] == user.id }&.approval_received || 0
@@ -75,7 +74,7 @@ class Unwound
       .group(:song_id)
       .select("room_playlist_records.song_id as song_id, count(1) as total_plays")
       .order(total_plays: :desc)
-      .take(25)
+      .take(5)
 
     top_songs.map do |record|
       {
@@ -120,7 +119,7 @@ class Unwound
 
     plays_in_period
       .where(song_id: song_ids)
-      .take(25)
+      .take(5)
       .map do |record|
         {
           label: record.song.name,
