@@ -34,7 +34,10 @@ gem "graphql"
 gem "airbrake"
 gem "foreman"
 
+gem 'nokogiri', force_ruby_platform: true
+
 gem "terminal-table"
+gem "ostruct"
 
 # Cron-like task scheduler
 gem "clockwork"
