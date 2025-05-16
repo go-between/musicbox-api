@@ -17,66 +17,66 @@ jobs:
           POSTGRES_PASSWORD: postgrespassword
           POSTGRES_DB: postgres
         ports:
-        # will assign a random free host port
-        - 5432/tcp
+          # will assign a random free host port
+          - 5432/tcp
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       redis:
         image: redis
         ports:
-        - 6379:6379
+          - 6379:6379
         options: --entrypoint redis-server
 
     steps:
-    - name: Set up Ruby 2.6
-      uses: actions/setup-ruby@v1
-      with:
-        ruby-version: 2.6
+      - name: Set up Ruby 2.6
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 3.4.4
 
-    - name: Checkout
-      uses: actions/checkout@v2.0.0
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
 
-    - name: Cache Things
-      uses: actions/cache@v1
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-gems-
+      - name: Cache Things
+        uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
 
-    - name: install PostgreSQL client
-      run: sudo apt-get install libpq-dev
+      - name: install PostgreSQL client
+        run: sudo apt-get install libpq-dev
 
-    - name: Bundle
-      env:
-        DATABASE_URL: postgresql://postgres:postgrespassword@localhost:${{ job.services.postgres.ports[5432] }}
-        REDIS_URL: redis://localhost:${{ job.services.redis.ports[6379] }}
-        RAILS_ENV: test
-      run: |
-        gem install bundler
-        bundle config path vendor/bundle
-        bundle install --jobs 4 --retry 3
+      - name: Bundle
+        env:
+          DATABASE_URL: postgresql://postgres:postgrespassword@localhost:${{ job.services.postgres.ports[5432] }}
+          REDIS_URL: redis://localhost:${{ job.services.redis.ports[6379] }}
+          RAILS_ENV: test
+        run: |
+          gem install bundler
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
 
-    - name: Run Rubocop
-      env:
-        DATABASE_URL: postgresql://postgres:postgrespassword@localhost:${{ job.services.postgres.ports[5432] }}
-        REDIS_URL: redis://localhost:${{ job.services.redis.ports[6379] }}
-        RAILS_ENV: test
-      run: |
-        bundle exec rubocop
+      - name: Run Rubocop
+        env:
+          DATABASE_URL: postgresql://postgres:postgrespassword@localhost:${{ job.services.postgres.ports[5432] }}
+          REDIS_URL: redis://localhost:${{ job.services.redis.ports[6379] }}
+          RAILS_ENV: test
+        run: |
+          bundle exec rubocop
 
-    - name: Setup DB
-      env:
-        DATABASE_URL: postgresql://postgres:postgrespassword@localhost:${{ job.services.postgres.ports[5432] }}
-        REDIS_URL: redis://localhost:${{ job.services.redis.ports[6379] }}
-        RAILS_ENV: test
-      run: |
-        bin/rails db:setup
+      - name: Setup DB
+        env:
+          DATABASE_URL: postgresql://postgres:postgrespassword@localhost:${{ job.services.postgres.ports[5432] }}
+          REDIS_URL: redis://localhost:${{ job.services.redis.ports[6379] }}
+          RAILS_ENV: test
+        run: |
+          bin/rails db:setup
 
-    - name: Run RSpec
-      env:
-        DATABASE_URL: postgresql://postgres:postgrespassword@localhost:${{ job.services.postgres.ports[5432] }}
-        REDIS_URL: redis://localhost:${{ job.services.redis.ports[6379] }}
-        RAILS_ENV: test
-      run: |
-        bundle exec rspec
+      - name: Run RSpec
+        env:
+          DATABASE_URL: postgresql://postgres:postgrespassword@localhost:${{ job.services.postgres.ports[5432] }}
+          REDIS_URL: redis://localhost:${{ job.services.redis.ports[6379] }}
+          RAILS_ENV: test
+        run: |
+          bundle exec rspec
