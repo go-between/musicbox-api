@@ -47,7 +47,7 @@ RSpec.describe BroadcastPlaylistWorker, type: :worker do
       user3_song3 = create(:song, name: "Song 6")
       user3_record3 = create_record(user3, user3_song3, 3)
 
-      room.update!(user_rotation: [user1.id, user2.id, user3.id])
+      room.update!(user_rotation: [ user1.id, user2.id, user3.id ])
 
       expect do
         worker.perform(room.id)

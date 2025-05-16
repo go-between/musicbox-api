@@ -16,7 +16,7 @@ RSpec.describe BroadcastUsersWorker, type: :worker do
       end.to(have_broadcasted_to(room).from_channel(UsersChannel).with do |msg|
         user_ids = msg.dig(:data, :room, :users).map { |u| u[:id] }
 
-        expect(user_ids).to match_array([user1.id, user2.id])
+        expect(user_ids).to contain_exactly(user1.id, user2.id)
       end)
     end
   end

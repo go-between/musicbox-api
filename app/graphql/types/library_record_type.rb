@@ -11,6 +11,6 @@ module Types
     field :from_user, Types::UserType, null: true
     field :song, Types::SongType, null: true
     field :user, Types::UserType, null: true
-    field :tags, [Types::TagType], null: true
+    field :tags, [ Types::TagType ], null: true
   end
 end

@@ -3,6 +3,7 @@
 module Selectors
   class LibraryRecords
     attr_reader :arel, :lookahead, :user
+
     def initialize(lookahead:, user:)
       @user = user
 
@@ -81,8 +82,7 @@ module Selectors
       ctx = from_user_context!(ctx, lookahead)
       ctx = tag_context!(ctx, lookahead)
       ctx = song_context!(ctx, lookahead)
-      ctx = user_context!(ctx, lookahead)
-      ctx
+      user_context!(ctx, lookahead)
     end
 
     def from_user_context!(ctx, lookahead)

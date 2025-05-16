@@ -4,7 +4,7 @@ module Mutations
   class PasswordResetInitiate < Mutations::BaseMutation
     argument :email, Types::EmailType, required: true
 
-    field :errors, [String], null: false
+    field :errors, [ String ], null: false
 
     def ready?(**_args)
       true

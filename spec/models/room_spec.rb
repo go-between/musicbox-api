@@ -11,7 +11,7 @@ RSpec.describe Room, type: :model do
       record2 = create(:room_playlist_record, room: room)
       record3 = create(:room_playlist_record, room: room)
 
-      expect(room.reload.room_playlist_records).to match_array([record1, record2, record3])
+      expect(room.reload.room_playlist_records).to contain_exactly(record1, record2, record3)
     end
 
     it "has many songs" do
@@ -21,14 +21,14 @@ RSpec.describe Room, type: :model do
       create(:room_playlist_record, room: room, song: song2)
       create(:room_playlist_record, room: room, song: song2)
 
-      expect(room.reload.songs).to match_array([song1, song2, song2])
+      expect(room.reload.songs).to contain_exactly(song1, song2, song2)
     end
 
     it "has many users" do
       user1 = create(:user, active_room: room)
       user2 = create(:user, active_room: room)
 
-      expect(room.reload.users).to match_array([user1, user2])
+      expect(room.reload.users).to contain_exactly(user1, user2)
     end
 
     it "has one current record" do

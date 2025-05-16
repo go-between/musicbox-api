@@ -46,13 +46,13 @@ class Unwound
 
   def team_approvals
     given = record_listens_in_period
-      .group(:user_id)
-      .select('user_id, sum(approval) as approval_given')
+            .group(:user_id)
+            .select("user_id, sum(approval) as approval_given")
     received = plays_in_period
-      .joins(:record_listens)
-      .group(RoomPlaylistRecord.arel_table[:user_id])
-      .where('room_playlist_records.user_id != record_listens.user_id')
-      .select('room_playlist_records.user_id, SUM(approval) as approval_received')
+               .joins(:record_listens)
+               .group(RoomPlaylistRecord.arel_table[:user_id])
+               .where("room_playlist_records.user_id != record_listens.user_id")
+               .select("room_playlist_records.user_id, SUM(approval) as approval_received")
 
     users
       .map do |user|
@@ -71,10 +71,10 @@ class Unwound
 
   def top_plays_over_time
     top_songs = plays_in_period
-      .group(:song_id)
-      .select("room_playlist_records.song_id as song_id, count(1) as total_plays")
-      .order(total_plays: :desc)
-      .take(5)
+                .group(:song_id)
+                .select("room_playlist_records.song_id as song_id, count(1) as total_plays")
+                .order(total_plays: :desc)
+                .take(5)
 
     top_songs.map do |record|
       {
@@ -200,9 +200,9 @@ class Unwound
   def plays_over_time(song_id)
     if week.blank?
       plays = plays_in_period
-        .where(song_id: song_id)
-        .group("play_week")
-        .select("count(1) as plays_in_week, DATE_PART('week', room_playlist_records.created_at) as play_week")
+              .where(song_id: song_id)
+              .group("play_week")
+              .select("count(1) as plays_in_week, DATE_PART('week', room_playlist_records.created_at) as play_week")
 
       (1..period_end.cweek).map do |each_week|
         {
@@ -213,9 +213,9 @@ class Unwound
       end
     else
       plays = plays_in_period
-        .where(song_id: song_id)
-        .group("play_day")
-        .select("count(1) as plays_on_day, DATE_PART('dow', room_playlist_records.created_at) as play_day")
+              .where(song_id: song_id)
+              .group("play_day")
+              .select("count(1) as plays_on_day, DATE_PART('dow', room_playlist_records.created_at) as play_day")
 
       (0..6).map do |each_day|
         {
@@ -245,7 +245,7 @@ class Unwound
 
   def users
     return @users if defined? @users
-    return @users = [User.find(user_id)] if user_id.present?
+    return @users = [ User.find(user_id) ] if user_id.present?
 
     @users = team.users
   end

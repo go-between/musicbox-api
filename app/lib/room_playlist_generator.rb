@@ -37,7 +37,7 @@ class RoomPlaylistGenerator
 
   def waiting_user_rotation
     next_user_index = user_rotation.find_index(next_user)
-    user_rotation[next_user_index..-1] + user_rotation[0...next_user_index]
+    user_rotation[next_user_index..] + user_rotation[0...next_user_index]
   end
 
   def next_user

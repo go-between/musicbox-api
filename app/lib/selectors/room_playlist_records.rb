@@ -3,6 +3,7 @@
 module Selectors
   class RoomPlaylistRecords
     attr_reader :arel, :from, :lookahead
+
     def initialize(lookahead:)
       @lookahead = lookahead
 

@@ -7,7 +7,7 @@ class LibraryRecord < ApplicationRecord
   has_many :tag_library_records
   has_many :tags, through: :tag_library_records
 
-  enum source: {
+  enum :source, {
     saved_from_history: "saved_from_history",
     pending_recommendation: "pending_recommendation",
     accepted_recommendation: "accepted_recommendation"

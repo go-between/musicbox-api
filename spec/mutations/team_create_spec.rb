@@ -42,7 +42,7 @@ RSpec.describe "Invitation Create", type: :request do
       # Ensure email is downcased
       user = User.find_by(email: "team-owner@atdot.com")
       expect(team.owner).to eq(user)
-      expect(user.valid_password?("foobar")).to eq(true)
+      expect(user.valid_password?("foobar")).to be(true)
       expect(user.teams).to include(team)
 
       token = Doorkeeper::AccessToken.find_by(token: json_body.dig(:data, :teamCreate, :accessToken))
@@ -60,7 +60,7 @@ RSpec.describe "Invitation Create", type: :request do
         teamName: "FrogTown"
       }
 
-      expect(Team.exists?(name: "FrogTown ")).to eq(false)
+      expect(Team.exists?(name: "FrogTown ")).to be(false)
       expect do
         post(
           "/api/v1/graphql",
@@ -71,7 +71,7 @@ RSpec.describe "Invitation Create", type: :request do
       team = Team.find_by(name: "FrogTown")
       user = User.find_by(email: "team-owner@atdot.com")
       expect(team.owner).to eq(user)
-      expect(user.valid_password?("foobar")).to eq(true)
+      expect(user.valid_password?("foobar")).to be(true)
       expect(user.teams).to include(team)
 
       token = Doorkeeper::AccessToken.find_by(token: json_body.dig(:data, :teamCreate, :accessToken))

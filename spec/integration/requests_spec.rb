@@ -10,9 +10,9 @@ RSpec.describe "Requests Integration", type: :request do
 
   let!(:team) { create(:team) }
   let!(:room) { create(:room, team: team) }
-  let!(:truman) { create(:user, name: "truman", teams: [team]) }
-  let!(:dan) { create(:user, name: "dan", teams: [team]) }
-  let!(:sean) { create(:user, name: "sean", teams: [team]) }
+  let!(:truman) { create(:user, name: "truman", teams: [ team ]) }
+  let!(:dan) { create(:user, name: "dan", teams: [ team ]) }
+  let!(:sean) { create(:user, name: "sean", teams: [ team ]) }
 
   def room_playlist_records_reorder_mutation
     %(
@@ -39,17 +39,17 @@ RSpec.describe "Requests Integration", type: :request do
           query: room_activate_mutation(room_id: room.id),
           user: truman
         )
-      end.to(broadcast_to(TeamChannel.broadcasting_for(team)).with do |data|
-        room_message = data.dig(:data, :team, :rooms).find { |r| r[:id] == room.id }
+      end.to(have_broadcasted_to(TeamChannel.broadcasting_for(team)).with do |msg|
+        room_message = msg.dig(:data, :team, :rooms).find { |r| r[:id] == room.id }
 
         has_truman = room_message[:users].any? { |d| d["id"] == truman.id }
-        expect(has_truman).to eq(true)
+        expect(has_truman).to be(true)
 
         has_dan = room_message[:users].any? { |d| d["id"] == dan.id }
-        expect(has_dan).to eq(false)
+        expect(has_dan).to be(false)
 
         has_sean = room_message[:users].any? { |d| d["id"] == sean.id }
-        expect(has_sean).to eq(false)
+        expect(has_sean).to be(false)
       end)
 
       expect do
@@ -57,17 +57,17 @@ RSpec.describe "Requests Integration", type: :request do
           query: room_activate_mutation(room_id: room.id),
           user: dan
         )
-      end.to(broadcast_to(TeamChannel.broadcasting_for(team)).with do |data|
-        room_message = data.dig(:data, :team, :rooms).find { |r| r[:id] == room.id }
+      end.to(have_broadcasted_to(TeamChannel.broadcasting_for(team)).with do |msg|
+        room_message = msg.dig(:data, :team, :rooms).find { |r| r[:id] == room.id }
 
         has_truman = room_message[:users].any? { |d| d["id"] == truman.id }
-        expect(has_truman).to eq(true)
+        expect(has_truman).to be(true)
 
         has_dan = room_message[:users].any? { |d| d["id"] == dan.id }
-        expect(has_dan).to eq(true)
+        expect(has_dan).to be(true)
 
         has_sean = room_message[:users].any? { |d| d["id"] == sean.id }
-        expect(has_sean).to eq(false)
+        expect(has_sean).to be(false)
       end)
 
       expect do
@@ -75,17 +75,17 @@ RSpec.describe "Requests Integration", type: :request do
           query: room_activate_mutation(room_id: room.id),
           user: sean
         )
-      end.to(broadcast_to(TeamChannel.broadcasting_for(team)).with do |data|
-        room_message = data.dig(:data, :team, :rooms).find { |r| r[:id] == room.id }
+      end.to(have_broadcasted_to(TeamChannel.broadcasting_for(team)).with do |msg|
+        room_message = msg.dig(:data, :team, :rooms).find { |r| r[:id] == room.id }
 
         has_truman = room_message[:users].any? { |d| d["id"] == truman.id }
-        expect(has_truman).to eq(true)
+        expect(has_truman).to be(true)
 
         has_dan = room_message[:users].any? { |d| d["id"] == dan.id }
-        expect(has_dan).to eq(true)
+        expect(has_dan).to be(true)
 
         has_sean = room_message[:users].any? { |d| d["id"] == sean.id }
-        expect(has_sean).to eq(true)
+        expect(has_sean).to be(true)
       end)
 
       # No one has joined the song rotation yet
@@ -126,8 +126,8 @@ RSpec.describe "Requests Integration", type: :request do
           variables: { orderedRecords: records },
           user: dan
         )
-      end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
-        songs = data.dig("data", "roomPlaylist")
+      end.to(have_broadcasted_to(RoomPlaylistChannel.broadcasting_for(room)).with do |msg|
+        songs = msg.dig("data", "roomPlaylist")
         expect(songs.size).to eq(1)
 
         dan_unicorn_id = songs.first["id"]
@@ -137,7 +137,7 @@ RSpec.describe "Requests Integration", type: :request do
       end)
 
       # Dan is now in song rotation
-      expect(room.reload.user_rotation).to eq([dan.id])
+      expect(room.reload.user_rotation).to eq([ dan.id ])
 
       # Dan enqueues another song
       expect do
@@ -151,8 +151,8 @@ RSpec.describe "Requests Integration", type: :request do
           variables: { orderedRecords: records },
           user: dan
         )
-      end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
-        songs = data.dig("data", "roomPlaylist")
+      end.to(have_broadcasted_to(RoomPlaylistChannel.broadcasting_for(room)).with do |msg|
+        songs = msg.dig("data", "roomPlaylist")
         expect(songs.size).to eq(2)
 
         expect(songs.first.dig("song", "id")).to eq(unicorn.id)
@@ -174,8 +174,8 @@ RSpec.describe "Requests Integration", type: :request do
           variables: { orderedRecords: records },
           user: truman
         )
-      end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
-        songs = data.dig("data", "roomPlaylist")
+      end.to(have_broadcasted_to(RoomPlaylistChannel.broadcasting_for(room)).with do |msg|
+        songs = msg.dig("data", "roomPlaylist")
         expect(songs.size).to eq(3)
         expect(songs.first["id"]).to eq(dan_unicorn_id)
 
@@ -189,7 +189,7 @@ RSpec.describe "Requests Integration", type: :request do
       end)
 
       # Truman now follows Dan in rotation
-      expect(room.reload.user_rotation).to eq([dan.id, truman.id])
+      expect(room.reload.user_rotation).to eq([ dan.id, truman.id ])
 
       # Sean enqueues a song
       expect do
@@ -202,8 +202,8 @@ RSpec.describe "Requests Integration", type: :request do
           variables: { orderedRecords: records },
           user: sean
         )
-      end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
-        songs = data.dig("data", "roomPlaylist")
+      end.to(have_broadcasted_to(RoomPlaylistChannel.broadcasting_for(room)).with do |msg|
+        songs = msg.dig("data", "roomPlaylist")
         expect(songs.size).to eq(4)
 
         expect(songs.first["id"]).to eq(dan_unicorn_id)
@@ -219,7 +219,7 @@ RSpec.describe "Requests Integration", type: :request do
       end)
 
       # Sean now follows Dan, Truman in rotation
-      expect(room.reload.user_rotation).to eq([dan.id, truman.id, sean.id])
+      expect(room.reload.user_rotation).to eq([ dan.id, truman.id, sean.id ])
 
       # Sean enqueues another song
       expect do
@@ -233,8 +233,8 @@ RSpec.describe "Requests Integration", type: :request do
           variables: { orderedRecords: records },
           user: sean
         )
-      end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
-        songs = data.dig("data", "roomPlaylist")
+      end.to(have_broadcasted_to(RoomPlaylistChannel.broadcasting_for(room)).with do |msg|
+        songs = msg.dig("data", "roomPlaylist")
         expect(songs.size).to eq(5)
 
         expect(songs.first["id"]).to eq(dan_unicorn_id)
@@ -263,8 +263,8 @@ RSpec.describe "Requests Integration", type: :request do
           variables: { orderedRecords: records },
           user: truman
         )
-      end.to(broadcast_to(RoomPlaylistChannel.broadcasting_for(room)).with do |data|
-        songs = data.dig("data", "roomPlaylist")
+      end.to(have_broadcasted_to(RoomPlaylistChannel.broadcasting_for(room)).with do |msg|
+        songs = msg.dig("data", "roomPlaylist")
         expect(songs.size).to eq(6)
 
         expect(songs.first["id"]).to eq(dan_unicorn_id)

@@ -36,8 +36,8 @@ RSpec.describe "Tag Add", type: :request do
         query: query,
         variables: {
           tagId: tag.id,
-          addIds: [library_record1.id, library_record3.id],
-          removeIds: [library_record2.id, library_record4.id]
+          addIds: [ library_record1.id, library_record3.id ],
+          removeIds: [ library_record2.id, library_record4.id ]
         },
         user: current_user
       )
@@ -54,7 +54,7 @@ RSpec.describe "Tag Add", type: :request do
       expect do
         graphql_request(
           query: query,
-          variables: { tagId: SecureRandom.uuid, addIds: [library_record1.id], removeIds: [library_record2.id] },
+          variables: { tagId: SecureRandom.uuid, addIds: [ library_record1.id ], removeIds: [ library_record2.id ] },
           user: current_user
         )
       end.not_to change(TagLibraryRecord, :count)
@@ -68,7 +68,7 @@ RSpec.describe "Tag Add", type: :request do
       expect do
         graphql_request(
           query: query,
-          variables: { tagId: other_tag.id, addIds: [library_record1.id], removeIds: [library_record2.id] },
+          variables: { tagId: other_tag.id, addIds: [ library_record1.id ], removeIds: [ library_record2.id ] },
           user: current_user
         )
       end.not_to change(TagLibraryRecord, :count)

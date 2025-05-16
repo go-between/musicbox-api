@@ -13,7 +13,7 @@ module Types
       Invitation.find_by(token: token, email: email&.downcase)
     end
 
-    field :invitations, [Types::InvitationType], null: false do
+    field :invitations, [ Types::InvitationType ], null: false do
     end
 
     def invitations
@@ -32,13 +32,13 @@ module Types
       LibraryRecord.find_by(id: id)
     end
 
-    field :library_records, [Types::LibraryRecordType], null: true, extras: [:lookahead] do
+    field :library_records, [ Types::LibraryRecordType ], null: true, extras: [ :lookahead ] do
       argument :query, String, required: false
-      argument :tag_ids, [ID], required: false
+      argument :tag_ids, [ ID ], required: false
       argument :order, Types::OrderType, required: false
     end
 
-    def library_records(query: nil, tag_ids: [], order: nil, lookahead:)
+    def library_records(lookahead:, query: nil, tag_ids: [], order: nil)
       confirm_current_user!
 
       Selectors::LibraryRecords
@@ -59,12 +59,12 @@ module Types
       Message.find(id)
     end
 
-    field :messages, [Types::MessageType], null: false, extras: [:lookahead] do
+    field :messages, [ Types::MessageType ], null: false, extras: [ :lookahead ] do
       argument :from, Types::DateTimeType, required: false
       argument :to, Types::DateTimeType, required: false
     end
 
-    def messages(from: nil, to: nil, lookahead:)
+    def messages(lookahead:, from: nil, to: nil)
       confirm_current_user!
       return [] if current_user.active_room.blank?
 
@@ -75,12 +75,12 @@ module Types
         .messages
     end
 
-    field :pinned_messages, [Types::MessageType], null: false, extras: [:lookahead] do
+    field :pinned_messages, [ Types::MessageType ], null: false, extras: [ :lookahead ] do
       argument :song_id, ID, required: true
       argument :room_id, ID, required: false
     end
 
-    def pinned_messages(song_id:, room_id: nil, lookahead:)
+    def pinned_messages(song_id:, lookahead:, room_id: nil)
       confirm_current_user!
       return [] if current_user&.active_room&.blank? && room_id.blank?
 
@@ -89,9 +89,9 @@ module Types
       # the broadcast worker which is calling with the opposite.
       select_for_room_id = if current_user&.active_room_id&.present?
                              current_user.active_room_id
-                           else
+      else
                              room_id
-                           end
+      end
 
       Selectors::Messages
         .new(lookahead: lookahead)
@@ -100,11 +100,11 @@ module Types
         .messages
     end
 
-    field :recommendations, [Types::LibraryRecordType], null: false, extras: [:lookahead] do
+    field :recommendations, [ Types::LibraryRecordType ], null: false, extras: [ :lookahead ] do
       argument :song_id, ID, required: false
     end
 
-    def recommendations(song_id: nil, lookahead:)
+    def recommendations(lookahead:, song_id: nil)
       includes = []
       includes << :song if lookahead.selects?(:song)
       includes << :user if lookahead.selects?(:user)
@@ -115,14 +115,14 @@ module Types
 
       conditions = if song_id
                      { from_user: current_user, song_id: song_id }
-                   else
+      else
                      { source: "pending_recommendation", user: current_user }
-                   end
+      end
 
       records.where(conditions)
     end
 
-    field :record_listens, [Types::RecordListenType], null: true, extras: [:lookahead] do
+    field :record_listens, [ Types::RecordListenType ], null: true, extras: [ :lookahead ] do
       argument :record_id, ID, required: true
     end
 
@@ -149,7 +149,7 @@ module Types
       rooms.first
     end
 
-    field :rooms, [Types::RoomType], null: true do
+    field :rooms, [ Types::RoomType ], null: true do
     end
 
     def rooms
@@ -157,13 +157,13 @@ module Types
       Room.where(team: current_user.active_team)
     end
 
-    field :room_playlist, [Types::RoomPlaylistRecordType], null: true, extras: [:lookahead] do
+    field :room_playlist, [ Types::RoomPlaylistRecordType ], null: true, extras: [ :lookahead ] do
       argument :room_id, ID, required: true
       argument :historical, Boolean, required: false
       argument :from, Types::DateTimeType, required: false
     end
 
-    def room_playlist(room_id:, historical: false, from: nil, lookahead:)
+    def room_playlist(room_id:, lookahead:, historical: false, from: nil)
       confirm_current_user!
 
       Selectors::RoomPlaylistRecords
@@ -171,7 +171,7 @@ module Types
         .select(room_id: room_id, historical: historical, from: from)
     end
 
-    field :room_playlist_for_user, [Types::RoomPlaylistRecordType], null: true do
+    field :room_playlist_for_user, [ Types::RoomPlaylistRecordType ], null: true do
       argument :historical, Boolean, required: true
     end
 
@@ -183,7 +183,7 @@ module Types
       records.waiting.order(:order)
     end
 
-    field :search, [Types::SearchResultType], null: false, extras: [:lookahead] do
+    field :search, [ Types::SearchResultType ], null: false, extras: [ :lookahead ] do
       argument :query, String, required: true
     end
 
@@ -196,7 +196,7 @@ module Types
         .search(query: query)
     end
 
-    field :tags, [Types::TagType], null: false do
+    field :tags, [ Types::TagType ], null: false do
     end
 
     def tags

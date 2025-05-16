@@ -5,6 +5,6 @@ module Types
     graphql_name "UnwoundCountPerWeek"
 
     field :label, String, null: false
-    field :plays, [Types::UnwoundCountType], null: false
+    field :plays, [ Types::UnwoundCountType ], null: false
   end
 end

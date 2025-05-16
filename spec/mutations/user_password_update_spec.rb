@@ -37,7 +37,7 @@ RSpec.describe "User Password Update", type: :request do
 
       current_user.reload
       expect(data[:errors]).to be_empty
-      expect(current_user.valid_password?("AnEvenBetterMoreSecretPassword!")).to eq(true)
+      expect(current_user.valid_password?("AnEvenBetterMoreSecretPassword!")).to be(true)
     end
   end
 
@@ -57,7 +57,7 @@ RSpec.describe "User Password Update", type: :request do
 
       current_user.reload
       expect(data[:errors]).to include("Invalid password")
-      expect(current_user.valid_password?("soSecretPassword!")).to eq(true)
+      expect(current_user.valid_password?("soSecretPassword!")).to be(true)
     end
 
     it "does not update a user's password when the existing password is insecure" do
@@ -75,7 +75,7 @@ RSpec.describe "User Password Update", type: :request do
 
       current_user.reload
       expect(data[:errors]).to include("Insecure password")
-      expect(current_user.valid_password?("soSecretPassword!")).to eq(true)
+      expect(current_user.valid_password?("soSecretPassword!")).to be(true)
     end
   end
 end

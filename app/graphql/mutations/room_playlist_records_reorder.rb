@@ -7,14 +7,14 @@ module Mutations
       argument :song_id, ID, required: true
     end
 
-    argument :ordered_records, [OrderedPlaylistRecordInputObject], required: true
+    argument :ordered_records, [ OrderedPlaylistRecordInputObject ], required: true
 
-    field :room_playlist_records, [Types::RoomPlaylistRecordType], null: true
-    field :errors, [String], null: true
+    field :room_playlist_records, [ Types::RoomPlaylistRecordType ], null: true
+    field :errors, [ String ], null: true
 
     def resolve(ordered_records:)
       room = Room.find(current_user.active_room_id)
-      return { errors: ["Not in active room"] } if room.blank?
+      return { errors: [ "Not in active room" ] } if room.blank?
 
       existing_record_ids = ordered_records.map { |r| r[:room_playlist_record_id] }.compact
       records = update_records!(room, ordered_records, existing_record_ids)

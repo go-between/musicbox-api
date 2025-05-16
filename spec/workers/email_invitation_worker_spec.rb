@@ -18,7 +18,7 @@ RSpec.describe EmailInvitationWorker, type: :worker do
 
   it_behaves_like "a mailgun worker" do
     let(:arguments) do
-      [invitation.id]
+      [ invitation.id ]
     end
     let(:payload) do
       {

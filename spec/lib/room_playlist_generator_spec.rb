@@ -6,7 +6,7 @@ RSpec.describe RoomPlaylistGenerator do
   let(:user_1) { create(:user) }
   let(:user_2) { create(:user) }
   let(:user_3) { create(:user) }
-  let(:room) { create(:room, user_rotation: [user_1.id, user_2.id, user_3.id]) }
+  let(:room) { create(:room, user_rotation: [ user_1.id, user_2.id, user_3.id ]) }
   let(:relation) { RoomPlaylistRecord.includes(:song, :user) }
 
   describe "#waiting" do
@@ -22,7 +22,7 @@ RSpec.describe RoomPlaylistGenerator do
 
       playlist = described_class.new(room, relation)
 
-      expect(playlist.playlist).to eq([record3, record4, record5, record6])
+      expect(playlist.playlist).to eq([ record3, record4, record5, record6 ])
     end
 
     it "returns an empty queue when no users are in rotation" do

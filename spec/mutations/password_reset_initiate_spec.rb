@@ -27,7 +27,7 @@ RSpec.describe "Password Reset Initiate", type: :request do
         params: { query: query, variables: { email: "a@a.a" } }
       )
 
-      expect(json_body.dig(:data, :passwordResetInitiate, :errors)).to match_array([])
+      expect(json_body.dig(:data, :passwordResetInitiate, :errors)).to be_empty
       expect(EmailPasswordResetWorker).to have_enqueued_sidekiq_job(user.id, anything)
     end
   end
@@ -39,7 +39,7 @@ RSpec.describe "Password Reset Initiate", type: :request do
         params: { query: query, variables: { email: "noemail@a.a" } }
       )
 
-      expect(json_body.dig(:data, :passwordResetInitiate, :errors)).to match_array([])
+      expect(json_body.dig(:data, :passwordResetInitiate, :errors)).to be_empty
       expect(EmailPasswordResetWorker).not_to have_enqueued_sidekiq_job
     end
   end

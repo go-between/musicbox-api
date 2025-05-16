@@ -6,13 +6,13 @@ module Mutations
     argument :approval, Int, required: true
 
     field :record_listen, Types::RecordListenType, null: true
-    field :errors, [String], null: true
+    field :errors, [ String ], null: true
 
     def resolve(record_id:, approval:)
       unless record_playing?(record_id)
         return {
           record_listen: nil,
-          errors: ["Record must be playing in the active room"]
+          errors: [ "Record must be playing in the active room" ]
         }
       end
 
@@ -31,7 +31,7 @@ module Mutations
     def ensure_approval_range(approval)
       return 0 if approval.negative?
 
-      [approval, 3].min
+      [ approval, 3 ].min
     end
 
     def ensure_record_listen!(record)

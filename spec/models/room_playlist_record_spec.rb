@@ -23,7 +23,7 @@ RSpec.describe RoomPlaylistRecord, type: :model do
       l2 = RecordListen.create!(room_playlist_record: record, song: song, user: create(:user))
       l3 = RecordListen.create!(room_playlist_record: record, song: song, user: create(:user))
 
-      expect(record.reload.record_listens).to match_array([l1, l2, l3])
+      expect(record.reload.record_listens).to contain_exactly(l1, l2, l3)
     end
   end
 

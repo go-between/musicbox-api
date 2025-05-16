@@ -6,7 +6,7 @@ module Mutations
     argument :from_user_id, ID, required: false
 
     field :song, Types::SongType, null: true
-    field :errors, [String], null: true
+    field :errors, [ String ], null: true
 
     def resolve(youtube_id:, from_user_id: nil)
       song = Song.find_or_initialize_by(youtube_id: youtube_id)

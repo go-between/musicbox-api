@@ -11,7 +11,7 @@ RSpec.describe User, type: :model do
       record2 = create(:library_record, user: user)
       record3 = create(:library_record, user: user)
 
-      expect(user.reload.library_records).to match_array([record1, record2, record3])
+      expect(user.reload.library_records).to contain_exactly(record1, record2, record3)
     end
 
     it "has many songs" do
@@ -22,7 +22,7 @@ RSpec.describe User, type: :model do
       create(:library_record, user: user, song: song2)
       create(:library_record, user: user, song: song2)
 
-      expect(user.reload.songs).to match_array([song1, song2, song2])
+      expect(user.reload.songs).to contain_exactly(song1, song2, song2)
     end
 
     it "has many tags" do
@@ -30,7 +30,7 @@ RSpec.describe User, type: :model do
       t2 = create(:tag, user: user)
       t3 = create(:tag, user: user)
 
-      expect(user.tags).to match_array([t1, t2, t3])
+      expect(user.tags).to contain_exactly(t1, t2, t3)
     end
 
     it "may belong to one active room" do
@@ -54,7 +54,7 @@ RSpec.describe User, type: :model do
       user.teams << team1
       user.teams << team2
 
-      expect(user.reload.teams).to match_array([team1, team2])
+      expect(user.reload.teams).to contain_exactly(team1, team2)
     end
   end
 end

@@ -44,7 +44,7 @@ RSpec.describe "Search Query", type: :request do
       tags: %w[dope chill beatz]
     )
     client_double = instance_double(YoutubeClient)
-    expect(client_double).to receive(:search).with("entirely-outside-song").and_return([video])
+    expect(client_double).to receive(:search).with("entirely-outside-song").and_return([ video ])
     expect(YoutubeClient).to receive(:new).and_return(client_double)
 
     graphql_request(query: query, user: user, variables: { query: "entirely-outside-song" })

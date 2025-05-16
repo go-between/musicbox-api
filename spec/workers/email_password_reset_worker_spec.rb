@@ -9,7 +9,7 @@ RSpec.describe EmailPasswordResetWorker, type: :worker do
 
   it_behaves_like "a mailgun worker" do
     let(:arguments) do
-      [user.id, token]
+      [ user.id, token ]
     end
     let(:payload) do
       {

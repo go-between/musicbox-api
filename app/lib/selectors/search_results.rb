@@ -3,6 +3,7 @@
 module Selectors
   class SearchResults
     attr_reader :user, :lookahead
+
     def initialize(user:, lookahead:)
       @user = user
       @lookahead = lookahead

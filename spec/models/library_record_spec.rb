@@ -23,7 +23,7 @@ RSpec.describe LibraryRecord, type: :model do
       record.tags << tag1
       record.tags << tag2
 
-      expect(record.tags).to match_array([tag1, tag2])
+      expect(record.tags).to contain_exactly(tag1, tag2)
     end
   end
 end

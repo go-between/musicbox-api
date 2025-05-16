@@ -83,7 +83,7 @@ RSpec.describe "Messages Query", type: :request do
 
       message3_body = json_body.dig(:data, :messages, 2)
       expect(message3_body[:id]).to eq(message3.id)
-      expect(message3_body.dig(:roomPlaylistRecord)).to be_nil
+      expect(message3_body[:roomPlaylistRecord]).to be_nil
       expect(message3_body.dig(:room, :id)).to eq(room.id)
       expect(message3_body.dig(:user, :id)).to eq(user.id)
     end
@@ -101,21 +101,21 @@ RSpec.describe "Messages Query", type: :request do
       graphql_request(query: query, variables: { from: 4.hours.ago }, user: user)
 
       message_ids = json_body.dig(:data, :messages).map { |m| m[:id] }
-      expect(message_ids).to match_array([message2.id, message3.id])
+      expect(message_ids).to contain_exactly(message2.id, message3.id)
     end
 
     it "returns messages before the specified datetime" do
       graphql_request(query: query, variables: { to: 2.hours.ago }, user: user)
 
       message_ids = json_body.dig(:data, :messages).map { |m| m[:id] }
-      expect(message_ids).to match_array([message1.id, message2.id])
+      expect(message_ids).to contain_exactly(message1.id, message2.id)
     end
 
     it "returns messages between the specified datetimes" do
       graphql_request(query: query, variables: { from: 4.hours.ago, to: 2.hours.ago }, user: user)
 
       message_ids = json_body.dig(:data, :messages).map { |m| m[:id] }
-      expect(message_ids).to match_array([message2.id])
+      expect(message_ids).to contain_exactly(message2.id)
     end
   end
 end

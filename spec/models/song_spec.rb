@@ -10,7 +10,7 @@ RSpec.describe Song, type: :model do
       lib1 = create(:library_record, song: song)
       lib2 = create(:library_record, song: song)
 
-      expect(song.reload.library_records).to match_array([lib1, lib2])
+      expect(song.reload.library_records).to contain_exactly(lib1, lib2)
     end
 
     it "has many users" do
@@ -21,7 +21,7 @@ RSpec.describe Song, type: :model do
       create(:library_record, song: song, user: user2)
       create(:library_record, song: song, user: user2)
 
-      expect(song.reload.users).to match_array([user1, user2, user2])
+      expect(song.reload.users).to contain_exactly(user1, user2, user2)
     end
   end
 

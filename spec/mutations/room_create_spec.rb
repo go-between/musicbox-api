@@ -70,7 +70,7 @@ RSpec.describe "Room Create", type: :request do
       data = json_body.dig(:data, :roomCreate)
 
       expect(data[:room]).to be_nil
-      expect(data[:errors]).to match_array([include("Team must exist")])
+      expect(data[:errors]).to contain_exactly(include("Team must exist"))
     end
 
     it "fails to persist when name is not specified" do
@@ -85,7 +85,7 @@ RSpec.describe "Room Create", type: :request do
       data = json_body.dig(:data, :roomCreate)
 
       expect(data[:room]).to be_nil
-      expect(data[:errors]).to match_array([include("Name can't be blank")])
+      expect(data[:errors]).to contain_exactly(include("Name can't be blank"))
     end
   end
 end

@@ -4,10 +4,10 @@ module Mutations
   class InvitationCreate < Mutations::BaseMutation
     argument :email, String, required: true
     argument :name, String, required: true
-    field :errors, [String], null: true
+    field :errors, [ String ], null: true
 
     def resolve(email:, name:)
-      return { errors: ["Must be on an active team"] } unless current_user.active_team.present?
+      return { errors: [ "Must be on an active team" ] } unless current_user.active_team.present?
 
       invite = Invitation.find_or_initialize_by(
         email: email.downcase,

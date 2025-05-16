@@ -14,9 +14,9 @@ class AllowLibraryRecordToAssociateToTags < ActiveRecord::Migration[6.0]
     end
 
     add_index :tags_songs, :library_record_id
-    add_index :tags_songs, [:tag_id, :library_record_id], unique: true
+    add_index :tags_songs, [ :tag_id, :library_record_id ], unique: true
     remove_index :tags_songs, :song_id
-    remove_index :tags_songs, [:tag_id, :song_id]
+    remove_index :tags_songs, [ :tag_id, :song_id ]
     remove_column :tags_songs, :song_id
 
     rename_table :tags_songs, :tags_library_records

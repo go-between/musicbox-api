@@ -53,7 +53,7 @@ RSpec.describe "Invitation Create", type: :request do
       expect(invitation).to be_accepted
 
       user = User.find_by(email: "an-invited-user@atdot.com")
-      expect(user.valid_password?("foobar")).to eq(true)
+      expect(user.valid_password?("foobar")).to be(true)
       expect(user.teams).to include(team)
 
       token = Doorkeeper::AccessToken.find_by(token: json_body.dig(:data, :invitationAccept, :accessToken))
@@ -62,7 +62,7 @@ RSpec.describe "Invitation Create", type: :request do
 
     it "adds an existing user to the invited team" do
       other_team = create(:team)
-      user = User.create!(email: "an-invited-user@atdot.com", password: "foobar", teams: [other_team])
+      user = User.create!(email: "an-invited-user@atdot.com", password: "foobar", teams: [ other_team ])
 
       variables = {
         email: "an-invited-USER@atdot.com",
@@ -79,11 +79,11 @@ RSpec.describe "Invitation Create", type: :request do
       end.not_to change(User, :count)
 
       user.reload
-      expect(user.teams.map(&:id)).to match_array([team.id, other_team.id])
+      expect(user.teams.map(&:id)).to contain_exactly(team.id, other_team.id)
     end
 
     it "does not duplicate teams for a user" do
-      user = User.create!(email: "an-invited-user@atdot.com", password: "foobar", teams: [team])
+      user = User.create!(email: "an-invited-user@atdot.com", password: "foobar", teams: [ team ])
 
       variables = {
         email: "an-invited-user@atdot.com",
@@ -100,7 +100,7 @@ RSpec.describe "Invitation Create", type: :request do
       end.not_to change(User, :count)
 
       user.reload
-      expect(user.teams.map(&:id)).to match_array([team.id])
+      expect(user.teams.map(&:id)).to contain_exactly(team.id)
     end
   end
 

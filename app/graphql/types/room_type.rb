@@ -8,6 +8,6 @@ module Types
     field :current_song, Types::SongType, null: true
     field :name, String, null: false
     field :id, ID, null: false
-    field :users, [Types::UserType], null: false
+    field :users, [ Types::UserType ], null: false
   end
 end
