@@ -5,15 +5,15 @@ module Mutations
     argument :youtube_id, ID, required: true
     argument :recommend_to_user, ID, required: true
 
-    field :errors, [String], null: true
+    field :errors, [ String ], null: true
 
     def resolve(youtube_id:, recommend_to_user:)
       song = Song.find_by(youtube_id: youtube_id)
-      return { errors: ["Song must exist"] } if song.blank?
+      return { errors: [ "Song must exist" ] } if song.blank?
 
       to_user = User.find(recommend_to_user)
-      return { errors: ["User must exist"] } if to_user.blank?
-      return { errors: ["User already has song"] } if LibraryRecord.exists?(song: song, user: to_user)
+      return { errors: [ "User must exist" ] } if to_user.blank?
+      return { errors: [ "User already has song" ] } if LibraryRecord.exists?(song: song, user: to_user)
 
       LibraryRecord.create!(
         user: to_user,

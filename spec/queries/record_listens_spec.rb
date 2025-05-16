@@ -43,7 +43,7 @@ RSpec.describe "Record Listens Query", type: :request do
     )
 
     listens = json_body.dig(:data, :recordListens).map { |m| { id: m[:id], approval: m[:approval] } }
-    expected_listens = [{ id: l1.id, approval: 1 }, { id: l2.id, approval: 2 }, { id: l3.id, approval: 3 }]
+    expected_listens = [ { id: l1.id, approval: 1 }, { id: l2.id, approval: 2 }, { id: l3.id, approval: 3 } ]
     expect(listens).to match_array(expected_listens)
   end
 end

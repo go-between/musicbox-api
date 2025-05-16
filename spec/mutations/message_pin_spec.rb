@@ -31,7 +31,7 @@ RSpec.describe "Message Pin", type: :request do
     it "Allows a user to pin a message" do
       graphql_request(query: query, variables: { messageId: message.id, pin: true }, user: current_user)
 
-      expect(message.reload.pinned).to eq(true)
+      expect(message.reload.pinned).to be(true)
       expect(json_body.dig(:data, :messagePin, :message, :id)).to eq(message.id)
       expect(BroadcastPinnedMessagesWorker).to have_enqueued_sidekiq_job(message.room_id, message.song_id)
     end
@@ -40,7 +40,7 @@ RSpec.describe "Message Pin", type: :request do
       message.update!(pinned: true)
       graphql_request(query: query, variables: { messageId: message.id, pin: true }, user: current_user)
 
-      expect(message.reload.pinned).to eq(true)
+      expect(message.reload.pinned).to be(true)
       expect(json_body.dig(:data, :messagePin, :message, :id)).to eq(message.id)
       expect(BroadcastPinnedMessagesWorker).to have_enqueued_sidekiq_job(message.room_id, message.song_id)
     end
@@ -49,7 +49,7 @@ RSpec.describe "Message Pin", type: :request do
       message.update!(pinned: true)
       graphql_request(query: query, variables: { messageId: message.id, pin: false }, user: current_user)
 
-      expect(message.reload.pinned).to eq(false)
+      expect(message.reload.pinned).to be(false)
       expect(json_body.dig(:data, :messagePin, :message, :id)).to eq(message.id)
       expect(BroadcastPinnedMessagesWorker).to have_enqueued_sidekiq_job(message.room_id, message.song_id)
     end
@@ -57,7 +57,7 @@ RSpec.describe "Message Pin", type: :request do
     it "Noops if a message is already unpinned" do
       graphql_request(query: query, variables: { messageId: message.id, pin: false }, user: current_user)
 
-      expect(message.reload.pinned).to eq(false)
+      expect(message.reload.pinned).to be(false)
       expect(json_body.dig(:data, :messagePin, :message, :id)).to eq(message.id)
       expect(BroadcastPinnedMessagesWorker).to have_enqueued_sidekiq_job(message.room_id, message.song_id)
     end
@@ -69,7 +69,7 @@ RSpec.describe "Message Pin", type: :request do
       graphql_request(query: query, variables: { messageId: message.id, pin: true }, user: user)
 
       expect(json_body.dig(:data, :messagePin, :errors)).to include("Message must belong to the current user")
-      expect(message.reload.pinned).to eq(false)
+      expect(message.reload.pinned).to be(false)
       expect(BroadcastPinnedMessagesWorker).not_to have_enqueued_sidekiq_job
     end
   end

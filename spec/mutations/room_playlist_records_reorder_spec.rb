@@ -41,7 +41,7 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
         user: current_user
       )
 
-      expect(room.reload.waiting_songs).to eq(true)
+      expect(room.reload.waiting_songs).to be(true)
     end
   end
 
@@ -84,7 +84,7 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
         user: current_user
       )
 
-      expect(RoomPlaylistRecord.exists?(id: record2_id)).to eq(false)
+      expect(RoomPlaylistRecord.exists?(id: record2_id)).to be(false)
       expect(record3.reload.order).to eq(0)
       expect(record1.reload.order).to eq(1)
       expect(other_room_record.reload).to be_persisted
@@ -122,7 +122,7 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
     it "places the user in the song rotation when the rotation is empty" do
       room.update!(user_rotation: [])
 
-      records = [{ songId: song.id }]
+      records = [ { songId: song.id } ]
       graphql_request(
         query: query,
         variables: { orderedRecords: records },
@@ -132,14 +132,14 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
       new_record = RoomPlaylistRecord.find_by(user: current_user, song_id: song.id, room: room)
       expect(new_record.order).to eq(0)
 
-      expect(room.reload.user_rotation).to eq([current_user.id])
+      expect(room.reload.user_rotation).to eq([ current_user.id ])
     end
 
     it "places the user at the end of an existing song rotation" do
       existing_user_id = SecureRandom.uuid
-      room.update!(user_rotation: [existing_user_id])
+      room.update!(user_rotation: [ existing_user_id ])
 
-      records = [{ songId: song.id }]
+      records = [ { songId: song.id } ]
       graphql_request(
         query: query,
         variables: { orderedRecords: records },
@@ -149,14 +149,14 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
       new_record = RoomPlaylistRecord.find_by(user: current_user, song_id: song.id, room: room)
       expect(new_record.order).to eq(0)
 
-      expect(room.reload.user_rotation).to eq([existing_user_id, current_user.id])
+      expect(room.reload.user_rotation).to eq([ existing_user_id, current_user.id ])
     end
 
     it "does not re-add the user if they are already in the song rotation" do
       existing_user_id = SecureRandom.uuid
-      room.update!(user_rotation: [current_user.id, existing_user_id])
+      room.update!(user_rotation: [ current_user.id, existing_user_id ])
 
-      records = [{ songId: song.id }]
+      records = [ { songId: song.id } ]
       graphql_request(
         query: query,
         variables: { orderedRecords: records },
@@ -166,7 +166,7 @@ RSpec.describe "Room Playlist Records Reorder", type: :request do
       new_record = RoomPlaylistRecord.find_by(user: current_user, song_id: song.id, room: room)
       expect(new_record.order).to eq(0)
 
-      expect(room.reload.user_rotation).to eq([current_user.id, existing_user_id])
+      expect(room.reload.user_rotation).to eq([ current_user.id, existing_user_id ])
     end
   end
 

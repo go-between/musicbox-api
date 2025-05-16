@@ -9,7 +9,7 @@ class Invitation < ApplicationRecord
     SecureRandom.uuid
   end
 
-  enum invitation_state: {
+  enum :invitation_state, {
     pending: "pending",
     accepted: "accepted"
   }

@@ -2,13 +2,13 @@
 
 module Mutations
   class RoomPlaylistRecordsAdd < Mutations::BaseMutation
-    argument :ids, [ID], required: true
+    argument :ids, [ ID ], required: true
 
-    field :errors, [String], null: true
+    field :errors, [ String ], null: true
 
     def resolve(ids:)
       room = Room.find(current_user.active_room_id)
-      return { errors: ["Not in active room"] } if room.blank?
+      return { errors: [ "Not in active room" ] } if room.blank?
 
       room.with_lock do
         ensure_user_in_rotation!(room)

@@ -159,7 +159,7 @@ RSpec.describe "Song Create", type: :request do
       data = json_body.dig(:data, :songCreate)
 
       expect(data[:song]).to be_nil
-      expect(data[:errors]).to match_array([include("Youtube can't be blank")])
+      expect(data[:errors]).to contain_exactly(include("Youtube can't be blank"))
     end
   end
 end

@@ -1,0 +1,255 @@
+File,Feature
+musicbox-api/app/channels/application_cable/channel.rb,Real-time Communication
+musicbox-api/app/channels/application_cable/connection.rb,Real-time Communication
+musicbox-api/app/channels/message_channel.rb,Message & Chat System
+musicbox-api/app/channels/now_playing_channel.rb,Real-time Music Playback
+musicbox-api/app/channels/pinned_messages_channel.rb,Message & Chat System
+musicbox-api/app/channels/record_listens_channel.rb,Music Listening History
+musicbox-api/app/channels/room_playlist_channel.rb,Playlist Management
+musicbox-api/app/channels/team_channel.rb,Team Collaboration
+musicbox-api/app/channels/users_channel.rb,User Authentication & Management
+musicbox-api/app/controllers/application_controller.rb,GraphQL API
+musicbox-api/app/controllers/graphql_controller.rb,GraphQL API
+musicbox-api/app/graphql/musicbox_api_schema.rb,GraphQL API
+musicbox-api/app/graphql/mutations.rb,GraphQL API
+musicbox-api/app/graphql/mutations/base_mutation.rb,GraphQL API
+musicbox-api/app/graphql/mutations/invitation_accept.rb,User Invitation System
+musicbox-api/app/graphql/mutations/invitation_create.rb,User Invitation System
+musicbox-api/app/graphql/mutations/library_record_delete.rb,User Music Library
+musicbox-api/app/graphql/mutations/message_create.rb,Message & Chat System
+musicbox-api/app/graphql/mutations/message_pin.rb,Message & Chat System
+musicbox-api/app/graphql/mutations/password_reset_complete.rb,Password Reset System
+musicbox-api/app/graphql/mutations/password_reset_initiate.rb,Password Reset System
+musicbox-api/app/graphql/mutations/recommendation_accept.rb,Music Recommendation
+musicbox-api/app/graphql/mutations/recommendation_create.rb,Music Recommendation
+musicbox-api/app/graphql/mutations/record_listen_create.rb,Music Listening History
+musicbox-api/app/graphql/mutations/room_activate.rb,Room Management
+musicbox-api/app/graphql/mutations/room_create.rb,Room Management
+musicbox-api/app/graphql/mutations/room_playlist_record_abandon.rb,Playlist Management
+musicbox-api/app/graphql/mutations/room_playlist_record_delete.rb,Playlist Management
+musicbox-api/app/graphql/mutations/room_playlist_records_add.rb,Playlist Management
+musicbox-api/app/graphql/mutations/room_playlist_records_reorder.rb,Playlist Management
+musicbox-api/app/graphql/mutations/song_create.rb,Song Library
+musicbox-api/app/graphql/mutations/tag_create.rb,Music Tagging
+musicbox-api/app/graphql/mutations/tag_toggle.rb,Music Tagging
+musicbox-api/app/graphql/mutations/team_activate.rb,Team Collaboration
+musicbox-api/app/graphql/mutations/team_create.rb,Team Collaboration
+musicbox-api/app/graphql/mutations/user_password_update.rb,User Authentication & Management
+musicbox-api/app/graphql/mutations/user_update.rb,User Authentication & Management
+musicbox-api/app/graphql/types.rb,GraphQL API
+musicbox-api/app/graphql/types/base_enum.rb,GraphQL API
+musicbox-api/app/graphql/types/base_input_object.rb,GraphQL API
+musicbox-api/app/graphql/types/base_interface.rb,GraphQL API
+musicbox-api/app/graphql/types/base_object.rb,GraphQL API
+musicbox-api/app/graphql/types/base_scalar.rb,GraphQL API
+musicbox-api/app/graphql/types/base_union.rb,GraphQL API
+musicbox-api/app/graphql/types/date_time_type.rb,GraphQL API
+musicbox-api/app/graphql/types/email_type.rb,GraphQL API
+musicbox-api/app/graphql/types/invitation_type.rb,User Invitation System
+musicbox-api/app/graphql/types/library_record_type.rb,User Music Library
+musicbox-api/app/graphql/types/message_type.rb,Message & Chat System
+musicbox-api/app/graphql/types/mutation_type.rb,GraphQL API
+musicbox-api/app/graphql/types/order_type.rb,GraphQL API
+musicbox-api/app/graphql/types/ordered_direction_type.rb,GraphQL API
+musicbox-api/app/graphql/types/ordered_field_type.rb,GraphQL API
+musicbox-api/app/graphql/types/query_type.rb,GraphQL API
+musicbox-api/app/graphql/types/record_listen_type.rb,Music Listening History
+musicbox-api/app/graphql/types/room_playlist_record_type.rb,Playlist Management
+musicbox-api/app/graphql/types/room_type.rb,Room Management
+musicbox-api/app/graphql/types/search_result_type.rb,Search Functionality
+musicbox-api/app/graphql/types/song_type.rb,Song Library
+musicbox-api/app/graphql/types/tag_type.rb,Music Tagging
+musicbox-api/app/graphql/types/team_type.rb,Team Collaboration
+musicbox-api/app/graphql/types/unwound_count_per_week_type.rb,Music Statistics
+musicbox-api/app/graphql/types/unwound_count_type.rb,Music Statistics
+musicbox-api/app/graphql/types/unwound_type.rb,Music Statistics
+musicbox-api/app/graphql/types/user_type.rb,User Authentication & Management
+musicbox-api/app/graphql/types/youtube_result_type.rb,YouTube Integration
+musicbox-api/app/lib/musicbox_unwound.rb,Music Statistics
+musicbox-api/app/lib/not_authenticated_error.rb,User Authentication & Management
+musicbox-api/app/lib/room_playlist_generator.rb,Playlist Management
+musicbox-api/app/lib/room_queue_poller.rb,Queue Management
+musicbox-api/app/lib/selectors.rb,GraphQL API
+musicbox-api/app/lib/selectors/library_records.rb,User Music Library
+musicbox-api/app/lib/selectors/messages.rb,Message & Chat System
+musicbox-api/app/lib/selectors/room_playlist_records.rb,Playlist Management
+musicbox-api/app/lib/selectors/search_results.rb,Search Functionality
+musicbox-api/app/lib/unwound.rb,Music Statistics
+musicbox-api/app/lib/youtube_client.rb,YouTube Integration
+musicbox-api/app/models/application_record.rb,GraphQL API
+musicbox-api/app/models/invitation.rb,User Invitation System
+musicbox-api/app/models/library_record.rb,User Music Library
+musicbox-api/app/models/message.rb,Message & Chat System
+musicbox-api/app/models/record_listen.rb,Music Listening History
+musicbox-api/app/models/room.rb,Room Management
+musicbox-api/app/models/room_playlist_record.rb,Playlist Management
+musicbox-api/app/models/song.rb,Song Library
+musicbox-api/app/models/tag.rb,Music Tagging
+musicbox-api/app/models/tag_library_record.rb,Music Tagging
+musicbox-api/app/models/team.rb,Team Collaboration
+musicbox-api/app/models/team_user.rb,Team Collaboration
+musicbox-api/app/models/user.rb,User Authentication & Management
+musicbox-api/app/workers/broadcast_message_worker.rb,Message & Chat System
+musicbox-api/app/workers/broadcast_now_playing_worker.rb,Real-time Music Playback
+musicbox-api/app/workers/broadcast_pinned_messages_worker.rb,Message & Chat System
+musicbox-api/app/workers/broadcast_playlist_worker.rb,Playlist Management
+musicbox-api/app/workers/broadcast_record_listens_worker.rb,Music Listening History
+musicbox-api/app/workers/broadcast_team_worker.rb,Team Collaboration
+musicbox-api/app/workers/broadcast_users_worker.rb,User Authentication & Management
+musicbox-api/app/workers/email_invitation_worker.rb,User Invitation System
+musicbox-api/app/workers/email_password_reset_worker.rb,Password Reset System
+musicbox-api/app/workers/queue_management_worker.rb,Queue Management
+musicbox-api/config/application.rb,Application Configuration
+musicbox-api/config/boot.rb,Application Configuration
+musicbox-api/config/clock.rb,Scheduled Jobs
+musicbox-api/config/environment.rb,Application Configuration
+musicbox-api/config/environments/development.rb,Environment Configuration
+musicbox-api/config/environments/production.rb,Environment Configuration
+musicbox-api/config/environments/staging.rb,Environment Configuration
+musicbox-api/config/environments/test.rb,Environment Configuration
+musicbox-api/config/initializers/airbrake.rb,Error Tracking
+musicbox-api/config/initializers/application_controller_renderer.rb,Application Configuration
+musicbox-api/config/initializers/backtrace_silencers.rb,Error Tracking
+musicbox-api/config/initializers/cors.rb,API Security
+musicbox-api/config/initializers/devise.rb,User Authentication & Management
+musicbox-api/config/initializers/doorkeeper.rb,User Authentication & Management
+musicbox-api/config/initializers/filter_parameter_logging.rb,Background Job Processing
+musicbox-api/config/initializers/graphiql.rb,GraphQL API
+musicbox-api/config/initializers/inflections.rb,Background Job Processing
+musicbox-api/config/initializers/mime_types.rb,Background Job Processing
+musicbox-api/config/initializers/new_framework_defaults_6_0.rb,Background Job Processing
+musicbox-api/config/initializers/sidekiq.rb,Background Job Processing
+musicbox-api/config/initializers/wrap_parameters.rb,Background Job Processing
+musicbox-api/config/puma.rb,Background Job Processing
+musicbox-api/config/routes.rb,GraphQL API
+musicbox-api/config/spring.rb,Background Job Processing
+musicbox-api/db/migrate/20171228003631_enable_pgcrypto_extension.rb,Background Job Processing
+musicbox-api/db/migrate/20180115152059_create_users.rb,User Authentication & Management
+musicbox-api/db/migrate/20190218193526_create_room.rb,Room Management
+musicbox-api/db/migrate/20190218194925_add_room_to_user.rb,Room Management
+musicbox-api/db/migrate/20190218202341_create_song.rb,Song Library
+musicbox-api/db/migrate/20190305135026_add_duration_in_seconds_to_songs.rb,Song Library
+musicbox-api/db/migrate/20190319122943_add_youtube_id_to_songs.rb,YouTube Integration
+musicbox-api/db/migrate/20190319133140_create_join_table_user_song.rb,User Music Library
+musicbox-api/db/migrate/20190322022735_remove_room_from_song.rb,Song Library
+musicbox-api/db/migrate/20190322030217_add_index_to_songs.rb,Song Library
+musicbox-api/db/migrate/20190322030346_create_room_queues.rb,Queue Management
+musicbox-api/db/migrate/20190326121153_update_song_table.rb,Song Library
+musicbox-api/db/migrate/20190329051317_create_doorkeeper_tables.rb,User Authentication & Management
+musicbox-api/db/migrate/20190329051721_drop_user_table.rb,User Authentication & Management
+musicbox-api/db/migrate/20190329051901_add_devise_to_users.rb,User Authentication & Management
+musicbox-api/db/migrate/20190329055527_drop_doorkeeper.rb,User Authentication & Management
+musicbox-api/db/migrate/20190329055638_recreate_doorkeeper_with_uuids.rb,User Authentication & Management
+musicbox-api/db/migrate/20190403034154_add_room_and_name_to_user.rb,User Authentication & Management
+musicbox-api/db/migrate/20190407020627_add_song_data_to_room.rb,Song Library
+musicbox-api/db/migrate/20190409022601_rename_room_queues_to_room_songs.rb,Playlist Management
+musicbox-api/db/migrate/20190606125833_add_user_rotation_to_rooms.rb,Room Management
+musicbox-api/db/migrate/20190606130002_add_play_state_and_played_at_to_room_songs.rb,Real-time Music Playback
+musicbox-api/db/migrate/20190702133426_add_id_to_songs_users.rb,User Music Library
+musicbox-api/db/migrate/20190927232332_rename_room_songs.rb,Playlist Management
+musicbox-api/db/migrate/20190927232709_rename_songs_users.rb,User Music Library
+musicbox-api/db/migrate/20190927233126_rename_room_playlist_songs.rb,Playlist Management
+musicbox-api/db/migrate/20190927234716_rename_user_library_songs.rb,User Music Library
+musicbox-api/db/migrate/20190928195833_update_room.rb,Room Management
+musicbox-api/db/migrate/20190929003240_add_foreign_key_constraint_to_active_storage_attachments_for_blob_id.active_storage.rb,Background Job Processing
+musicbox-api/db/migrate/20191231013211_update_room_for_user.rb,Room Management
+musicbox-api/db/migrate/20191231014000_create_teams.rb,Team Collaboration
+musicbox-api/db/migrate/20191231014524_add_team_to_room.rb,Team Collaboration
+musicbox-api/db/migrate/20191231015122_create_teams_users.rb,Team Collaboration
+musicbox-api/db/migrate/20191231020447_add_active_team_to_users.rb,Team Collaboration
+musicbox-api/db/migrate/20191231155941_create_invitations.rb,User Invitation System
+musicbox-api/db/migrate/20200102170036_add_state_to_invitation.rb,User Invitation System
+musicbox-api/db/migrate/20200125023143_create_messages.rb,Message & Chat System
+musicbox-api/db/migrate/20200205052424_add_playing_until_to_room.rb,Real-time Music Playback
+musicbox-api/db/migrate/20200205061306_add_waiting_songs_to_room.rb,Queue Management
+musicbox-api/db/migrate/20200209060935_add_invited_user_name_to_invitation.rb,User Invitation System
+musicbox-api/db/migrate/20200223055015_add_queue_processing_to_room.rb,Queue Management
+musicbox-api/db/migrate/20200226234544_enable_pgtrgm_extension.rb,Search Functionality
+musicbox-api/db/migrate/20200226234654_add_gin_index_to_song_name.rb,Search Functionality
+musicbox-api/db/migrate/20200304014052_create_tags_table.rb,Music Tagging
+musicbox-api/db/migrate/20200304014747_create_tags_songs.rb,Music Tagging
+musicbox-api/db/migrate/20200305230807_add_pinned_to_messages.rb,Message & Chat System
+musicbox-api/db/migrate/20200307232816_add_song_id_to_message.rb,Message & Chat System
+musicbox-api/db/migrate/20200318014102_create_listens_table.rb,Music Listening History
+musicbox-api/db/migrate/20200401223702_add_unique_tags_songs_index.rb,Music Tagging
+musicbox-api/db/migrate/20200407040051_add_played_at_index_to_room_playlist_records.rb,Playlist Management
+musicbox-api/db/migrate/20200415022511_add_youtube_details_to_songs.rb,YouTube Integration
+musicbox-api/db/migrate/20200423152618_remove_remember_at_from_user.rb,User Authentication & Management
+musicbox-api/db/migrate/20200424153153_add_source_data_to_user_library_records.rb,User Music Library
+musicbox-api/db/migrate/20200513033849_rename_user_library_records.rb,User Music Library
+musicbox-api/db/migrate/20200513040509_allow_library_record_to_associate_to_tags.rb,Music Tagging
+musicbox-api/db/migrate/20200515034314_add_library_record_indexes.rb,User Music Library
+musicbox-api/db/migrate/20200603024043_add_unique_constraint_on_record_listens.rb,Music Listening History
+musicbox-api/db/schema.rb,Background Job Processing
+musicbox-api/db/seeds.rb,Background Job Processing
+musicbox-api/nginx.conf.erb,Background Job Processing
+musicbox-api/spec/factories/library_record.rb,User Music Library
+musicbox-api/spec/factories/message.rb,Message & Chat System
+musicbox-api/spec/factories/room.rb,Room Management
+musicbox-api/spec/factories/room_playlist_record.rb,Playlist Management
+musicbox-api/spec/factories/song.rb,Song Library
+musicbox-api/spec/factories/tag.rb,Music Tagging
+musicbox-api/spec/factories/team.rb,Team Collaboration
+musicbox-api/spec/factories/users.rb,User Authentication & Management
+musicbox-api/spec/integration/requests_spec.rb,GraphQL API
+musicbox-api/spec/lib/room_playlist_generator_spec.rb,Playlist Management
+musicbox-api/spec/lib/room_queue_poller_spec.rb,Queue Management
+musicbox-api/spec/models/invitation_spec.rb,User Invitation System
+musicbox-api/spec/models/library_record_spec.rb,User Music Library
+musicbox-api/spec/models/message_spec.rb,Message & Chat System
+musicbox-api/spec/models/record_listen_spec.rb,Music Listening History
+musicbox-api/spec/models/room_playlist_record_spec.rb,Playlist Management
+musicbox-api/spec/models/room_spec.rb,Room Management
+musicbox-api/spec/models/song_spec.rb,Song Library
+musicbox-api/spec/models/tag_spec.rb,Music Tagging
+musicbox-api/spec/models/team_spec.rb,Team Collaboration
+musicbox-api/spec/models/user_spec.rb,User Authentication & Management
+musicbox-api/spec/mutations/invitation_accept_spec.rb,User Invitation System
+musicbox-api/spec/mutations/invitation_create_spec.rb,User Invitation System
+musicbox-api/spec/mutations/library_record_delete_spec.rb,User Music Library
+musicbox-api/spec/mutations/message_create_spec.rb,Message & Chat System
+musicbox-api/spec/mutations/message_pin_spec.rb,Message & Chat System
+musicbox-api/spec/mutations/password_reset_complete_spec.rb,Password Reset System
+musicbox-api/spec/mutations/password_reset_initiate_spec.rb,Password Reset System
+musicbox-api/spec/mutations/recommendation_accept_spec.rb,Music Recommendation
+musicbox-api/spec/mutations/recommendation_create_spec.rb,Music Recommendation
+musicbox-api/spec/mutations/record_listen_create_spec.rb,Music Listening History
+musicbox-api/spec/mutations/room_activate_spec.rb,Room Management
+musicbox-api/spec/mutations/room_create_spec.rb,Room Management
+musicbox-api/spec/mutations/room_playlist_record_abandon_spec.rb,Playlist Management
+musicbox-api/spec/mutations/room_playlist_record_delete_spec.rb,Playlist Management
+musicbox-api/spec/mutations/room_playlist_records_add_spec.rb,Playlist Management
+musicbox-api/spec/mutations/room_playlist_records_reorder_spec.rb,Playlist Management
+musicbox-api/spec/mutations/song_create_spec.rb,Song Library
+musicbox-api/spec/mutations/tag_create_spec.rb,Music Tagging
+musicbox-api/spec/mutations/tag_toggle_spec.rb,Music Tagging
+musicbox-api/spec/mutations/team_activate_spec.rb,Team Collaboration
+musicbox-api/spec/mutations/team_create_spec.rb,Team Collaboration
+musicbox-api/spec/mutations/user_password_update_spec.rb,User Authentication & Management
+musicbox-api/spec/mutations/user_update_spec.rb,User Authentication & Management
+musicbox-api/spec/queries/invitation_spec.rb,User Invitation System
+musicbox-api/spec/queries/library_records_spec.rb,User Music Library
+musicbox-api/spec/queries/messages_spec.rb,Message & Chat System
+musicbox-api/spec/queries/pinned_messages_spec.rb,Message & Chat System
+musicbox-api/spec/queries/recommendations_spec.rb,Music Recommendation
+musicbox-api/spec/queries/record_listens_spec.rb,Music Listening History
+musicbox-api/spec/queries/room_playlist_spec.rb,Playlist Management
+musicbox-api/spec/queries/room_spec.rb,Room Management
+musicbox-api/spec/queries/rooms_spec.rb,Room Management
+musicbox-api/spec/queries/search_spec.rb,Search Functionality
+musicbox-api/spec/queries/user_spec.rb,User Authentication & Management
+musicbox-api/spec/rails_helper.rb,Background Job Processing
+musicbox-api/spec/spec_helper.rb,Background Job Processing
+musicbox-api/spec/support/auth_helper.rb,User Authentication & Management
+musicbox-api/spec/support/graphql_helper.rb,GraphQL API
+musicbox-api/spec/support/json_helper.rb,GraphQL API
+musicbox-api/spec/workers/broadcast_message_worker_spec.rb,Message & Chat System
+musicbox-api/spec/workers/broadcast_now_playing_worker_spec.rb,Real-time Music Playback
+musicbox-api/spec/workers/broadcast_pinned_messages_worker_spec.rb,Message & Chat System
+musicbox-api/spec/workers/broadcast_playlist_worker_spec.rb,Playlist Management
+musicbox-api/spec/workers/broadcast_record_listens_worker_spec.rb,Music Listening History
+musicbox-api/spec/workers/broadcast_users_worker_spec.rb,User Authentication & Management
+musicbox-api/spec/workers/email_invitation_worker_spec.rb,User Invitation System
+musicbox-api/spec/workers/email_password_reset_worker_spec.rb,Password Reset System
+musicbox-api/spec/workers/email_worker_shared_examples.rb,Background Job Processing
+musicbox-api/spec/workers/queue_management_worker_spec.rb,Queue Management

@@ -11,7 +11,7 @@ module Mutations
 
     argument :invitation, InvitationAcceptInputObject, required: true
     field :access_token, ID, null: true
-    field :errors, [String], null: true
+    field :errors, [ String ], null: true
 
     def ready?(**_args)
       true
@@ -19,10 +19,10 @@ module Mutations
 
     def resolve(invitation:)
       invite = Invitation.find_by(email: invitation[:email], token: invitation[:token])
-      return { errors: ["Invalid invitation"] } if invite.blank?
+      return { errors: [ "Invalid invitation" ] } if invite.blank?
 
-      invited_user = ensure_invited_user!(invitation)
-      return { errors: ["Unable to authenticate user"] } if invited_user.blank?
+      invited_user = ensure_invited_user!(**invitation.to_h)
+      return { errors: [ "Unable to authenticate user" ] } if invited_user.blank?
 
       finalize_invitation!(invite, invited_user)
 
@@ -37,7 +37,8 @@ module Mutations
     def ensure_invited_user!(email:, password:, name: nil, **_kwargs)
       user = User.find_for_database_authentication(email: email)
       return create_user!(email: email, password: password, name: name) if user.blank?
-      return user if user.valid_for_authentication? { user.valid_password?(password) }
+
+      user if user.valid_for_authentication? { user.valid_password?(password) }
     end
 
     def create_user!(email:, password:, name:)

@@ -13,8 +13,8 @@ module Types
     field :name, String, null: true
     field :thumbnail_url, String, null: true
     field :youtube_id, ID, null: false
-    field :youtube_tags, [String], null: false
+    field :youtube_tags, [ String ], null: false
 
-    field :library_records, [Types::LibraryRecordType], null: false
+    field :library_records, [ Types::LibraryRecordType ], null: false
   end
 end

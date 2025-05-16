@@ -44,7 +44,7 @@ RSpec.describe "Songs Query", type: :request do
     graphql_request(query: query, user: user)
 
     library_record_ids = json_body.dig(:data, :libraryRecords).map { |r| r[:id] }
-    expect(library_record_ids).to match_array([r1.id, r2.id])
+    expect(library_record_ids).to contain_exactly(r1.id, r2.id)
   end
 
   it "excludes library_records that are pending recommendations" do
@@ -53,7 +53,7 @@ RSpec.describe "Songs Query", type: :request do
 
     graphql_request(query: query, user: user)
     library_record_ids = json_body.dig(:data, :libraryRecords).map { |r| r[:id] }
-    expect(library_record_ids).to match_array([r2.id])
+    expect(library_record_ids).to contain_exactly(r2.id)
   end
 
   it "retrieves all of a user's library_records when search is empty" do
@@ -61,11 +61,11 @@ RSpec.describe "Songs Query", type: :request do
     r2 = create(:library_record, user: user)
     create(:library_record, user: other_user)
 
-    [nil, ""].each do |term|
+    [ nil, "" ].each do |term|
       graphql_request(query: query, user: user, variables: { query: term })
 
       library_record_ids = json_body.dig(:data, :libraryRecords).map { |s| s[:id] }
-      expect(library_record_ids).to match_array([r1.id, r2.id])
+      expect(library_record_ids).to contain_exactly(r1.id, r2.id)
     end
   end
 
@@ -84,7 +84,7 @@ RSpec.describe "Songs Query", type: :request do
       graphql_request(query: query, user: user, variables: { query: term })
 
       library_record_ids = json_body.dig(:data, :libraryRecords).map { |r| r[:id] }
-      expect(library_record_ids).to match_array([r1.id, r2.id, r3.id])
+      expect(library_record_ids).to contain_exactly(r1.id, r2.id, r3.id)
     end
   end
 
@@ -92,22 +92,22 @@ RSpec.describe "Songs Query", type: :request do
     tag1 = create(:tag, user: user)
     tag2 = create(:tag, user: user)
 
-    r1 = create(:library_record, user: user, tags: [tag1])
-    r2 = create(:library_record, user: user, tags: [tag2])
-    r3 = create(:library_record, user: user, tags: [tag1, tag2])
+    r1 = create(:library_record, user: user, tags: [ tag1 ])
+    r2 = create(:library_record, user: user, tags: [ tag2 ])
+    r3 = create(:library_record, user: user, tags: [ tag1, tag2 ])
     create(:library_record, user: user, tags: [])
 
-    graphql_request(query: query, user: user, variables: { tagIds: [tag1.id] })
+    graphql_request(query: query, user: user, variables: { tagIds: [ tag1.id ] })
     library_record_ids = json_body.dig(:data, :libraryRecords).map { |s| s[:id] }
-    expect(library_record_ids).to match_array([r1.id, r3.id])
+    expect(library_record_ids).to contain_exactly(r1.id, r3.id)
 
-    graphql_request(query: query, user: user, variables: { tagIds: [tag2.id] })
+    graphql_request(query: query, user: user, variables: { tagIds: [ tag2.id ] })
     library_record_ids = json_body.dig(:data, :libraryRecords).map { |s| s[:id] }
-    expect(library_record_ids).to match_array([r2.id, r3.id])
+    expect(library_record_ids).to contain_exactly(r2.id, r3.id)
 
-    graphql_request(query: query, user: user, variables: { tagIds: [tag1.id, tag2.id] })
+    graphql_request(query: query, user: user, variables: { tagIds: [ tag1.id, tag2.id ] })
     library_record_ids = json_body.dig(:data, :libraryRecords).map { |s| s[:id] }
-    expect(library_record_ids).to match_array([r1.id, r2.id, r3.id])
+    expect(library_record_ids).to contain_exactly(r1.id, r2.id, r3.id)
   end
 
   it "retrieves only matching library_records by name and tag" do
@@ -118,13 +118,13 @@ RSpec.describe "Songs Query", type: :request do
     s2 = create(:song, name: "blingflong")
     s3 = create(:song, name: "blooperdoooper")
 
-    create(:library_record, song: s1, user: user, tags: [tag1])
-    r2 = create(:library_record, song: s2, user: user, tags: [tag2])
-    create(:library_record, song: s3, user: user, tags: [tag2])
+    create(:library_record, song: s1, user: user, tags: [ tag1 ])
+    r2 = create(:library_record, song: s2, user: user, tags: [ tag2 ])
+    create(:library_record, song: s3, user: user, tags: [ tag2 ])
 
-    graphql_request(query: query, user: user, variables: { query: "ing", tagIds: [tag2.id] })
+    graphql_request(query: query, user: user, variables: { query: "ing", tagIds: [ tag2.id ] })
     library_record_ids = json_body.dig(:data, :libraryRecords).map { |s| s[:id] }
-    expect(library_record_ids).to match_array([r2.id])
+    expect(library_record_ids).to contain_exactly(r2.id)
   end
 
   describe "when retrieving associated tags" do
@@ -134,13 +134,13 @@ RSpec.describe "Songs Query", type: :request do
       tag1 = create(:tag, user: user)
       tag2 = create(:tag, user: other_user)
 
-      create(:library_record, song: song, user: user, tags: [tag1])
-      create(:library_record, song: song, user: other_user, tags: [tag2])
+      create(:library_record, song: song, user: user, tags: [ tag1 ])
+      create(:library_record, song: song, user: other_user, tags: [ tag2 ])
       graphql_request(query: query, user: user)
 
       expect(json_body.dig(:data, :libraryRecords).size).to eq(1)
       tag_ids = json_body.dig(:data, :libraryRecords, 0, :tags).map { |t| t[:id] }
-      expect(tag_ids).to match_array([tag1.id])
+      expect(tag_ids).to contain_exactly(tag1.id)
     end
   end
 
@@ -153,8 +153,8 @@ RSpec.describe "Songs Query", type: :request do
     graphql_request(query: query, user: user)
     records = json_body.dig(:data, :libraryRecords)
 
-    expect(records.map { |r| r[:id] }).to match_array([record1.id, record2.id])
-    expect(records.map { |r| r.dig(:user, :id) }).to match_array([user.id, user.id])
+    expect(records.map { |r| r[:id] }).to contain_exactly(record1.id, record2.id)
+    expect(records.map { |r| r.dig(:user, :id) }).to contain_exactly(user.id, user.id)
   end
 
   describe "ordering" do
@@ -168,25 +168,25 @@ RSpec.describe "Songs Query", type: :request do
     it "returns library records in creation order by default" do
       graphql_request(query: query, user: user)
       library_record_ids = json_body.dig(:data, :libraryRecords).map { |r| r[:id] }
-      expect(library_record_ids).to eq([record3.id, record2.id, record1.id])
+      expect(library_record_ids).to eq([ record3.id, record2.id, record1.id ])
     end
 
     it "returns library records in reverse creation order" do
       graphql_request(query: query, user: user, variables: { order: { field: "createdAt", direction: "desc" } })
       library_record_ids = json_body.dig(:data, :libraryRecords).map { |r| r[:id] }
-      expect(library_record_ids).to eq([record1.id, record2.id, record3.id])
+      expect(library_record_ids).to eq([ record1.id, record2.id, record3.id ])
     end
 
     it "returns library recoreds in name order" do
       graphql_request(query: query, user: user, variables: { order: { field: "song.name", direction: "asc" } })
       library_record_ids = json_body.dig(:data, :libraryRecords).map { |r| r[:id] }
-      expect(library_record_ids).to eq([record2.id, record3.id, record1.id])
+      expect(library_record_ids).to eq([ record2.id, record3.id, record1.id ])
     end
 
     it "returns library records in reverse name order" do
       graphql_request(query: query, user: user, variables: { order: { field: "song.name", direction: "desc" } })
       library_record_ids = json_body.dig(:data, :libraryRecords).map { |r| r[:id] }
-      expect(library_record_ids).to eq([record1.id, record3.id, record2.id])
+      expect(library_record_ids).to eq([ record1.id, record3.id, record2.id ])
     end
 
     it "returns an empty array when field is invalid" do

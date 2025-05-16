@@ -5,7 +5,7 @@ module Mutations
     argument :name, String, required: true
 
     field :tag, Types::TagType, null: true
-    field :errors, [String], null: true
+    field :errors, [ String ], null: true
 
     def resolve(name:)
       tag = Tag.new(

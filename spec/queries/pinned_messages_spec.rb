@@ -51,6 +51,6 @@ RSpec.describe "Messages Query", type: :request do
     )
 
     message_ids = json_body.dig(:data, :pinnedMessages).map { |m| m[:id] }
-    expect(message_ids).to match_array([msg1.id, msg2.id])
+    expect(message_ids).to contain_exactly(msg1.id, msg2.id)
   end
 end

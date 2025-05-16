@@ -5,7 +5,7 @@ module Mutations
     argument :name, String, required: true
 
     field :room, Types::RoomType, null: true
-    field :errors, [String], null: true
+    field :errors, [ String ], null: true
 
     def resolve(name:)
       room = Room.new(

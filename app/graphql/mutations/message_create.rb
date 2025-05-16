@@ -5,13 +5,13 @@ module Mutations
     argument :message, String, required: true
 
     field :message, Types::MessageType, null: true
-    field :errors, [String], null: true
+    field :errors, [ String ], null: true
 
     def resolve(message:)
       unless current_user.active_room_id.present?
         return {
           message: nil,
-          errors: ["Must be in an active room"]
+          errors: [ "Must be in an active room" ]
         }
       end
 

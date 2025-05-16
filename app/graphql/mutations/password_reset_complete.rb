@@ -7,7 +7,7 @@ module Mutations
     argument :token, String, required: true
 
     field :access_token, ID, null: true
-    field :errors, [String], null: false
+    field :errors, [ String ], null: false
 
     def ready?(**_args)
       true
@@ -15,9 +15,9 @@ module Mutations
 
     def resolve(email:, password:, token:)
       user = ensure_user(email, token)
-      return { errors: ["Invalid token"] } if user.blank?
-      return { errors: ["Expired token"] } unless user.reset_password_period_valid?
-      return { errors: ["Invalid new password"] } unless user.reset_password(password, password)
+      return { errors: [ "Invalid token" ] } if user.blank?
+      return { errors: [ "Expired token" ] } unless user.reset_password_period_valid?
+      return { errors: [ "Invalid new password" ] } unless user.reset_password(password, password)
 
       {
         access_token: access_token_for(user.id),

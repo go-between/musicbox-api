@@ -25,7 +25,7 @@ RSpec.describe "Room Playlist Record Add", type: :request do
 
   describe "success" do
     it "adds records to the room playlist when none exist" do
-      graphql_request(query: query, user: current_user, variables: { ids: [song1.id, song2.id] })
+      graphql_request(query: query, user: current_user, variables: { ids: [ song1.id, song2.id ] })
 
       record1 = RoomPlaylistRecord.find_by(user: current_user, room: room, song: song1)
       expect(record1.order).to eq(0)
@@ -39,7 +39,7 @@ RSpec.describe "Room Playlist Record Add", type: :request do
       create(:room_playlist_record, order: 1, room: room, user: current_user)
       create(:room_playlist_record, order: 2, room: room, user: current_user)
 
-      graphql_request(query: query, user: current_user, variables: { ids: [song1.id, song2.id] })
+      graphql_request(query: query, user: current_user, variables: { ids: [ song1.id, song2.id ] })
 
       record1 = RoomPlaylistRecord.find_by(user: current_user, room: room, song: song1)
       expect(record1.order).to eq(3)

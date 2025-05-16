@@ -1,7 +1,7 @@
-FROM ruby:2.6.5
+FROM ruby:3.4.4
 RUN apt-get update -qq && apt-get upgrade -qqy
 RUN apt-get -qqy install cmake
-RUN gem install bundler -v 2.0.2
+RUN gem install bundler -v 2.6.7
 RUN gem update --system
 
 ENV APP_HOME /app

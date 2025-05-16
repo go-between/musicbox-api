@@ -6,7 +6,7 @@ module Mutations
     argument :pin, Boolean, required: true
 
     field :message, Types::MessageType, null: true
-    field :errors, [String], null: true
+    field :errors, [ String ], null: true
 
     def resolve(message_id:, pin:)
       message = Message.find_by(user: current_user, id: message_id)
@@ -14,7 +14,7 @@ module Mutations
       unless message.present?
         return {
           message: nil,
-          errors: ["Message must belong to the current user"]
+          errors: [ "Message must belong to the current user" ]
         }
       end
 

@@ -21,7 +21,7 @@ RSpec.describe Tag, type: :model do
       tag.library_records << library_record1
       tag.library_records << library_record2
 
-      expect(tag.library_records).to match_array([library_record1, library_record2])
+      expect(tag.library_records).to contain_exactly(library_record1, library_record2)
     end
   end
 end

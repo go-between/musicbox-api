@@ -2,6 +2,7 @@
 
 class MusicboxUnwound
   attr_reader :ref_time, :team, :users, :invalid_songs
+
   def initialize(ref_time: Time.zone.now)
     @ref_time = ref_time
     @start = ref_time.beginning_of_year
@@ -31,7 +32,7 @@ class MusicboxUnwound
 
     top_25_songs = Song.where(id: top_25.keys).group_by(&:id)
     rows = top_25.map do |song_id, count|
-      [top_25_songs[song_id].first.name, count]
+      [ top_25_songs[song_id].first.name, count ]
     end
 
     puts Terminal::Table.new(title: "Most Played", headings: %w[Song Plays], rows: rows)
@@ -43,7 +44,7 @@ class MusicboxUnwound
 
     top_25_songs = Song.where(id: top_25.keys).group_by(&:id)
     rows = top_25.map do |song_id, count|
-      [top_25_songs[song_id].first.name, count]
+      [ top_25_songs[song_id].first.name, count ]
     end
 
     puts Terminal::Table.new(title: "#{user.name} Most Played", headings: %w[Song Plays], rows: rows)
@@ -54,7 +55,7 @@ class MusicboxUnwound
     user_group = users.group_by(&:id)
 
     rows = user_plays.map do |user_id, count|
-      [user_group[user_id].first.name, count]
+      [ user_group[user_id].first.name, count ]
     end
 
     puts Terminal::Table.new(title: "Plays by User", headings: %w[User Plays], rows: rows)
@@ -69,7 +70,7 @@ class MusicboxUnwound
 
       top_5_songs = Song.where(id: top_5.keys).group_by(&:id)
       rows = top_5.map do |song_id, count|
-        [top_5_songs[song_id].first.name, count]
+        [ top_5_songs[song_id].first.name, count ]
       end
 
       puts Terminal::Table.new(title: "Most Played - #{current_period.year}", headings: %w[Song Plays], rows: rows)
@@ -81,7 +82,7 @@ class MusicboxUnwound
     top_25 = record_listens_this_year.group(:song_id).order(count: :desc).sum(:approval).take(25).to_h
     top_25_songs = Song.where(id: top_25.keys).group_by(&:id)
     rows = top_25.map do |song_id, count|
-      [top_25_songs[song_id].first.name, count]
+      [ top_25_songs[song_id].first.name, count ]
     end
 
     puts Terminal::Table.new(title: "Most Approved", headings: %w[Song Approval], rows: rows)

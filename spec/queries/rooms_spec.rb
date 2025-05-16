@@ -25,7 +25,7 @@ RSpec.describe "Rooms Query", type: :request do
       other_team = create(:team)
       create(:room, team: other_team)
 
-      user = create(:user, teams: [team], active_team: team)
+      user = create(:user, teams: [ team ], active_team: team)
 
       graphql_request(
         query: query,
@@ -33,14 +33,14 @@ RSpec.describe "Rooms Query", type: :request do
       )
 
       room_ids = json_body.dig(:data, :rooms).map { |r| r[:id] }
-      expect(room_ids).to match_array([room.id, room2.id])
+      expect(room_ids).to contain_exactly(room.id, room2.id)
     end
 
     it "does not return rooms when user has no active team" do
       other_team = create(:team)
       create(:room, team: other_team)
 
-      user = create(:user, teams: [team], active_team: nil)
+      user = create(:user, teams: [ team ], active_team: nil)
 
       graphql_request(
         query: query,

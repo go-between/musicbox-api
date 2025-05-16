@@ -33,7 +33,7 @@ RSpec.describe "Room Query", type: :request do
 
   describe "query" do
     it "returns the details of the current user" do
-      user = create(:user, name: "flooper", teams: [team, other_team], active_room: room, active_team: team)
+      user = create(:user, name: "flooper", teams: [ team, other_team ], active_room: room, active_team: team)
 
       graphql_request(
         query: query,
@@ -46,7 +46,7 @@ RSpec.describe "Room Query", type: :request do
       expect(user_data[:name]).to eq(user.name)
       expect(user_data.dig(:activeRoom, :id)).to eq(room.id)
       expect(user_data.dig(:activeTeam, :id)).to eq(team.id)
-      expect(user_data[:teams].map { |t| t[:id] }).to match_array([team.id, other_team.id])
+      expect(user_data[:teams].map { |t| t[:id] }).to contain_exactly(team.id, other_team.id)
     end
   end
 end

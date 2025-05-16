@@ -19,7 +19,7 @@ RSpec.describe "Team Activate", type: :request do
   end
 
   let(:team) { create(:team) }
-  let(:current_user) { create(:user, teams: [team]) }
+  let(:current_user) { create(:user, teams: [ team ]) }
 
   describe "success" do
     it "updates the active team for the user" do

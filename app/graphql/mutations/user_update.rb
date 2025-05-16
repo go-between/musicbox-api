@@ -8,11 +8,11 @@ module Mutations
 
     argument :user, UserUpdateInputObject, required: true
     field :user, Types::UserType, null: true
-    field :errors, [String], null: false
+    field :errors, [ String ], null: false
 
     def resolve(user:)
       attrs = update_with(user)
-      return { errors: ["Must specify at least one attribute"] } if attrs.blank?
+      return { errors: [ "Must specify at least one attribute" ] } if attrs.blank?
 
       current_user.update!(attrs)
 

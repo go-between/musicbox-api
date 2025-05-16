@@ -39,7 +39,7 @@ RSpec.describe "Password Reset Complete", type: :request do
       )
 
       user.reload
-      expect(user.valid_password?("abigpassword!")).to eq(true)
+      expect(user.valid_password?("abigpassword!")).to be(true)
       expect(user.reset_password_token).to be_blank
 
       token = Doorkeeper::AccessToken.find_by(token: json_body.dig(:data, :passwordResetComplete, :accessToken))
@@ -65,7 +65,7 @@ RSpec.describe "Password Reset Complete", type: :request do
       )
 
       user.reload
-      expect(user.valid_password?("somethingIForgot!!!")).to eq(true)
+      expect(user.valid_password?("somethingIForgot!!!")).to be(true)
       expect(user.reset_password_token).not_to be_blank
       expect(json_body.dig(:data, :passwordResetComplete, :errors)).to include("Invalid token")
     end
@@ -87,7 +87,7 @@ RSpec.describe "Password Reset Complete", type: :request do
       )
 
       user.reload
-      expect(user.valid_password?("somethingIForgot!!!")).to eq(true)
+      expect(user.valid_password?("somethingIForgot!!!")).to be(true)
       expect(user.reset_password_token).not_to be_blank
       expect(json_body.dig(:data, :passwordResetComplete, :errors)).to include("Invalid token")
     end
@@ -112,7 +112,7 @@ RSpec.describe "Password Reset Complete", type: :request do
       )
 
       user.reload
-      expect(user.valid_password?("somethingIForgot!!!")).to eq(true)
+      expect(user.valid_password?("somethingIForgot!!!")).to be(true)
       expect(user.reset_password_token).not_to be_blank
       expect(json_body.dig(:data, :passwordResetComplete, :errors)).to include("Expired token")
     end
@@ -134,7 +134,7 @@ RSpec.describe "Password Reset Complete", type: :request do
       )
 
       user.reload
-      expect(user.valid_password?("somethingIForgot!!!")).to eq(true)
+      expect(user.valid_password?("somethingIForgot!!!")).to be(true)
       expect(user.reset_password_token).not_to be_blank
       expect(json_body.dig(:data, :passwordResetComplete, :errors)).to include("Invalid new password")
     end

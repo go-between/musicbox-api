@@ -39,7 +39,7 @@ RSpec.describe "Tag Create", type: :request do
       )
       data = json_body.dig(:data, :tagCreate, :tag)
 
-      expect(Tag.exists?(id: data[:id])).to eq(true)
+      expect(Tag.exists?(id: data[:id])).to be(true)
       expect(data[:name]).to eq("Jam City")
       expect(data.dig(:user, :id)).to eq(current_user.id)
       expect(data[:libraryRecords]).to be_empty
@@ -59,7 +59,7 @@ RSpec.describe "Tag Create", type: :request do
       data = json_body.dig(:data, :tagCreate)
 
       expect(data[:tag]).to be_nil
-      expect(data[:errors]).to match_array([include("Name can't be blank")])
+      expect(data[:errors]).to contain_exactly(include("Name can't be blank"))
     end
   end
 end

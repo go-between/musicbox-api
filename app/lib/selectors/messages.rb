@@ -3,6 +3,7 @@
 module Selectors
   class Messages
     attr_reader :arel, :current_user, :to, :from, :lookahead
+
     def initialize(lookahead:)
       @arel = Message.arel_table
       @messages = record_context(lookahead)

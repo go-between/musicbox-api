@@ -8,7 +8,7 @@ RSpec.describe "Room Activate", type: :request do
   include JsonHelper
 
   let(:team) { create(:team) }
-  let(:current_user) { create(:user, teams: [team]) }
+  let(:current_user) { create(:user, teams: [ team ]) }
   let(:room) { create(:room, team: team) }
 
   describe "success" do

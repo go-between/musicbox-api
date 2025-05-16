@@ -19,7 +19,7 @@ RSpec.describe Team, type: :model do
       team.users << user1
       team.users << user2
 
-      expect(team.reload.users).to match_array([user1, user2])
+      expect(team.reload.users).to contain_exactly(user1, user2)
     end
 
     it "may have many rooms" do
@@ -27,7 +27,7 @@ RSpec.describe Team, type: :model do
       room1 = create(:room, team: team)
       room2 = create(:room, team: team)
 
-      expect(team.reload.rooms).to match_array([room1, room2])
+      expect(team.reload.rooms).to contain_exactly(room1, room2)
     end
   end
 end

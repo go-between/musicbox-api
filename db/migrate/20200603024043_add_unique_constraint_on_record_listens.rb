@@ -14,7 +14,7 @@ class AddUniqueConstraintOnRecordListens < ActiveRecord::Migration[6.0]
       to_remove.destroy_all
     end
 
-    add_index :record_listens, [:room_playlist_record_id, :song_id, :user_id], unique: true, name: :unique_record_listens
+    add_index :record_listens, [ :room_playlist_record_id, :song_id, :user_id ], unique: true, name: :unique_record_listens
   end
 
   def down

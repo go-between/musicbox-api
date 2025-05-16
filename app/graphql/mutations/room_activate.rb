@@ -5,14 +5,14 @@ module Mutations
     argument :room_id, ID, required: true
 
     field :room, Types::RoomType, null: true
-    field :errors, [String], null: true
+    field :errors, [ String ], null: true
 
     def resolve(room_id:)
       room = Room.find_by(id: room_id, team: context[:current_user].teams)
       if room.blank?
         return {
           room: nil,
-          errors: ["Room #{room_id} does not exist"]
+          errors: [ "Room #{room_id} does not exist" ]
         }
       end
 

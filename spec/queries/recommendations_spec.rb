@@ -113,6 +113,6 @@ RSpec.describe "Recommendations Query", type: :request do
     recommended_user_ids = json_body.dig(:data, :recommendations).map do |r|
       r.dig(:user, :id)
     end.compact
-    expect(recommended_user_ids).to match_array([recommended_user1.id, recommended_user2.id])
+    expect(recommended_user_ids).to contain_exactly(recommended_user1.id, recommended_user2.id)
   end
 end

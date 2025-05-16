@@ -16,9 +16,9 @@ RSpec.describe QueueManagementWorker, type: :worker do
       worker.perform(room.id)
 
       room.reload
-      expect(room.current_record).to eq(nil)
-      expect(room.playing_until).to eq(nil)
-      expect(room.waiting_songs).to eq(false)
+      expect(room.current_record).to be_nil
+      expect(room.playing_until).to be_nil
+      expect(room.waiting_songs).to be(false)
     end
 
     context "when its previous run processed the last song" do
@@ -40,7 +40,7 @@ RSpec.describe QueueManagementWorker, type: :worker do
 
   context "when queue has songs to play" do
     before do
-      room.update!(user_rotation: [user.id])
+      room.update!(user_rotation: [ user.id ])
     end
 
     let!(:record) do

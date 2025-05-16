@@ -6,7 +6,7 @@ class RoomPlaylistRecord < ApplicationRecord
   belongs_to :user
   has_many :record_listens
 
-  enum play_state: {
+  enum :play_state, {
     played: "played",
     waiting: "waiting"
   }

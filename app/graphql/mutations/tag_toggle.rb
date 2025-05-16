@@ -3,16 +3,16 @@
 module Mutations
   class TagToggle < Mutations::BaseMutation
     argument :tag_id, ID, required: true
-    argument :add_ids, [ID], required: true
-    argument :remove_ids, [ID], required: true
+    argument :add_ids, [ ID ], required: true
+    argument :remove_ids, [ ID ], required: true
 
     field :tag, Types::TagType, null: true
-    field :errors, [String], null: true
+    field :errors, [ String ], null: true
 
     def resolve(tag_id:, add_ids:, remove_ids:)
       tag = current_user.tags.find_by(id: tag_id)
 
-      return { errors: ["Tag must be present"] } if tag.blank?
+      return { errors: [ "Tag must be present" ] } if tag.blank?
 
       add_to_records!(tag_id, add_ids)
       remove_tag_from_songs!(tag_id, remove_ids)
