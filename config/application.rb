@@ -43,6 +43,9 @@ module MusicboxApi
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    # Use SQL structure dump to preserve PostgreSQL functions, triggers, etc.
+    config.active_record.schema_format = :sql
+
     # Allow requests from any host
     host_regexes = ENV.fetch("ALLOWED_HOSTS", "").split("&").map { |h| /#{h}/ }
 
