@@ -34,7 +34,7 @@ gem "graphql"
 gem "airbrake"
 gem "foreman"
 
-gem 'nokogiri', force_ruby_platform: true
+gem "nokogiri", force_ruby_platform: true
 
 gem "terminal-table"
 gem "ostruct"

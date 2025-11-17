@@ -1,8 +1,8 @@
 ---
-version: '3.4'
+version: "3.4"
 services:
   db:
-    image: postgres:11.5
+    image: postgres:15
     environment:
       POSTGRES_PASSWORD: postgrespassword
     ports: ["5432:5432"]
@@ -19,8 +19,8 @@ services:
       VIRTUAL_HOST: localhost
       VIRTUAL_PORT: 3000
     links:
-    - db
-    - redis
+      - db
+      - redis
     volumes: [".:/app"]
     ports: ["3000:3000"]
   redis:

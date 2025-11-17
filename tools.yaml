@@ -1,0 +1,19 @@
+sources:
+  musicbox:
+    kind: postgres
+    host: musicbox.cg69eq3max0q.us-east-1.rds.amazonaws.com
+    port: 5432
+    database: musicbox-api_staging
+    user: root
+    password: K4qW3hRxfdAboBqyLHxn!-toRc
+
+tools:
+  query-musicbox:
+    kind: postgres-sql
+    source: musicbox
+    description: Execute an arbitrary SQL query against the musicbox database
+    statement: "{{.sql}}"
+    templateParameters:
+      - name: sql
+        type: string
+        description: The SQL query to execute
