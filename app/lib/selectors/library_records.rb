@@ -6,12 +6,18 @@ module Selectors
 
     def initialize(lookahead:, user:)
       @user = user
+      @search_query = nil
 
       @arel = LibraryRecord.arel_table
       @library_records = record_context(lookahead)
     end
 
     def library_records(order: nil)
+      # If no explicit order but we have a search query, order by song search relevance
+      if order.blank? && @search_query.present?
+        return apply_song_search_order(@search_query)
+      end
+
       return @library_records.order(created_at: :asc) if order.blank?
       return [] unless %w[asc desc].include?(order[:direction])
 
@@ -43,7 +49,10 @@ module Selectors
     def with_query(query)
       return self if query.blank?
 
-      @library_records = @library_records.joins(:song).where(Song.arel_table[:name].matches("%#{query}%"))
+      @search_query = query
+      # Merge Song.search but strip ORDER BY to avoid DISTINCT conflicts
+      # We'll apply song ordering later in library_records()
+      @library_records = @library_records.joins(:song).merge(Song.search(query).reorder(""))
       self
     end
 
@@ -58,6 +67,32 @@ module Selectors
     end
 
     private
+
+    def apply_song_search_order(query)
+      # Apply the same 3-tier ordering logic as Song.search but at library_records level (after DISTINCT)
+      # Add ORDER BY expressions to SELECT to support DISTINCT
+      searchable_expr = "COALESCE(songs.name, '') || ' ' || COALESCE(songs.channel_title, '') || ' ' || COALESCE(immutable_array_to_string(songs.youtube_tags, ' '), '')"
+      fts_condition = Song.sanitize_sql_array([ "songs.text_search @@ plainto_tsquery(?)", query ])
+      fuzzy_condition = Song.sanitize_sql_array([ "(?) <% (#{searchable_expr})", query ])
+
+      tier_expr = "CASE " \
+                  "WHEN #{fts_condition} THEN 1 " \
+                  "WHEN #{fuzzy_condition} THEN 2 " \
+                  "ELSE 3 END"
+      relevance_expr = Song.sanitize_sql_array([
+        "CASE " +
+        "WHEN #{fts_condition} THEN ts_rank(songs.text_search, plainto_tsquery(?)) " +
+        "WHEN #{fuzzy_condition} THEN word_similarity(?, #{searchable_expr}) " +
+        "ELSE 0 END",
+        query, query
+      ])
+
+      @library_records
+        .select("library_records.*")
+        .select("#{tier_expr} as search_tier")
+        .select("#{relevance_expr} as search_relevance")
+        .order("search_tier ASC, search_relevance DESC")
+    end
 
     def order_by_field(field, direction)
       return [] unless LibraryRecord.column_names.include?(field)

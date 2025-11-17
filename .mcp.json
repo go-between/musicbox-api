@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "db-toolbox": {
+      "command": "toolbox",
+      "args": ["--stdio", "--tools-file", "tools.yaml"]
+    }
+  }
+}

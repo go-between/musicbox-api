@@ -71,7 +71,7 @@ RSpec.describe "Songs Query", type: :request do
 
   it "retrieves only matching library_records by name" do
     non_match = create(:song, name: "ballooba")
-    s1 = create(:song, name: "floopadoop")
+    s1 = create(:song, name: "loopmaster")
     s2 = create(:song, name: "LOOPABLARG")
     s3 = create(:song, name: "bling!!!LoOp")
 

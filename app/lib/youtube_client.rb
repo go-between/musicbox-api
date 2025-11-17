@@ -17,7 +17,11 @@ class YoutubeClient
       duration: ActiveSupport::Duration.parse(data.dig(:contentDetails, :duration)).to_f,
       title: data.dig(:snippet, :title),
       thumbnail_url: data.dig(:snippet, :thumbnails, :default, :url),
-      tags: data.dig(:snippet, :tags)
+      tags: data.dig(:snippet, :tags),
+      channel_title: data.dig(:snippet, :channelTitle),
+      channel_id: data.dig(:snippet, :channelId),
+      published_at: data.dig(:snippet, :publishedAt),
+      category_id: data.dig(:snippet, :categoryId)
     )
   end
 

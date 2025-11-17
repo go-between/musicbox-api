@@ -2,28 +2,35 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_03_024043) do
-
+ActiveRecord::Schema[8.0].define(version: 2025_11_17_093000) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
-  enable_extension "plpgsql"
+
+  # Custom functions required for generated columns
+  execute <<-SQL
+    CREATE OR REPLACE FUNCTION immutable_array_to_string(text[], text)
+    RETURNS text AS $$
+      SELECT array_to_string($1, $2);
+    $$ LANGUAGE SQL IMMUTABLE;
+  SQL
 
   create_table "invitations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "email"
     t.uuid "token"
     t.uuid "invited_by_id"
     t.uuid "team_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "invitation_state"
     t.string "name"
     t.index ["token"], name: "index_invitations_on_token"
@@ -47,8 +54,8 @@ ActiveRecord::Schema.define(version: 2020_06_03_024043) do
     t.uuid "room_playlist_record_id"
     t.uuid "room_id"
     t.uuid "user_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.boolean "pinned", default: false
     t.uuid "song_id"
     t.index ["created_at"], name: "index_messages_on_created_at"
@@ -99,8 +106,8 @@ ActiveRecord::Schema.define(version: 2020_06_03_024043) do
     t.uuid "song_id"
     t.uuid "user_id"
     t.integer "approval", default: 0, null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["room_playlist_record_id", "song_id", "user_id"], name: "unique_record_listens", unique: true
     t.index ["room_playlist_record_id"], name: "index_record_listens_on_room_playlist_record_id"
     t.index ["song_id"], name: "index_record_listens_on_song_id"
@@ -146,24 +153,33 @@ ActiveRecord::Schema.define(version: 2020_06_03_024043) do
     t.string "license"
     t.boolean "licensed", default: false
     t.string "youtube_tags", default: [], array: true
+    t.string "channel_title"
+    t.string "channel_id"
+    t.datetime "published_at", precision: nil
+    t.string "category_id"
+    t.virtual "text_search", type: :tsvector, as: "(((setweight(to_tsvector('english'::regconfig, (COALESCE(name, ''::character varying))::text), 'A'::\"char\") || setweight(to_tsvector('english'::regconfig, (COALESCE(channel_title, ''::character varying))::text), 'A'::\"char\")) || setweight(to_tsvector('english'::regconfig, COALESCE(immutable_array_to_string((youtube_tags)::text[], ' '::text), ''::text)), 'B'::\"char\")) || setweight(to_tsvector('english'::regconfig, (COALESCE(description, ''::character varying))::text), 'C'::\"char\"))", stored: true
+    t.index "((((((COALESCE(name, ''::character varying))::text || ' '::text) || (COALESCE(channel_title, ''::character varying))::text) || ' '::text) || COALESCE(immutable_array_to_string((youtube_tags)::text[], ' '::text), ''::text))) gist_trgm_ops (siglen='256')", name: "index_songs_on_searchable_content_trgm", using: :gist
+    t.index ["channel_id"], name: "index_songs_on_channel_id"
     t.index ["duration_in_seconds"], name: "index_songs_on_duration_in_seconds"
     t.index ["name"], name: "index_songs_on_name", opclass: :gin_trgm_ops, using: :gin
     t.index ["name"], name: "song_name_order_index"
+    t.index ["published_at"], name: "index_songs_on_published_at"
+    t.index ["text_search"], name: "index_songs_on_text_search", using: :gin
     t.index ["youtube_id"], name: "index_songs_on_youtube_id"
   end
 
   create_table "tags", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "user_id"
     t.string "name"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_tags_on_user_id"
   end
 
   create_table "tags_library_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "tag_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.uuid "library_record_id"
     t.index ["library_record_id"], name: "index_tags_library_records_on_library_record_id"
     t.index ["tag_id", "library_record_id"], name: "index_tags_library_records_on_tag_id_and_library_record_id", unique: true
@@ -173,15 +189,15 @@ ActiveRecord::Schema.define(version: 2020_06_03_024043) do
   create_table "teams", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.uuid "owner_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "teams_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "team_id"
     t.uuid "user_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["team_id"], name: "index_teams_users_on_team_id"
     t.index ["user_id"], name: "index_teams_users_on_user_id"
   end

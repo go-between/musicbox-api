@@ -1,0 +1,11 @@
+{
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "db-toolbox"
+  ],
+  "permissions": {
+    "allow": [
+      "mcp__db-toolbox__query-musicbox"
+    ]
+  }
+}
