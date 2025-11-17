@@ -45,7 +45,11 @@ module Mutations
         duration_in_seconds: video.duration,
         name: video.title,
         thumbnail_url: video.thumbnail_url,
-        youtube_tags: video.tags
+        youtube_tags: video.tags,
+        channel_title: video.channel_title,
+        channel_id: video.channel_id,
+        published_at: video.published_at,
+        category_id: video.category_id
       )
     end
   end
