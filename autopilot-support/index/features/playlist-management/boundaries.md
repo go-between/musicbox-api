@@ -1,0 +1,26 @@
+# Playlist Management — Boundaries
+
+## Extension points
+- **New ordering algorithms** — add them inside `app/lib/room_playlist_generator.rb` (or as a sibling class invoked from `Selectors::RoomPlaylistRecords#select` when `historical: false`). The contract is "given a Room and a relation of `RoomPlaylistRecord`, return an Array of records." The selector is the seam; the GraphQL query, the broadcast worker, and the channel payload all flow through it unchanged.
+- **New playlist record states** — extend the `play_state` enum on `RoomPlaylistRecord` rather than introducing parallel state columns. Existing readers branch on `played` vs `waiting`; a new state needs both a generator-side decision (does it appear in the upcoming view?) and a selector-side decision (does it appear in historical?). Update both at the same time.
+- **New mutation semantics** — follow the trio of conventions already established: (1) wrap multi-row writes in `room.with_lock`, (2) call `ensure_user_in_rotation!` when the action implies the user wants to participate, (3) enqueue `BroadcastPlaylistWorker.perform_async(room_id)` after commit. Skip step 3 only when the mutation triggers a queue advance (the queue worker will broadcast).
+- **New broadcast fields** — extend the GraphQL query inside `BroadcastPlaylistWorker#query` and the matching GraphQL type. Subscribers receive whatever the worker projects; do not introduce a second broadcast format.
+- **Historical query filters** — they belong in `Selectors::RoomPlaylistRecords#select` and ride the `played_at` index from `db/migrate/20200407040051_add_played_at_index_to_room_playlist_records.rb`. New filters that need a different index should add the index in the same migration as the selector change.
+
+## Do-not-build
+- **Do not bake queue advancement here.** Advancing `Room#current_record`, flipping `playing_until`, and clearing the `waiting_songs` flag belong to **queue-management**. This feature signals intent (e.g., `abandon` sets `playing_until` to 1 second ago) but never moves the queue itself.
+- **Do not bake playback timing here.** "What is playing right now," `now_playing` channel broadcasts, and clock-driven advancement live in **real-time-playback**. The `played_at` timestamp is written elsewhere; this feature's mutations never set it.
+- **Do not write `RecordListen` rows from playlist mutations.** Listens are a sibling join belonging to **listening-history**. `RoomPlaylistRecord has_many :record_listens` is exposed so the GraphQL type can read them, not so this feature can author them.
+- **Do not query `RoomPlaylistRecord` directly from another feature's GraphQL resolver.** Go through `Selectors::RoomPlaylistRecords` so the future/historical branch and lookahead-driven `includes` stay consistent. The selector is the public read API.
+- **Do not bypass `RoomPlaylistGenerator` for the upcoming view.** A DB-side ordering on `(user_id, order)` is not equivalent — the rotation interleave depends on `Room#current_record` and `Room#user_rotation`, both of which can change between calls.
+- **Do not add cross-user delete or reorder.** Every write path is scoped to `user: current_user`. The single-row delete returns a generic not-found rather than a permission error; do not invert this contract by exposing other users' records.
+- **Do not reintroduce the names "queue" or "room_queues" or "room_songs" for this table.** The three rename migrations document the historical journey to `room_playlist_records`; the word "queue" is now reserved for queue-management.
+
+## Where playlist-management ends
+- `Song` (and YouTube linkage) lives in **features/songs/**. This feature stores `song_id` and exposes the song via the GraphQL type but does not own the model. Song creation, metadata, and YouTube fetching are out of scope.
+- `Room`, `Room#user_rotation`, `Room#current_record`, `Room#waiting_songs`, `Room#playing_until` are owned by **features/rooms/**. This feature reads all of them and writes `waiting_songs` (to `true`) and `playing_until` (via abandon); deeper room lifecycle (creation, activation, ownership) is out of scope.
+- Queue advancement worker and poller live in **features/queue-management/**. The `abandon` mutation is the handoff point: it signals "advance now" via `playing_until = 1.second.ago` and lets the queue worker take it from there.
+- Playback broadcasting and the `NowPlayingChannel` belong to **features/real-time-playback/**. `RoomPlaylistChannel` (this feature's channel) carries the *upcoming* playlist; `NowPlayingChannel` carries the *currently playing* state. Two channels, two features.
+- `RecordListen` rows and the listen-broadcast plumbing live in **features/listening-history/**. The `record_listens` association on `RoomPlaylistRecord` is a read-only seam for this feature.
+- `LibraryRecord` (created as a side effect inside `RoomPlaylistRecordsAdd` via `LibraryRecord.find_or_create_by!`) is owned by **features/music-library/**. The cross-feature write is intentional — adding a song to a room implicitly adds it to the user's library — but the model and its other mutations are out of scope here.
+- `Doorkeeper`/`Devise` auth and `current_user` resolution belong to **features/user-authentication/**.
