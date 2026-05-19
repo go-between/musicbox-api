@@ -1,0 +1,606 @@
+{
+  "purpose": "Bootstrap a comprehensive index at autopilot-support/index/ for the musicbox-api Rails GraphQL API \u2014 manifest, 5 structure files, and 17 feature directories \u2014 modeled on the autopilot-reindex skill's conventions.",
+  "subject": ".",
+  "execution_mode": "subagent",
+  "prompt_file": "docs/work/bootstrap-index/prompt.md",
+  "steps": [
+    {
+      "id": 1,
+      "name": "Scaffold index + manifest skeleton",
+      "kind": "produce",
+      "description": "Create the autopilot-support/index/ directory tree and write a CLAUDE.md manifest skeleton. The manifest must list every file that subsequent steps will produce: 5 structure files (modules, data-model, resources, infrastructure, testing) and 17 feature directories (each with map.md, patterns.md, boundaries.md). Use placeholder one-liners for files that don't exist yet \u2014 later steps fill in the content; the integrate step will reconcile any drift. The manifest must also state the index rules verbatim from prompt.md (points to files, no line numbers, no code duplication, only non-obvious info, three-file feature convention). Create empty placeholder directories: autopilot-support/index/structures/ and autopilot-support/index/features/{user-authentication,user-invitations,password-reset,teams,rooms,playlist-management,queue-management,real-time-playback,messages,music-library,songs,listening-history,music-statistics,tagging,recommendations,search,youtube}/. Do NOT create the actual map.md/patterns.md/boundaries.md/structure files yet \u2014 only the manifest and directories.",
+      "files": [
+        "README.md",
+        "feature_classification.csv",
+        "Gemfile"
+      ],
+      "changes": [
+        "autopilot-support/index/CLAUDE.md"
+      ],
+      "deliverable": "autopilot-support/index/CLAUDE.md exists and lists all 5 planned structure files and 17 planned feature directories. All 17 feature directories exist under autopilot-support/index/features/. The structures/ directory exists.",
+      "verify": "Run: test -f autopilot-support/index/CLAUDE.md && test -d autopilot-support/index/structures && ls autopilot-support/index/features/ | wc -l (must report 17). Also grep CLAUDE.md for each of the 17 feature slugs and each of the 5 structure file names \u2014 all must be present.",
+      "output_file": "docs/work/bootstrap-index/outputs/1-scaffold.md",
+      "depends_on": [],
+      "done": true
+    },
+    {
+      "id": 2,
+      "name": "structures/modules.md",
+      "kind": "produce",
+      "description": "Document the module organization of the codebase. Cover: app/concerns (model + controller concerns), app/lib/ contents (musicbox_unwound, room_playlist_generator, room_queue_poller, youtube_client, selectors/, unwound), lib/tasks/, the selectors pattern used in app/lib/selectors/, the workers grouping by purpose (broadcast_* family, email_* family, queue_management). Identify groupings, naming conventions, and which modules are shared infrastructure vs feature-specific. Do not list every file \u2014 point to directories and describe the organizing principle.",
+      "files": [
+        "app/lib",
+        "app/concerns",
+        "app/models/concerns",
+        "app/controllers/concerns",
+        "app/workers",
+        "lib/tasks"
+      ],
+      "changes": [
+        "autopilot-support/index/structures/modules.md"
+      ],
+      "deliverable": "autopilot-support/index/structures/modules.md exists with sections covering: app/lib organization, concerns (model + controller), workers groupings, selectors pattern, lib/tasks. Each section points to file paths; no code is duplicated.",
+      "verify": "Run: test -s autopilot-support/index/structures/modules.md && grep -E '^#' autopilot-support/index/structures/modules.md | wc -l (must be >= 4 headings). Run grep -c '\\.rb' autopilot-support/index/structures/modules.md to confirm it points to specific files. Run: grep -E ':[0-9]+' autopilot-support/index/structures/modules.md must return nothing (no line numbers).",
+      "output_file": "docs/work/bootstrap-index/outputs/2-structures-modules.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 3,
+      "name": "structures/data-model.md",
+      "kind": "produce",
+      "description": "Document the data model. Read db/structure.sql (authoritative \u2014 replaces schema.rb per recent commit) and every file in app/models/. For each model, capture: relationships (has_many/belongs_to/etc), key columns and their meaning when non-obvious, validations or callbacks that have surprising side effects, indexes that imply hot query paths, any STI/polymorphic setups. Note enums and their values. Identify join tables (team_user, etc) and what they represent. Do not list every column \u2014 only the ones that matter to a reader trying to understand the data. Point to db/structure.sql for full schema; point to model files for behavior.",
+      "files": [
+        "db/structure.sql",
+        "app/models"
+      ],
+      "changes": [
+        "autopilot-support/index/structures/data-model.md"
+      ],
+      "deliverable": "autopilot-support/index/structures/data-model.md exists and covers every model in app/models/ (User, Team, TeamUser, Room, Song, LibraryRecord, RecordListen, RoomPlaylistRecord, Tag, TagLibraryRecord, Message, Invitation, and any others). Relationships and surprising fields are documented; full schema is referenced via db/structure.sql.",
+      "verify": "Run: test -s autopilot-support/index/structures/data-model.md. For each .rb file in app/models/ (excluding application_record.rb and concerns/), the model name must appear in data-model.md \u2014 verify with: for f in app/models/*.rb; do name=$(basename $f .rb | sed 's/_/ /g'); grep -qi \"$name\" autopilot-support/index/structures/data-model.md || echo \"MISSING: $name\"; done \u2014 must produce no MISSING lines. No line numbers (grep -E ':[0-9]+' must return nothing).",
+      "output_file": "docs/work/bootstrap-index/outputs/3-structures-data-model.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 4,
+      "name": "structures/resources.md",
+      "kind": "produce",
+      "description": "Document the API surface. The app is GraphQL-only (single REST endpoint at app/controllers/graphql_controller.rb plus Doorkeeper/Devise routes). Cover: every mutation in app/graphql/mutations/ grouped by domain, the query type in app/graphql/types/query_type.rb, base types and helpers in app/graphql/types/, ActionCable channels in app/channels/ (Message, NowPlaying, PinnedMessages, RecordListens, RoomPlaylist, Team, Users) and what each broadcasts/subscribes to. Document config/routes.rb in summary form. Note authorization patterns (e.g., current_user resolution, Doorkeeper for OAuth, anything else surprising).",
+      "files": [
+        "app/graphql",
+        "app/channels",
+        "app/controllers",
+        "config/routes.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/structures/resources.md"
+      ],
+      "deliverable": "autopilot-support/index/structures/resources.md exists, lists every mutation file, every channel, the query type, and routes. Authorization model is documented.",
+      "verify": "Run: test -s autopilot-support/index/structures/resources.md. Every mutation file basename (without .rb) must be referenced \u2014 for f in app/graphql/mutations/*.rb; do name=$(basename $f .rb); grep -q \"$name\" autopilot-support/index/structures/resources.md || echo \"MISSING: $name\"; done \u2014 must produce no output. Every channel must be referenced similarly. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/4-structures-resources.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 5,
+      "name": "structures/infrastructure.md",
+      "kind": "produce",
+      "description": "Document the runtime and operational infrastructure. Cover: Sidekiq (config/sidekiq.yml, app/workers/), ActionCable (config/cable.yml), Redis (used by both), PostgreSQL (config/database.yml), Devise + Doorkeeper auth setup (config/initializers/), Airbrake error tracking, YouTube client (app/lib/youtube_client.rb), Docker setup (Dockerfile, docker-compose.yml), Render deployment (render.yaml), nginx (nginx.conf.erb), Procfile (ProductionProcfile), passenger app server. Note clock.rb for scheduled jobs. Point to README.md and COSTS.md for operational details.",
+      "files": [
+        "config",
+        "Dockerfile",
+        "docker-compose.yml",
+        "render.yaml",
+        "ProductionProcfile",
+        "nginx.conf.erb",
+        "Gemfile",
+        "app/lib/youtube_client.rb",
+        "COSTS.md",
+        "README.md"
+      ],
+      "changes": [
+        "autopilot-support/index/structures/infrastructure.md"
+      ],
+      "deliverable": "autopilot-support/index/structures/infrastructure.md exists and covers Sidekiq, ActionCable, Redis, PostgreSQL, Devise+Doorkeeper, Airbrake, YouTube client, Docker, Render, Procfile, nginx, clock.rb.",
+      "verify": "Run: test -s autopilot-support/index/structures/infrastructure.md. Required terms must each appear at least once (case-insensitive): sidekiq, actioncable OR action cable OR cable, redis, postgres, devise, doorkeeper, airbrake, youtube, docker, render, nginx, procfile, clock. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/5-structures-infrastructure.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 6,
+      "name": "structures/testing.md",
+      "kind": "produce",
+      "description": "Document the test layout and conventions. Cover spec/ subdirectories (factories, integration, lib, models, mutations, queries, workers, support), rails_helper.rb and spec_helper.rb setup, the FactoryBot factories under spec/factories/, integration test patterns, the support/ directory's shared helpers. Note any non-obvious conventions (e.g., how authentication is stubbed in mutation specs, how channels are tested, how Sidekiq is configured for tests).",
+      "files": [
+        "spec/rails_helper.rb",
+        "spec/spec_helper.rb",
+        "spec/factories",
+        "spec/support",
+        "spec/integration",
+        "spec/mutations",
+        "spec/queries",
+        "spec/workers",
+        "spec/models",
+        "spec/lib"
+      ],
+      "changes": [
+        "autopilot-support/index/structures/testing.md"
+      ],
+      "deliverable": "autopilot-support/index/structures/testing.md exists and covers each spec/ subdirectory, the helper setup, and at least one non-obvious convention per major area.",
+      "verify": "Run: test -s autopilot-support/index/structures/testing.md. Required terms must each appear: rspec OR RSpec, factor OR FactoryBot, integration, mutation, support. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/6-structures-testing.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 7,
+      "name": "feature: user-authentication",
+      "kind": "produce",
+      "description": "Build the index entry for the 'User Authentication & Management' feature. Filter feature_classification.csv rows where Feature == 'User Authentication & Management' to get the file list. Read those files and produce three index files. map.md: list each file in the feature with a one-line description of its role. patterns.md: non-obvious conventions \u2014 how Devise integrates, OAuth via Doorkeeper, current_user resolution in GraphQL context, session vs token auth, channel authentication. boundaries.md: extension points (where to add a new auth method, new user field), do-not-build items, where user-auth ends and user-invitations or password-reset begin.",
+      "files": [
+        "feature_classification.csv",
+        "app/models/user.rb",
+        "app/graphql/mutations/user_password_update.rb",
+        "app/graphql/mutations/user_update.rb",
+        "app/channels/users_channel.rb",
+        "app/workers/broadcast_users_worker.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/features/user-authentication/map.md",
+        "autopilot-support/index/features/user-authentication/patterns.md",
+        "autopilot-support/index/features/user-authentication/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/user-authentication/, each non-empty, each with a top-level heading matching its purpose. map.md references every file the CSV labels with this feature.",
+      "verify": "All three files exist and are non-empty (test -s on each). map.md must reference every file from: awk -F',' '$2==\"User Authentication & Management\"' feature_classification.csv | cut -d',' -f1 \u2014 for each path, grep the basename in map.md; report any MISSING. No line numbers in any of the three files.",
+      "output_file": "docs/work/bootstrap-index/outputs/7-user-authentication.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 8,
+      "name": "feature: user-invitations",
+      "kind": "produce",
+      "description": "Build the index entry for the 'User Invitation System' feature. Filter feature_classification.csv where Feature == 'User Invitation System'. Produce map.md, patterns.md, boundaries.md following the same conventions as step 7. Patterns should cover invitation token generation, email delivery via worker, acceptance flow. Boundaries should note overlap with user-authentication and teams.",
+      "files": [
+        "feature_classification.csv",
+        "app/models/invitation.rb",
+        "app/graphql/mutations/invitation_accept.rb",
+        "app/graphql/mutations/invitation_create.rb",
+        "app/workers/email_invitation_worker.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/features/user-invitations/map.md",
+        "autopilot-support/index/features/user-invitations/patterns.md",
+        "autopilot-support/index/features/user-invitations/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/user-invitations/, non-empty. map.md references every CSV-listed file for this feature.",
+      "verify": "All three files non-empty. map.md cross-checks against: awk -F',' '$2==\"User Invitation System\"' feature_classification.csv | cut -d',' -f1 \u2014 every basename present. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/8-user-invitations.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 9,
+      "name": "feature: password-reset",
+      "kind": "produce",
+      "description": "Build the index entry for the 'Password Reset System' feature. Filter feature_classification.csv where Feature == 'Password Reset System'. Same conventions. Patterns cover token flow, email worker, expiration. Boundaries note overlap with user-authentication.",
+      "files": [
+        "feature_classification.csv",
+        "app/graphql/mutations/password_reset_complete.rb",
+        "app/graphql/mutations/password_reset_initiate.rb",
+        "app/workers/email_password_reset_worker.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/features/password-reset/map.md",
+        "autopilot-support/index/features/password-reset/patterns.md",
+        "autopilot-support/index/features/password-reset/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/password-reset/, non-empty. map.md references every CSV-listed file.",
+      "verify": "All three files non-empty. map.md cross-checks against awk filter on CSV. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/9-password-reset.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 10,
+      "name": "feature: teams",
+      "kind": "produce",
+      "description": "Build the index entry for the 'Team Collaboration' feature. Filter feature_classification.csv where Feature == 'Team Collaboration'. Patterns cover team lifecycle, team_user join, activation, broadcast worker. Boundaries note overlap with rooms, user-invitations.",
+      "files": [
+        "feature_classification.csv",
+        "app/models/team.rb",
+        "app/models/team_user.rb",
+        "app/graphql/mutations/team_activate.rb",
+        "app/graphql/mutations/team_create.rb",
+        "app/channels/team_channel.rb",
+        "app/workers/broadcast_team_worker.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/features/teams/map.md",
+        "autopilot-support/index/features/teams/patterns.md",
+        "autopilot-support/index/features/teams/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/teams/, non-empty. map.md covers every CSV-listed file.",
+      "verify": "All three non-empty. CSV cross-check. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/10-teams.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 11,
+      "name": "feature: rooms",
+      "kind": "produce",
+      "description": "Build the index entry for the 'Room Management' feature. Filter feature_classification.csv where Feature == 'Room Management'. Patterns cover room lifecycle, activation, ownership. Boundaries note where rooms hand off to playlist-management, queue-management, real-time-playback, messages.",
+      "files": [
+        "feature_classification.csv",
+        "app/models/room.rb",
+        "app/graphql/mutations/room_activate.rb",
+        "app/graphql/mutations/room_create.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/features/rooms/map.md",
+        "autopilot-support/index/features/rooms/patterns.md",
+        "autopilot-support/index/features/rooms/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/rooms/, non-empty. map.md covers every CSV-listed file.",
+      "verify": "All three non-empty. CSV cross-check. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/11-rooms.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 12,
+      "name": "feature: playlist-management",
+      "kind": "produce",
+      "description": "Build the index entry for the 'Playlist Management' feature. Filter feature_classification.csv where Feature == 'Playlist Management'. Patterns cover the room_playlist_record model, reorder/add/abandon operations, the room_playlist_generator and room_queue_poller in app/lib/. Boundaries note overlap with queue-management and real-time-playback.",
+      "files": [
+        "feature_classification.csv",
+        "app/models/room_playlist_record.rb",
+        "app/graphql/mutations/room_playlist_record_abandon.rb",
+        "app/graphql/mutations/room_playlist_record_delete.rb",
+        "app/graphql/mutations/room_playlist_records_add.rb",
+        "app/graphql/mutations/room_playlist_records_reorder.rb",
+        "app/lib/room_playlist_generator.rb",
+        "app/channels/room_playlist_channel.rb",
+        "app/workers/broadcast_playlist_worker.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/features/playlist-management/map.md",
+        "autopilot-support/index/features/playlist-management/patterns.md",
+        "autopilot-support/index/features/playlist-management/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/playlist-management/, non-empty. map.md covers every CSV-listed file.",
+      "verify": "All three non-empty. CSV cross-check. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/12-playlist-management.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 13,
+      "name": "feature: queue-management",
+      "kind": "produce",
+      "description": "Build the index entry for the 'Queue Management' feature. Filter feature_classification.csv where Feature == 'Queue Management'. Patterns cover queue_management_worker, room_queue_poller, how queue advances and interacts with playlist-management. Boundaries note overlap with playlist-management and real-time-playback.",
+      "files": [
+        "feature_classification.csv",
+        "app/workers/queue_management_worker.rb",
+        "app/lib/room_queue_poller.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/features/queue-management/map.md",
+        "autopilot-support/index/features/queue-management/patterns.md",
+        "autopilot-support/index/features/queue-management/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/queue-management/, non-empty. map.md covers every CSV-listed file.",
+      "verify": "All three non-empty. CSV cross-check. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/13-queue-management.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 14,
+      "name": "feature: real-time-playback",
+      "kind": "produce",
+      "description": "Build the index entry for the 'Real-time Music Playback' feature. Filter feature_classification.csv where Feature == 'Real-time Music Playback'. Patterns cover the now_playing channel + worker, how playback state is broadcast to clients, clock synchronization. Boundaries note overlap with playlist-management and queue-management.",
+      "files": [
+        "feature_classification.csv",
+        "app/channels/now_playing_channel.rb",
+        "app/workers/broadcast_now_playing_worker.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/features/real-time-playback/map.md",
+        "autopilot-support/index/features/real-time-playback/patterns.md",
+        "autopilot-support/index/features/real-time-playback/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/real-time-playback/, non-empty. map.md covers every CSV-listed file.",
+      "verify": "All three non-empty. CSV cross-check. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/14-real-time-playback.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 15,
+      "name": "feature: messages",
+      "kind": "produce",
+      "description": "Build the index entry for the 'Message & Chat System' feature. Filter feature_classification.csv where Feature == 'Message & Chat System'. Patterns cover the message model, pinning, pinned_messages channel, broadcast workers. Boundaries note that messages belong to rooms \u2014 point to rooms feature.",
+      "files": [
+        "feature_classification.csv",
+        "app/models/message.rb",
+        "app/graphql/mutations/message_create.rb",
+        "app/graphql/mutations/message_pin.rb",
+        "app/channels/message_channel.rb",
+        "app/channels/pinned_messages_channel.rb",
+        "app/workers/broadcast_message_worker.rb",
+        "app/workers/broadcast_pinned_messages_worker.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/features/messages/map.md",
+        "autopilot-support/index/features/messages/patterns.md",
+        "autopilot-support/index/features/messages/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/messages/, non-empty. map.md covers every CSV-listed file.",
+      "verify": "All three non-empty. CSV cross-check. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/15-messages.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 16,
+      "name": "feature: music-library",
+      "kind": "produce",
+      "description": "Build the index entry for the 'User Music Library' feature. Filter feature_classification.csv where Feature == 'User Music Library'. Patterns cover library_record (the user-song join), deletion, how a library is populated. Boundaries note overlap with songs, tagging, recommendations.",
+      "files": [
+        "feature_classification.csv",
+        "app/models/library_record.rb",
+        "app/graphql/mutations/library_record_delete.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/features/music-library/map.md",
+        "autopilot-support/index/features/music-library/patterns.md",
+        "autopilot-support/index/features/music-library/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/music-library/, non-empty. map.md covers every CSV-listed file.",
+      "verify": "All three non-empty. CSV cross-check. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/16-music-library.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 17,
+      "name": "feature: songs",
+      "kind": "produce",
+      "description": "Build the index entry for the 'Song Library' feature. Filter feature_classification.csv where Feature == 'Song Library'. Patterns cover song model, creation, YouTube linkage. Boundaries note overlap with music-library, youtube, search.",
+      "files": [
+        "feature_classification.csv",
+        "app/models/song.rb",
+        "app/graphql/mutations/song_create.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/features/songs/map.md",
+        "autopilot-support/index/features/songs/patterns.md",
+        "autopilot-support/index/features/songs/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/songs/, non-empty. map.md covers every CSV-listed file.",
+      "verify": "All three non-empty. CSV cross-check. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/17-songs.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 18,
+      "name": "feature: listening-history",
+      "kind": "produce",
+      "description": "Build the index entry for the 'Music Listening History' feature. Filter feature_classification.csv where Feature == 'Music Listening History'. Patterns cover record_listen creation, the channel + worker that broadcasts plays. Boundaries note overlap with music-statistics, recommendations.",
+      "files": [
+        "feature_classification.csv",
+        "app/models/record_listen.rb",
+        "app/graphql/mutations/record_listen_create.rb",
+        "app/channels/record_listens_channel.rb",
+        "app/workers/broadcast_record_listens_worker.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/features/listening-history/map.md",
+        "autopilot-support/index/features/listening-history/patterns.md",
+        "autopilot-support/index/features/listening-history/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/listening-history/, non-empty. map.md covers every CSV-listed file.",
+      "verify": "All three non-empty. CSV cross-check. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/18-listening-history.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 19,
+      "name": "feature: music-statistics",
+      "kind": "produce",
+      "description": "Build the index entry for the 'Music Statistics' feature. Filter feature_classification.csv where Feature == 'Music Statistics'. Patterns cover any aggregation/stat-computing code, selectors involved. Boundaries note overlap with listening-history.",
+      "files": [
+        "feature_classification.csv",
+        "app/lib/selectors"
+      ],
+      "changes": [
+        "autopilot-support/index/features/music-statistics/map.md",
+        "autopilot-support/index/features/music-statistics/patterns.md",
+        "autopilot-support/index/features/music-statistics/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/music-statistics/, non-empty. map.md covers every CSV-listed file.",
+      "verify": "All three non-empty. CSV cross-check. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/19-music-statistics.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 20,
+      "name": "feature: tagging",
+      "kind": "produce",
+      "description": "Build the index entry for the 'Music Tagging' feature. Filter feature_classification.csv where Feature == 'Music Tagging'. Patterns cover tag model, tag_library_record join, toggle vs create flows. Boundaries note overlap with music-library and search.",
+      "files": [
+        "feature_classification.csv",
+        "app/models/tag.rb",
+        "app/models/tag_library_record.rb",
+        "app/graphql/mutations/tag_create.rb",
+        "app/graphql/mutations/tag_toggle.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/features/tagging/map.md",
+        "autopilot-support/index/features/tagging/patterns.md",
+        "autopilot-support/index/features/tagging/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/tagging/, non-empty. map.md covers every CSV-listed file.",
+      "verify": "All three non-empty. CSV cross-check. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/20-tagging.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 21,
+      "name": "feature: recommendations",
+      "kind": "produce",
+      "description": "Build the index entry for the 'Music Recommendation' feature. Filter feature_classification.csv where Feature == 'Music Recommendation'. Patterns cover recommendation_create and recommendation_accept flow, how recommendations interact with music-library. Boundaries note overlap with music-library, songs.",
+      "files": [
+        "feature_classification.csv",
+        "app/graphql/mutations/recommendation_accept.rb",
+        "app/graphql/mutations/recommendation_create.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/features/recommendations/map.md",
+        "autopilot-support/index/features/recommendations/patterns.md",
+        "autopilot-support/index/features/recommendations/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/recommendations/, non-empty. map.md covers every CSV-listed file.",
+      "verify": "All three non-empty. CSV cross-check. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/21-recommendations.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 22,
+      "name": "feature: search",
+      "kind": "produce",
+      "description": "Build the index entry for the 'Search Functionality' feature. Filter feature_classification.csv where Feature == 'Search Functionality'. Patterns cover search_result_type, how queries are routed, any indexing or scoring. Boundaries note overlap with songs, tagging.",
+      "files": [
+        "feature_classification.csv",
+        "app/graphql/types/search_result_type.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/features/search/map.md",
+        "autopilot-support/index/features/search/patterns.md",
+        "autopilot-support/index/features/search/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/search/, non-empty. map.md covers every CSV-listed file.",
+      "verify": "All three non-empty. CSV cross-check. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/22-search.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 23,
+      "name": "feature: youtube",
+      "kind": "produce",
+      "description": "Build the index entry for the 'YouTube Integration' feature. Filter feature_classification.csv where Feature == 'YouTube Integration'. Patterns cover the youtube_client in app/lib, how song metadata is fetched, rate limiting / error handling. Boundaries note overlap with songs.",
+      "files": [
+        "feature_classification.csv",
+        "app/lib/youtube_client.rb"
+      ],
+      "changes": [
+        "autopilot-support/index/features/youtube/map.md",
+        "autopilot-support/index/features/youtube/patterns.md",
+        "autopilot-support/index/features/youtube/boundaries.md"
+      ],
+      "deliverable": "All three files exist under features/youtube/, non-empty. map.md covers every CSV-listed file.",
+      "verify": "All three non-empty. CSV cross-check. No line numbers.",
+      "output_file": "docs/work/bootstrap-index/outputs/23-youtube.md",
+      "depends_on": [
+        1
+      ],
+      "done": true
+    },
+    {
+      "id": 24,
+      "name": "Integrate: finalize manifest + cross-ref check",
+      "kind": "integrate",
+      "description": "Update autopilot-support/index/CLAUDE.md so its file listing reflects what was actually produced by steps 2-23 (replace skeleton one-liners with one-line summaries derived from each file's top-level content). Then run cross-reference validation: (a) every file listed in CLAUDE.md must exist on disk; (b) no file in autopilot-support/index/ is unreferenced from CLAUDE.md; (c) no .md file under autopilot-support/index/ contains line-number references (matches the regex ':[0-9]+' in a path-like context); (d) no .md file pastes Ruby code blocks (matches '```ruby' or '```rb'). If any check fails, fix the offending files; the integrate step has write scope across the whole index.",
+      "files": [
+        "autopilot-support/index/CLAUDE.md",
+        "autopilot-support/index/structures",
+        "autopilot-support/index/features"
+      ],
+      "changes": [
+        "autopilot-support/index/CLAUDE.md",
+        "autopilot-support/index/**/*.md"
+      ],
+      "deliverable": "CLAUDE.md accurately lists every produced file with a one-line summary. All four cross-ref checks pass. The index is internally consistent.",
+      "verify": "Run all four checks and report results: (a) for f in $(grep -oE 'autopilot-support/index/[a-zA-Z0-9/_-]+\\.md' autopilot-support/index/CLAUDE.md | sort -u); do test -f $f || echo MISSING $f; done \u2014 no MISSING lines. (b) for f in $(find autopilot-support/index -name '*.md' ! -name CLAUDE.md); do grep -q \"$(basename $f)\" autopilot-support/index/CLAUDE.md || echo UNREFERENCED $f; done \u2014 no UNREFERENCED lines. (c) grep -rEn '\\.rb:[0-9]+|\\.sql:[0-9]+' autopilot-support/index/ returns nothing. (d) grep -rE '```(ruby|rb)$' autopilot-support/index/ returns nothing.",
+      "output_file": "docs/work/bootstrap-index/outputs/24-integrate.md",
+      "depends_on": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "done": true
+    }
+  ]
+}
